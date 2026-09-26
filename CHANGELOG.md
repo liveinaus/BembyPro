@@ -12,6 +12,11 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 
 ### 中文
 
+**变更**
+
+- **转为闭源，稳定版镜像改为 `:pro`** -- 源代码不再公开，构建与发布改在公开仓库 [liveinaus/BembyPro](https://github.com/liveinaus/BembyPro) 进行，面板的更新检查也改读该仓库。镜像仍发布到 `liveinaus/bemby` 与 `ghcr.io/liveinaus/bemby`，但稳定版的别名由 `:latest` 改为 <strong>`:pro`</strong>；`:latest` 保留为最后一个开源版本，之后不再更新。要继续收到新版本，请把 `docker-compose.yml` 中的镜像改为 `liveinaus/bemby:pro`。`:dev` 与 `:beta` 不变。
+- **升级到 Telegram 第 229 层** -- 机器人现在可以把消息发成一个小型页面（标题、列表、表格、引用、按钮），旧版本收到的是"不支持的消息"，在消息页显示为空白气泡，关键词匹配也读不到任何内容。现在这类消息会按页面渲染，任务读取回复时也能拿到其中的文字。按钮在新层中合并为统一类型，所有读取按钮的地方都已随之调整；加入了 Telegram 新"社区"的账户也不会再因此报错。
+
 **修复**
 
 - **修复升级后计划任务被重排** -- 此前每次进程启动都会根据"最近一次成功 + 间隔天数"重新推算整张计划表，任何无法从这两项还原的信息都会丢失：失败后的顺延、「跳过这次」的顺延、尚未成功过的任务，以及具体的执行时刻。结果就是原本分散在未来几天的任务在升级后全部挤到同一天（多在深夜重启时集中到第二天，因为当天窗口已过）。现在每次排定的时间都会写回任务本身，重启后直接按原定的那一刻继续；停机期间错过的运行视为欠下的，在下一个可执行时机补上。间隔为一天的签到任务看不出差别，这也是此前一直没被发现的原因。
@@ -24,6 +29,7 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **失败的运行改为次日重试** -- 原先无论成功或失败都顺延一个完整间隔，间隔 7 天的任务失败一次就要再等一周。间隔约束的是两次成功之间的节奏，因此失败只顺延一天。
 - **修复最早版本升级后缺少 `job_logs.message` 列** -- 该列只在全新安装的建表语句中，没有对应的 ALTER，因此从最初版本一路升级上来的数据库始终缺它，而每次写运行日志都会用到它。同时新增一项测试，直接比对"从最老结构升级"与"全新安装"两者的全部表结构，任何漏掉的 ALTER 都会在此暴露。
 - **修复浏览器脚本步骤取不到 console 输出** -- 「运行脚本」步骤原本通过浏览器的 console 事件收集输出，但任务所用的指纹修补版 Chromium 根本不上报这类事件（这正是它不显眼的一部分），因此"脚本只打印、不返回"的用法始终报"没有返回值"。现改为在页面内收集，与浏览器无关。
+- **修复导入 session 时跳过已存在但未登录的账户** -- 此前手机号匹配到已有账户就一律跳过，即使该账户早已掉线、正等着重新登录。现在只有已登录的账户才会跳过；未登录的账户会直接换上导入的 session 与 API 凭据，并固定其设备指纹。
 
 **性能**
 
@@ -40,8 +46,20 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **封号检查区分「轻度限制」** -- 此前只有「正常」与「受限」两种结果，但 SpamBot 还有第三种回复：只因号码触发了较严格的发送数量限制，仍可给非联系人发消息（回复只有"提交申诉 / OK"两个按钮，正文讲的是号码而非账号被限制）。这类账号此前被一律判为「受限」，白白弃用。现在单列为<strong>轻度限制</strong>（紫色徽章），而确认无限制的账号也会在「附加信息」列显示绿色的<strong>无限制</strong>徽章——此前正常账号不显示任何徽章，与"从未检查过"无从分辨。需重新检查一次才会更新已有账号上的标记。
 - **批量创建任务的账户筛选** -- 此前只有一条写死的规则：已关联此模板的账户直接不显示，其余全部列出并默认勾选，想跳过谁只能一个个取消。现在列表返回全部启用账户，并在弹窗内即时筛选（切换不需要重新请求）：<strong>排除已关联</strong>（默认开启，即原先的行为）、<strong>排除受限账户</strong>（默认关闭；受限 / 封禁 / 冻结，轻度限制不算）、<strong>仅包含关键词</strong>与<strong>排除关键词</strong>（匹配 Bemby 名称或 TG 名称，逗号分隔多个），以及<strong>仅包含已成功运行过以下模板的账户</strong>——选一个别的模板，只列出至少有一个该模板任务成功过的账户（任务已停用或退役也算，一次性的注册任务成功后正是这两种状态），这样注册模板跑完后，签到任务就只建给真正注册成功的账户；匹配的行标绿色「已成功」。标题旁显示"当前 / 总数"，行内标出「已关联」与封号状态。已关联的账户即使显示出来也默认不勾选，不会误建重复任务。
 - **日志大小与精简** -- 日志列表新增<strong>大小</strong>列（每次运行占用的空间，含截图文件），工具栏显示当前筛选结果的合计。可精简单条（日志行上的压缩图标）、所选多条（批量操作栏）或全部（工具栏按钮），并指定保留最近几张截图（0 表示全部删除）；步骤记录始终保留，只删截图。新增设置<strong>每次运行保留的截图数</strong>，对之后的运行生效；留空则仅按体积上限裁剪。
+- **按数据文件夹逐条循环** -- 自定义任务新增「按数据文件夹逐条循环」动作：对文件夹中的每条记录执行一轮内层动作，内层用 `{v}` 引用当前记录的键（如 `{data.文件夹[{v}].password}`）。每轮相互独立，浏览器动作会重新打开并各自抽取代理。可跳过已有某字段的记录（如 `prize`，重跑时从上次停下处继续）、限制最多轮数、设置每轮间隔，并选择某一轮失败时是继续下一条还是终止任务。数据页新增<strong>导入</strong>，可读回导出的 JSON（单个或全部文件夹，亦可为未加密的完整备份），同名文件夹合并，可选是否覆盖已有键。
+- **保存消息中的链接为变量** -- 新动作把消息里的网址存成变量，供之后的「打开网址」或网页步骤直接使用。除普通链接外，也会取小程序按钮（含输入框上方的按钮，自动签名）和登录按钮（自动确认登录）。
+- **优先点击置顶消息中的按钮** -- 点击按钮的步骤可勾选<strong>优先使用置顶消息</strong>：先在该聊天的置顶消息中找按钮（取最新的一条），找不到再按消息范围查找。群里置顶的抽奖、验证消息被大量新消息淹没后仍能点到。
+- **回复键盘里的小程序按钮** -- 查找小程序按钮时，除了消息下方的内联按钮，也会查找输入框上方回复键盘中的按钮（如「开始验证」）；按钮文字可用 `|` 分隔多种写法，适用于按账户语言切换文字的机器人。这类小程序通过 `sendData` 把结果交回机器人，任务与消息页现在都会像官方客户端一样代为转发，小程序自行上报或关闭即视为完成。
+- **账户头像与 Telegram ID** -- 设置中可开启<strong>在账户列表中显示 Telegram 头像</strong>：检查状态或刷新 TG 名称时顺带读取头像（复用已打开的连接，不额外连接），账户列表新增头像列；Telegram 用户 ID 也会显示。默认关闭。
+- **头像图库** -- 批量修改资料所用的头像图片现在可以在设置中提前上传：支持 zip（服务端解压，只取 .jpg / .png / .webp）或单张图片，单张上限 10MB，单次 300MB / 3000 张；同名自动加序号，重复图片只保留一份。
+- **消息页记住所选文件夹** -- 每个账户各自记住上次停留的文件夹标签，切换账户再回来不会回到「全部」。
 
 ### English
+
+**Changes**
+
+- **Closed source, and stable images move to `:pro`** -- the source is no longer published. Builds and releases now happen on the public [liveinaus/BembyPro](https://github.com/liveinaus/BembyPro) repository, which is also what the panel's update check reads. Images still go to `liveinaus/bemby` and `ghcr.io/liveinaus/bemby`, but the stable alias is now <strong>`:pro`</strong> rather than `:latest`; `:latest` stays on the last open-source build and will not move again. To keep receiving updates, change the image in your `docker-compose.yml` to `liveinaus/bemby:pro`. `:dev` and `:beta` are unchanged.
+- **Telegram layer 229** -- a bot can now send a message as a small page (headings, lists, tables, quotes, buttons). An older layer received it as an unsupported message, which showed as a blank bubble in the Messenger and gave keyword matching nothing to read. Such messages now render as the page, and jobs reading the reply see its text. Buttons became one type in the new layer, and every place that reads them follows; an account that has joined one of Telegram's new Communities no longer errors because of it.
 
 **Fixes**
 
@@ -55,6 +73,7 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **A failed run now retries the next day** -- a run was deferred by its full interval whether it succeeded or not, so one failure on a 7-day job cost a week. The interval is there to space out successful runs, so a failure waits a day.
 - **Fixed `job_logs.message` missing after upgrading from the earliest release** -- the column was only in the fresh-install `CREATE TABLE` with no matching ALTER, so a database upgraded all the way from the first version never had it, and every run log insert names it. A test now compares the full schema of an upgraded database against a fresh install, so any missed ALTER fails there instead of on someone's machine.
 - **Fixed a browser script step losing its console output** -- the Run a script step collected output through the browser's console events, but the fingerprint-patched Chromium the jobs run on reports none of them (part of how it stays unremarkable to a site), so a script whose only output was what it printed always came back as "gave nothing back". The console is now collected inside the page, which works on any browser.
+- **Fixed session import skipping an existing account that had lost its login** -- a phone number matching an existing account was always skipped, even when that account had dropped out and was waiting to be re-authenticated. Only an authenticated account is skipped now; one that is not takes the imported session and API credentials, with its device fingerprint pinned.
 
 **Performance**
 
@@ -71,6 +90,13 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **The spam check tells low-limited accounts apart** -- the check had two outcomes, free and limited, but SpamBot has a third reply: a stricter per-count limit drawn by the phone number, with the account still able to message non-contacts (its keyboard is just Submit a complaint / OK, and the wording is about the number, not the account). Those were all read as limited and set aside for nothing. They now read as <strong>Low limited</strong> on a purple badge, and an account confirmed clear gets a green <strong>Unlimited</strong> badge in the Extra Info column -- a free account previously showed no badge at all, which was indistinguishable from never having been checked. Accounts already marked take their new standing from the next check.
 - **Account filters when creating jobs from a template** -- there was one hard-coded rule: accounts already linked to the template were dropped from the list, everything else was listed and ticked, and skipping anyone meant unticking them one at a time. The list now returns every enabled account and filters in the dialog, so a toggle costs no round trip: <strong>Exclude already linked</strong> (on by default, which is what it used to do), <strong>Exclude restricted</strong> (off by default; limited, blocked and frozen, with low limited left in), <strong>Include</strong> / <strong>Exclude keywords</strong> matching either the Bemby or the Telegram name, comma-separated, and <strong>Only accounts with a successful run of</strong> another template -- pick one, and only accounts with at least one job from it that succeeded are listed (a job since switched off or retired counts, which is what a one-time signup job becomes), so once a signup template has run, check-in jobs go only to the accounts it actually got through; a matching row carries a green <strong>Succeeded</strong> badge. The heading carries a shown/total count and each row is marked with its link and spam standing. A linked account starts unticked even when shown, so revealing them never queues a duplicate.
 - **Log size and compacting** -- the log list has a <strong>Size</strong> column for what each run costs, screenshot files included, and a total in the toolbar for whatever the filters match. One row (the compress icon), a selection (the bulk bar) or all of them (the toolbar button) can be compacted, keeping however many of the most recent screenshots you ask for, where 0 drops them all; what each step did is always kept. A new <strong>Screenshots to keep per run</strong> setting applies the same trim to future runs, and left blank they are bounded by size alone.
+- **Loop over a data folder** -- a new custom-job action runs its inner actions once per record in a folder, with `{v}` standing for the record's key (`{data.folder[{v}].password}`, say). Each round is independent, so a browser action opens anew and draws its own proxy. Records that already hold a field can be skipped (`prize`, for instance, so a rerun carries on where the last stopped), rounds can be capped and spaced out, and a failed round either moves on to the next record or fails the job. The Data view gains <strong>Import</strong>, which reads an export back (one folder or all, or an unencrypted full backup), merging folders of the same name and optionally overwriting keys that exist.
+- **Save a link from a message as a variable** -- a new action stores a message's address as a variable for a later Open URL or page step. Besides plain links it takes Mini App buttons (the keyboard above the composer included, signed) and login buttons (the login confirmed for you).
+- **Click a button from the pinned message first** -- a click-button step can tick <strong>Use pinned messages first</strong> to look among the chat's pinned messages (newest wins) before the message scope, so a pinned draw or verification prompt stays reachable however many messages follow it.
+- **Mini App buttons on the reply keyboard** -- looking for a Mini App button now covers the reply keyboard above the composer (a "开始验证" button, say) as well as the inline buttons under a message, and `|` separates alternative wordings for a bot that follows the account's language. Such an app hands its result back to the bot with `sendData`, which jobs and the Messenger now relay as the official client does; an app that reports or closes itself counts as done.
+- **Account avatars and Telegram IDs** -- <strong>Show Telegram avatars in the accounts table</strong> in Settings has a status check or TG name refresh read the profile photo too (on the connection already open, so no extra connect) and adds an avatar column; the Telegram user ID is shown as well. Off by default.
+- **Avatar pool** -- the images the bulk profile update hands out can now be uploaded ahead of time in Settings: a zip (unpacked on the server, taking the .jpg, .png and .webp files) or single images, up to 10MB an image and 300MB or 3000 images an upload; clashing names get a counter and duplicate images are kept once.
+- **The Messenger remembers the folder** -- each account remembers the folder tab it was left on, so switching accounts and coming back no longer lands on All.
 
 ---
 
