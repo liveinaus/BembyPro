@@ -1,0 +1,299 @@
+name: Release
+
+run-name: Release ${{ inputs.tag || github.ref_name }}
+
+# Builds run here, in the public repo, so they do not consume the private
+# repo's Actions minutes. The source is checked out from liveinaus/Bemby-code
+# with a read-only token (SOURCE_REPO_TOKEN).
+#
+# Started by scripts/release.sh in the source repo, which tags the source first.
+# Pushing a tag to this repo by hand starts it too.
+#
+#   v1.0.1, v1.0.1-patch-1   stable: images :<ver> and :latest, a GitHub release
+#                            here (what the panel's update check reads), and the
+#                            changelog copied to this repo's front page
+#   v1.0.1-beta.1            beta: images :<ver> and :beta, a tag here
+#   dev-v1.0.1-3             dev: images :<tag> and :dev, a tag here
+#
+# Logs for this workflow are public. A failing build prints source paths and
+# snippets, so treat that as the cost of building here.
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'dev-*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release, for example v1.0.1, v1.0.1-beta.1 or dev-v1.0.1-1'
+        required: true
+      source_ref:
+        description: 'Branch, tag or commit in the source repo. Empty means the same tag'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+# Two releases at once would race on the front page commit.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  SOURCE_REPO: liveinaus/Bemby-code
+
+jobs:
+  meta:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.resolve.outputs.tag }}
+      semver: ${{ steps.resolve.outputs.semver }}
+      channel: ${{ steps.resolve.outputs.channel }}
+      source_ref: ${{ steps.resolve.outputs.source_ref }}
+      ghcr_image: ${{ steps.resolve.outputs.ghcr_image }}
+    steps:
+      - name: Resolve tag, channel and source
+        id: resolve
+        env:
+          SOURCE_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          set -euo pipefail
+          TAG="${INPUT_TAG:-$GITHUB_REF_NAME}"
+
+          # Same naming the images have always used: dev tags keep their name,
+          # everything else drops the leading v.
+          if [[ "$TAG" =~ ^dev-.+ ]]; then
+            CHANNEL="dev";    SEMVER="$TAG"
+          elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-beta ]]; then
+            CHANNEL="beta";   SEMVER="${TAG#v}"
+          elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-patch-[0-9]+)?$ ]]; then
+            CHANNEL="latest"; SEMVER="${TAG#v}"
+          else
+            echo "::error::Tag must look like v1.0.1, v1.0.1-patch-1, v1.0.1-beta.1 or dev-v1.0.1-1, got '$TAG'"
+            exit 1
+          fi
+
+          if [ "$CHANNEL" = "latest" ] && gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists. Use a new tag or delete that release first."
+            exit 1
+          fi
+
+          # A release is built from the source tag of the same name, so it can
+          # always be rebuilt. Anything else has to be asked for explicitly.
+          SOURCE_REF="${INPUT_SOURCE_REF:-}"
+          if [ -z "$SOURCE_REF" ]; then
+            if git ls-remote --tags "https://x-access-token:${SOURCE_TOKEN}@github.com/${SOURCE_REPO}.git" "refs/tags/${TAG}" | grep -q .; then
+              SOURCE_REF="$TAG"
+            else
+              echo "::error::$SOURCE_REPO has no tag $TAG. Tag the source (scripts/release.sh does), or pass source_ref."
+              exit 1
+            fi
+          fi
+
+          {
+            echo "tag=$TAG"
+            echo "semver=$SEMVER"
+            echo "channel=$CHANNEL"
+            echo "source_ref=$SOURCE_REF"
+            # GHCR wants a lowercase owner
+            echo "ghcr_image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/bemby"
+          } >> "$GITHUB_OUTPUT"
+          echo "Releasing $TAG ($CHANNEL) from $SOURCE_REPO@$SOURCE_REF"
+
+  # Each platform on its own native runner -- no QEMU
+  build:
+    needs: meta
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+            suffix: amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            suffix: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: liveinaus/Bemby-code
+          ref: ${{ needs.meta.outputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          path: source
+
+      - name: Record the source commit
+        id: src
+        run: echo "sha=$(git -C source rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push platform image
+        uses: docker/build-push-action@v6
+        with:
+          context: source
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/bemby:${{ needs.meta.outputs.semver }}-${{ matrix.suffix }}
+            ${{ needs.meta.outputs.ghcr_image }}:${{ needs.meta.outputs.semver }}-${{ matrix.suffix }}
+          # Stamped into the image so the running app knows its own build, which is
+          # what the panel's update check compares against this repo's releases
+          build-args: |
+            BEMBY_VERSION=${{ needs.meta.outputs.semver }}
+            BEMBY_CHANNEL=${{ needs.meta.outputs.channel }}
+          cache-from: type=gha,scope=${{ matrix.suffix }}
+          cache-to: type=gha,scope=${{ matrix.suffix }},mode=max
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ needs.meta.outputs.semver }}
+            org.opencontainers.image.revision=${{ steps.src.outputs.sha }}
+
+  # One multi-arch manifest per registry, under the version and the channel alias
+  merge:
+    needs: [meta, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Create and push multi-platform manifests
+        run: |
+          set -euo pipefail
+          VER='${{ needs.meta.outputs.semver }}'
+          CHANNEL='${{ needs.meta.outputs.channel }}'
+          for IMG in '${{ secrets.DOCKERHUB_USERNAME }}/bemby' '${{ needs.meta.outputs.ghcr_image }}'; do
+            docker buildx imagetools create \
+              -t "${IMG}:${VER}" \
+              -t "${IMG}:${CHANNEL}" \
+              "${IMG}:${VER}-amd64" \
+              "${IMG}:${VER}-arm64"
+          done
+
+  # Only once the images exist, so the update check never offers a build that
+  # cannot be pulled yet.
+  publish:
+    needs: [meta, merge]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out this repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: public
+
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: liveinaus/Bemby-code
+          ref: ${{ needs.meta.outputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          path: source
+
+      - name: Release notes from the changelog
+        if: needs.meta.outputs.channel == 'latest'
+        id: notes
+        run: |
+          set -euo pipefail
+          TAG='${{ needs.meta.outputs.tag }}'
+          NOTES="$RUNNER_TEMP/notes.md"
+          # The section under "## <tag>", up to the next version heading
+          awk -v tag="## ${TAG}" '
+            $0 == tag { on = 1; next }
+            on && /^## / { exit }
+            on { print }
+          ' source/CHANGELOG.md | sed -e '/./,$!d' -e 's/^---$//' > "$NOTES"
+          if ! grep -q '[^[:space:]]' "$NOTES"; then
+            echo "::error::CHANGELOG.md has no '## $TAG' section to take the notes from"
+            exit 1
+          fi
+          echo "path=$NOTES" >> "$GITHUB_OUTPUT"
+
+      - name: Publish the release and the changelog
+        if: needs.meta.outputs.channel == 'latest'
+        working-directory: public
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG='${{ needs.meta.outputs.tag }}'
+
+          # The changelog the front page links to, as it stands in the source
+          cp ../source/CHANGELOG.md CHANGELOG.md
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add CHANGELOG.md
+          if ! git diff --cached --quiet; then
+            git commit -m "Publish $TAG"
+            git push origin HEAD:main
+          fi
+
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$(git rev-parse HEAD)" \
+            --latest \
+            --title "Bemby $TAG" \
+            --notes-file '${{ steps.notes.outputs.path }}'
+
+      # Beta and dev have no release; the update check reads them off the tag list
+      - name: Tag this repository
+        if: needs.meta.outputs.channel != 'latest'
+        working-directory: public
+        run: |
+          set -euo pipefail
+          TAG='${{ needs.meta.outputs.tag }}'
+          if git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "Tag $TAG is already here."
+            exit 0
+          fi
+          git tag "$TAG"
+          git push origin "refs/tags/$TAG"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Bemby ${{ needs.meta.outputs.tag }} (${{ needs.meta.outputs.channel }})"
+            echo
+            echo "- Source \`${{ env.SOURCE_REPO }}@${{ needs.meta.outputs.source_ref }}\`"
+            echo "- Images \`liveinaus/bemby:${{ needs.meta.outputs.semver }}\`, \`${{ needs.meta.outputs.ghcr_image }}:${{ needs.meta.outputs.semver }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

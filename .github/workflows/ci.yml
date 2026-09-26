@@ -1,0 +1,79 @@
+name: CI
+
+# The source lives in the private liveinaus/Bemby-code, which runs no Actions of
+# its own and cannot trigger this workflow without spending minutes. So CI runs
+# on demand and on a weekly sweep. Check a specific branch or commit with:
+#   gh workflow run ci.yml --repo liveinaus/BembyPro -f source_ref=<branch or sha>
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: 'Branch, tag or commit in the source repo'
+        required: false
+        default: 'main'
+  schedule:
+    # 19:00 UTC Sunday, which is Monday morning in Australia.
+    - cron: '0 19 * * 0'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ inputs.source_ref || 'main' }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: liveinaus/Bemby-code
+          ref: ${{ inputs.source_ref || 'main' }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+
+      # npm test runs the GramJS layer patch first (pretest), which the typecheck needs too
+      - name: Unit tests
+        working-directory: backend
+        run: npm test
+
+      - name: Typecheck
+        working-directory: backend
+        run: npx tsc --noEmit -p .
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the private source
+        uses: actions/checkout@v4
+        with:
+          repository: liveinaus/Bemby-code
+          ref: ${{ inputs.source_ref || 'main' }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Typecheck, build and the bundle-size budget
+      - name: Checks
+        working-directory: frontend
+        run: npm test
