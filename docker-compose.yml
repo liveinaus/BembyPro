@@ -1,6 +1,6 @@
 services:
   bemby:
-    image: liveinaus/bemby:latest
+    image: liveinaus/bemby:pro
     restart: unless-stopped
     ports:
       - "3000:3000"

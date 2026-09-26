@@ -9,7 +9,7 @@ run-name: Release ${{ inputs.tag || github.ref_name }}
 # Started by scripts/release.sh in the source repo, which tags the source first.
 # Pushing a tag to this repo by hand starts it too.
 #
-#   v1.0.1, v1.0.1-patch-1   stable: images :<ver> and :latest, a GitHub release
+#   v1.0.1, v1.0.1-patch-1   stable: images :<ver> and :pro, a GitHub release
 #                            here (what the panel's update check reads), and the
 #                            changelog copied to this repo's front page
 #   v1.0.1-beta.1            beta: images :<ver> and :beta, a tag here
@@ -66,19 +66,20 @@ jobs:
           TAG="${INPUT_TAG:-$GITHUB_REF_NAME}"
 
           # Same naming the images have always used: dev tags keep their name,
-          # everything else drops the leading v.
+          # everything else drops the leading v. Stable goes to :pro; :latest
+          # stays the last open-source build and is never pushed from here.
           if [[ "$TAG" =~ ^dev-.+ ]]; then
             CHANNEL="dev";    SEMVER="$TAG"
           elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-beta ]]; then
             CHANNEL="beta";   SEMVER="${TAG#v}"
           elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-patch-[0-9]+)?$ ]]; then
-            CHANNEL="latest"; SEMVER="${TAG#v}"
+            CHANNEL="pro";    SEMVER="${TAG#v}"
           else
             echo "::error::Tag must look like v1.0.1, v1.0.1-patch-1, v1.0.1-beta.1 or dev-v1.0.1-1, got '$TAG'"
             exit 1
           fi
 
-          if [ "$CHANNEL" = "latest" ] && gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          if [ "$CHANNEL" = "pro" ] && gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "::error::Release $TAG already exists. Use a new tag or delete that release first."
             exit 1
           fi
@@ -230,7 +231,7 @@ jobs:
           path: source
 
       - name: Release notes from the changelog
-        if: needs.meta.outputs.channel == 'latest'
+        if: needs.meta.outputs.channel == 'pro'
         id: notes
         run: |
           set -euo pipefail
@@ -249,7 +250,7 @@ jobs:
           echo "path=$NOTES" >> "$GITHUB_OUTPUT"
 
       - name: Publish the release and the changelog
-        if: needs.meta.outputs.channel == 'latest'
+        if: needs.meta.outputs.channel == 'pro'
         working-directory: public
         env:
           GH_TOKEN: ${{ github.token }}
@@ -276,7 +277,7 @@ jobs:
 
       # Beta and dev have no release; the update check reads them off the tag list
       - name: Tag this repository
-        if: needs.meta.outputs.channel != 'latest'
+        if: needs.meta.outputs.channel != 'pro'
         working-directory: public
         run: |
           set -euo pipefail

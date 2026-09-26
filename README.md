@@ -118,10 +118,10 @@ docker run -d \
   -e ADMIN_USERNAME=admin \
   -e ADMIN_PASSWORD=changeme \
   -e JWT_SECRET="$(openssl rand -hex 32)" \
-  liveinaus/bemby:latest
+  liveinaus/bemby:pro
 ```
 
-镜像同时发布到 Docker Hub 与 GitHub 容器仓库（GHCR），二者内容一致，可任选其一：`liveinaus/bemby:latest` 或 `ghcr.io/liveinaus/bemby:latest`。
+镜像同时发布到 Docker Hub 与 GitHub 容器仓库（GHCR），二者内容一致，可任选其一：`liveinaus/bemby:pro` 或 `ghcr.io/liveinaus/bemby:pro`。
 
 > `JWT_SECRET` 为必填项，且不能使用公开的占位值（如 `change-me-in-production`），否则应用将拒绝启动。请用 `openssl rand -hex 32` 生成。
 
@@ -404,10 +404,10 @@ docker run -d \
   -e ADMIN_USERNAME=admin \
   -e ADMIN_PASSWORD=changeme \
   -e JWT_SECRET="$(openssl rand -hex 32)" \
-  liveinaus/bemby:latest
+  liveinaus/bemby:pro
 ```
 
-Images are published to both Docker Hub and the GitHub Container Registry (GHCR) with identical contents; use either `liveinaus/bemby:latest` or `ghcr.io/liveinaus/bemby:latest`.
+Images are published to both Docker Hub and the GitHub Container Registry (GHCR) with identical contents; use either `liveinaus/bemby:pro` or `ghcr.io/liveinaus/bemby:pro`.
 
 > `JWT_SECRET` is required and must not be a publicly known placeholder (e.g. `change-me-in-production`), or the app refuses to start. Generate one with `openssl rand -hex 32`.
 
