@@ -19,10 +19,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Rewrite relative image paths to absolute GitHub raw URLs
+      # Docker Hub keeps only the first 25,000 bytes, and the full README is several times
+      # that. So it gets the parts marked <!-- dockerhub:start --> ... <!-- dockerhub:end -->
+      # (header, what Pro adds, quick start, in both languages) and a link to the rest.
+      # Relative links and images are made absolute, since they resolve against nothing there.
+      - name: Build the Docker Hub description
         run: |
-          sed 's|src="docs/|src="https://raw.githubusercontent.com/${{ github.repository }}/main/docs/|g' \
-            README.md > "$RUNNER_TEMP/DOCKERHUB.md"
+          set -euo pipefail
+          REPO_URL="https://github.com/${{ github.repository }}"
+          RAW_URL="https://raw.githubusercontent.com/${{ github.repository }}/main"
+          OUT="$RUNNER_TEMP/DOCKERHUB.md"
+          {
+            awk '/<!-- dockerhub:start -->/ { on = 1; next }
+                 /<!-- dockerhub:end -->/   { on = 0; print ""; next }
+                 on' README.md
+            echo "---"
+            echo
+            echo "完整说明 / Full documentation: ${REPO_URL}#readme"
+          } | sed -e "s|src=\"docs/|src=\"${RAW_URL}/docs/|g" \
+                  -e "s|](CHANGELOG.md)|](${REPO_URL}/blob/main/CHANGELOG.md)|g" \
+                  -e "s|](#|](${REPO_URL}#|g" > "$OUT"
+          BYTES=$(wc -c < "$OUT")
+          echo "Docker Hub description: $BYTES bytes"
+          if [ "$BYTES" -gt 25000 ]; then
+            echo "::error::The marked sections come to $BYTES bytes, over Docker Hub's 25,000"
+            exit 1
+          fi
 
       - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v4

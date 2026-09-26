@@ -6,9 +6,9 @@ All notable changes to Bemby are documented here.
 
 ## 未发布 / Unreleased
 
-计划任务在升级后保持原定日期，运行日志不再撑爆数据库（实测 527MB → 35MB），面板首屏体积减少约 70%。
+第一个 Pro 版本（镜像 `:pro`），包含开源版 v1.0.0 之后的全部开发：大量网页子步骤与流程控制、数据仓库、邮箱验证码 / TOTP / 通行密钥、卡密账户导入与接管、实时查看浏览器、节点订阅与全局代理、深色主题、Telegram 第 229 层；计划任务在升级后保持原定日期，运行日志不再撑爆数据库（实测 527MB → 35MB），面板首屏体积减少约 70%。
 
-Scheduled runs keep their dates across an upgrade, run logs stop filling the database (527MB to 35MB on a real install), and the panel's first load is about 70% smaller.
+The first Pro release (the `:pro` image), carrying everything built since the open-source v1.0.0: many new page steps and flow control, the data store, email codes / TOTP / passkeys, session account import and take-ownership, a live view of the browser, node subscriptions and a global proxy, a dark theme and Telegram layer 229. Scheduled runs keep their dates across an upgrade, run logs stop filling the database (527MB to 35MB on a real install), and the panel's first load is about 70% smaller.
 
 ### 中文
 
@@ -30,6 +30,7 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **修复最早版本升级后缺少 `job_logs.message` 列** -- 该列只在全新安装的建表语句中，没有对应的 ALTER，因此从最初版本一路升级上来的数据库始终缺它，而每次写运行日志都会用到它。同时新增一项测试，直接比对"从最老结构升级"与"全新安装"两者的全部表结构，任何漏掉的 ALTER 都会在此暴露。
 - **修复浏览器脚本步骤取不到 console 输出** -- 「运行脚本」步骤原本通过浏览器的 console 事件收集输出，但任务所用的指纹修补版 Chromium 根本不上报这类事件（这正是它不显眼的一部分），因此"脚本只打印、不返回"的用法始终报"没有返回值"。现改为在页面内收集，与浏览器无关。
 - **修复导入 session 时跳过已存在但未登录的账户** -- 此前手机号匹配到已有账户就一律跳过，即使该账户早已掉线、正等着重新登录。现在只有已登录的账户才会跳过；未登录的账户会直接换上导入的 session 与 API 凭据，并固定其设备指纹。
+- **其他修复（8 月 5 日 – 9 月 10 日）** -- 缺失的贴纸、修改登录邮箱时的频率限制、Emby 观看达到并发流上限、群主在成员列表中看不到、「不使用配置文件」每次未生成新配置、数据删除与复制引用、无法删除代理提供方、中文复制粘贴、通行密钥、数字字段保存、任务列表代理显示、日志样式、Microsoft Edge 最小化、浏览器无法正常启动、客户端 ID 丢失、已完成或中止的后台任务未清理、任务卡死。
 
 **性能**
 
@@ -53,6 +54,34 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **账户头像与 Telegram ID** -- 设置中可开启<strong>在账户列表中显示 Telegram 头像</strong>：检查状态或刷新 TG 名称时顺带读取头像（复用已打开的连接，不额外连接），账户列表新增头像列；Telegram 用户 ID 也会显示。默认关闭。
 - **头像图库** -- 批量修改资料所用的头像图片现在可以在设置中提前上传：支持 zip（服务端解压，只取 .jpg / .png / .webp）或单张图片，单张上限 10MB，单次 300MB / 3000 张；同名自动加序号，重复图片只保留一份。
 - **消息页记住所选文件夹** -- 每个账户各自记住上次停留的文件夹标签，切换账户再回来不会回到「全部」。
+- **大量新的网页 / 小程序子步骤** -- 键盘输入（输入到当前焦点处）、按键（Enter / Ctrl+Enter）、长按与按锚点偏移长按、拖动（滑块、拼图，指针沿带弧度的缓动轨迹移动）、选择下拉选项、跳转网址与后退、滚动到元素、读取页面文字、选取单个元素或收集全部元素（存为列表）、在页面中运行脚本（可进入 iframe）。
+- **流程控制** -- 按页面条件分支（if / else）、按次数循环、按列表逐个循环（for each，可按正则或文字筛选、限制数量，并记住已处理的值）、以成功或失败提前结束任务；条件可显示或隐藏。
+- **变量、通知与 AI 填写** -- 「设置变量」可一次定义多个值（含 `{word:6}`、`{randomFirstName}` 等随机占位符，下方可引用上方），之后任意字段写 `{名称}` 使用；「发送通知」可在运行中途经通知机器人发消息；「AI 写入输入框」按提示生成内容并填入指定输入框。随机数支持范围（`{num:1-30}`、定宽 `{num:01-30}`）与日期变量。
+- **邮箱验证码与两步验证** -- 从邮件读取验证码或验证链接；从 msOauth2api 邮箱池领取独立邮箱（开启 `MSOAUTH2API=1` 后可用，也可用于批量修改登录邮箱）并完成邮箱登录；在开启两步验证的页面抓取密钥（otpauth 链接、二维码地址或明文 base32），再计算动态码（TOTP）。
+- **通行密钥（Passkey）** -- 用虚拟安全密钥在网站上注册通行密钥并保存，之后加载它登录，无需任何硬件。
+- **Telegram 相关网页步骤** -- 等待 Telegram 发来的登录码（my.telegram.org 的网页令牌或手机登录的数字码）、以该账户发送 Telegram 消息、把 API ID / Hash 保存到账户上；配合内置流程可自动从 my.telegram.org 获取 API 凭据。
+- **任务移交** -- 注册类任务成功后可移交给另一个模板并保留任务 ID，注册时以 `{jobId}` 保存的凭据由接手的模板直接读回，注册任务就此变成该账户的日常任务。
+- **数据仓库** -- 在设置中开启后新增「数据」菜单：以文件夹与记录（键 + JSON 或单个值）长期保存数据，任务中用 `{data.文件夹.键}` 或 `{data.文件夹.键.字段}` 读取，并有「保存到数据 / 从数据删除 / 从数据读取 / 按位置取记录」等步骤；记录可排序、筛选、增删改（表单或原始 JSON），可导出（含明文格式）。步骤输出也可直接存入数据。
+- **图片验证码与 AI 点击** -- AI 识别 hCaptcha 一类的选图验证码并按格子编号作答；AI 可一次点击多个位置；「多个 AI 按钮」可按关键词限定查找范围；AI 按钮可附加自定义提示。
+- **实时查看与手动操作浏览器** -- 通过 VNC 实时观看任务中的浏览器（显示所用代理），也可在设置中手动打开浏览器操作并使用剪贴板；浏览器任务可强制停止。
+- **浏览器配置文件管理** -- 可查看、改名、清理或保留配置文件中的数据，导入时可选择覆盖同名配置；也可选择不使用配置文件（每次生成全新的配置）。
+- **小程序中的 Cloudflare Turnstile** -- 小程序内同样可以通过 Turnstile 验证。
+- **导入卡密（session）账户** -- 批量导入购买的 session 账户（可经转换服务转换，导入前可检查是否存活），并固定其设备指纹；之后可「批量接管所有权」：修改 2FA 密码（可每个账户随机生成）并清理其他设备。
+- **批量设置隐私与批量提取消息** -- 一次把所选账户的隐私设置全部收紧到最严；从某个聊天中按关键词与正则批量提取内容，按自定义格式输出，可复制、下载或写入数据仓库。
+- **批量修改资料的更多选项** -- 可同时设置随机头像与用户名（@handle）。
+- **账户页** -- 账户搜索与筛选、手机号校验、分享手机号给机器人、表单内容在本浏览器中记住以便下次使用、处理「设备重复」错误。
+- **消息页** -- 频道私信（Channel DM）、投票与测验（投票后显示结果）、@提及没有用户名的群成员、群成员搜索、群服务消息、被回复消息的预览与点击跳转、升级到第 225 层。
+- **入群验证** -- AI 选择入群验证按钮（可附提示，适合"9 - 1 = ?"这类题目）、以测验投票形式出的入群题同样能作答、加群流程更稳。
+- **签到更灵活** -- 按文字匹配按钮、多个关键词搜索、签到流程可配置性更高。
+- **一次性任务** -- 任务可设为成功一次后自动停用；一次性任务也可设为在今天起若干天内的随机一天运行。所有任务类型都支持「每 X 天运行一次」，时长字段可选以秒为单位输入。
+- **任务列表** -- 任务图标、多种筛选、显示每个任务实际使用的代理、在任务列表中直接编辑模板、日志行快捷按钮（打开消息页、任务设置、模板设置）、日志视图更多按钮。
+- **单个任务覆盖代理**；Emby 观看任务也可设置代理。
+- **批量任务** -- 在后台运行并显示进度，可暂停、跳过，可调整账户间隔与每个任务的最长运行时间；同时运行的后台任务更多；批量编辑任务更快。
+- **代理** -- VLESS 订阅（后续扩展为节点订阅与 Xray 核心）、全局代理（适合中国大陆）、随机代理池、代理健康检查与测试、代理自动刷新（刷新时不再删除再添加）。
+- **Emby 观看** -- 支持更多服务器（包括需要播放会话才能取流的网关）、可忽略无效 SSL 证书、自定义 UA 修复。
+- **AI 回复更多样** -- 每次 `{aiInputWithCustomHint}` 回复会抽取不同的语气与结构并随机采样，避免多个账户发出相同文字（可关闭）。
+- **系统** -- 浅色 / 深色主题；版本更新检查；设置中查看系统日志；重启与强制重启；TG 通知可指定论坛群的话题；设置页重新整理；环境变量可关闭不需要的组件。
+- **减少 Telegram 限流（Flood Wait）** -- 遇到限流时不再在等待期内反复重连（那会把 60 秒的等待拉长到数百秒），剩余重试直接放弃，等待自然到期。
 
 ### English
 
@@ -74,6 +103,7 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **Fixed `job_logs.message` missing after upgrading from the earliest release** -- the column was only in the fresh-install `CREATE TABLE` with no matching ALTER, so a database upgraded all the way from the first version never had it, and every run log insert names it. A test now compares the full schema of an upgraded database against a fresh install, so any missed ALTER fails there instead of on someone's machine.
 - **Fixed a browser script step losing its console output** -- the Run a script step collected output through the browser's console events, but the fingerprint-patched Chromium the jobs run on reports none of them (part of how it stays unremarkable to a site), so a script whose only output was what it printed always came back as "gave nothing back". The console is now collected inside the page, which works on any browser.
 - **Fixed session import skipping an existing account that had lost its login** -- a phone number matching an existing account was always skipped, even when that account had dropped out and was waiting to be re-authenticated. Only an authenticated account is skipped now; one that is not takes the imported session and API credentials, with its device fingerprint pinned.
+- **Other fixes (5 Aug - 10 Sep)** -- missing stickers, the rate limit hit when changing a login email, Emby Watch reaching a server's concurrent stream cap, a group's owner missing from its member list, "no profile" not producing a fresh profile each time, removing data and copying a data reference, a proxy provider that could not be removed, copying and pasting Chinese text, a passkey bug, number fields not saving, the jobs list's proxy display, log styling, Microsoft Edge minimising, the browser failing to start, a missing client id, finished or aborted background tasks not being cleared, and a hung runner.
 
 **Performance**
 
@@ -97,6 +127,34 @@ Scheduled runs keep their dates across an upgrade, run logs stop filling the dat
 - **Account avatars and Telegram IDs** -- <strong>Show Telegram avatars in the accounts table</strong> in Settings has a status check or TG name refresh read the profile photo too (on the connection already open, so no extra connect) and adds an avatar column; the Telegram user ID is shown as well. Off by default.
 - **Avatar pool** -- the images the bulk profile update hands out can now be uploaded ahead of time in Settings: a zip (unpacked on the server, taking the .jpg, .png and .webp files) or single images, up to 10MB an image and 300MB or 3000 images an upload; clashing names get a counter and duplicate images are kept once.
 - **The Messenger remembers the folder** -- each account remembers the folder tab it was left on, so switching accounts and coming back no longer lands on All.
+- **Many new web / Mini App page steps** -- type on the keyboard (wherever the focus is), press a key (Enter / Ctrl+Enter), press and hold (also at an offset from an anchor), drag (a slider or puzzle piece, the pointer walked along an eased, slightly arced path), choose a dropdown option, go to a URL and back, scroll to an element, read text off the page, pick one element or collect every match into a list, and run a script on the page (iframes included).
+- **Flow control** -- branch on the page (if / else), repeat a number of times, for each value in a list (narrowed by regex or text, capped, and remembering values already handled), and end the job early as a success or a failure; conditions can be shown or hidden.
+- **Variables, notifications and AI input** -- **Set variables** settles several values at once (random placeholders such as `{word:6}` and `{randomFirstName}` included, each row able to use the ones above) for any later field to use as `{name}`; **Send a notification** goes through the notification bot mid-run; **AI writes into a field** fills an input from a hint. Random numbers take a range (`{num:1-30}`, fixed width `{num:01-30}`), and there is a date variable.
+- **Email codes and two-factor** -- read a verification code or link from email; lease an address of its own from an msOauth2api pool (with `MSOAUTH2API=1`, also usable by Bulk Change Login Email) and sign the mailbox in; capture the two-factor secret on the page that turns 2FA on (otpauth URL, QR image address or printed base32) and work out its authenticator code (TOTP).
+- **Passkeys** -- register a passkey on a site with a virtual security key, save it, and load it later to sign in, with no hardware.
+- **Telegram page steps** -- wait for Telegram's login code (the web token my.telegram.org sends, or a phone login's digits), send a Telegram message as the account, and save an API ID / hash onto the account; together they fetch API credentials from my.telegram.org automatically.
+- **Job handover** -- a signup job can hand itself to another template once it succeeds, keeping its id, so credentials it saved under `{jobId}` are what the new template reads back and the signup becomes that account's daily job.
+- **Data store** -- switched on in Settings, **Data** gets its own menu entry: folders of records (a key plus JSON or a single value) that outlive a run, read in any field as `{data.folder.key}` or `{data.folder.key.field}`, with Save / Delete / Read / Take-by-position steps. Records can be sorted, filtered, added and edited (as fields or raw JSON) and exported (plain text too), and a step's output can be stored straight into it.
+- **Picture captchas and AI clicks** -- the AI solves hCaptcha-style picture grids by tile number, can click several positions at once, can have its multi-button search narrowed by keyword, and an AI button can carry a custom hint.
+- **Watch and drive the browser** -- follow a job's browser live over VNC (with the proxy it uses shown), or open a browser by hand from Settings with clipboard support; browser jobs can be force-stopped.
+- **Browser profile management** -- view, rename, clear or keep what a profile holds, choose whether an import overwrites profiles of the same name, or run with no profile (a fresh one each time).
+- **Cloudflare Turnstile inside Mini Apps**.
+- **Session (card) accounts** -- bulk-import bought session accounts (through a converter service, with an optional liveness check first), pinning their device fingerprint; **Take Ownership** then rotates the 2FA password (random per account if wanted) and clears other devices, in bulk.
+- **Bulk Set Privacy and Bulk Extract Messages** -- shut every privacy setting on the selected accounts as far as it goes; pull text out of one chat across accounts by keyword and regex, in a line format of your choosing, to copy, download or write into the data store.
+- **More from bulk profile updates** -- a random avatar and a username (@handle) can be set at the same time.
+- **Accounts page** -- account search and filters, phone number validation, sharing the phone number with a bot, form values remembered in this browser for next time, and handling of the duplicated-device error.
+- **Messenger** -- channel DMs, polls and quizzes (results shown once voted), @-mentions of group members with no username, member search, group service messages, reply previews that jump to the original, and layer 225.
+- **Group join verification** -- the AI picks the verification button (with an optional hint, for a "9 - 1 = ?" style question), a check posed as a quiz poll is answered too, and the join flow is sturdier.
+- **More flexible check-in** -- match buttons by text, search several keywords, and more of the flow configurable.
+- **One-time jobs** -- a job can switch itself off after a successful run, or run once on a random day within a range from today. Every job type takes run-every-X-days, and duration fields can be shown and typed in seconds.
+- **Jobs list** -- job icons, filters, the proxy each job actually uses, template editing straight from the list, log-row shortcuts (Messenger, job settings, template settings) and more buttons in the log view.
+- **Per-job proxy override**, and a proxy for Emby Watch jobs.
+- **Bulk jobs** -- run in the background with progress, can be paused and skipped, with an adjustable gap between accounts and a maximum run time per job; more background tasks at once, and quicker bulk editing.
+- **Proxies** -- VLESS subscriptions (later node subscriptions with the Xray core), a global proxy for censored networks, random proxy pools, health checks and testing, and auto refresh that no longer removes and re-adds.
+- **Emby Watch** -- more servers (play-session gateways that only stream against a session included), ignore an invalid SSL certificate, and a fix for custom user agents.
+- **More varied AI replies** -- each `{aiInputWithCustomHint}` answer draws a different voice, tone and structure with randomised sampling, so accounts do not send identical text (can be turned off).
+- **System** -- light / dark theme; update check; system log in Settings; restart and force restart; TG notifications to one topic of a forum group; a reorganised Settings page; environment switches to leave out components you do not need.
+- **Fewer Telegram flood waits** -- a flood wait no longer reconnects inside the wait (which walked a 60-second wait up to several hundred); the remaining attempts are dropped and the wait left to expire.
 
 ---
 

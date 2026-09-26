@@ -1,8 +1,9 @@
+<!-- dockerhub:start -->
 <p align="center">
   <img src="docs/logo.png" width="200" alt="Bemby" />
 </p>
 
-# Bemby v1.0.0
+# Bemby Pro
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/liveinaus/bemby)](https://hub.docker.com/r/liveinaus/bemby)
 [![更新日志](https://img.shields.io/badge/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97-%E6%9F%A5%E7%9C%8B-blue)](https://github.com/liveinaus/BembyPro/blob/main/CHANGELOG.md)
@@ -13,6 +14,7 @@
 > 如果 Bemby 为你节省了时间，欢迎在 GitHub 上给它点个 Star，帮助更多人发现这个项目。
 
 一款自托管的自动化工具，用于管理每日 Telegram 机器人签到和 Emby 视频观看会话。内置 Web 管理门户，支持多账号和多任务管理。
+<!-- dockerhub:end -->
 
 Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，网页，小程序，回答问题或者验证码。同时 Bemby 有完整的 Web TG 应用，支持批量入群，订阅，抽奖，更多玩法等你来挖掘。同时感谢群友们的建议，意见与测试。
 
@@ -50,6 +52,7 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 
 ---
 
+<!-- dockerhub:start -->
 ## Pro 版比开源版 1.0.0 多了什么
 
 开源版停在 v1.0.0（镜像 `:latest`，2026 年 8 月）。之后的开发都只在 Pro（镜像 `:pro`）中，主要新增如下；逐条说明见[更新日志](CHANGELOG.md)。
@@ -96,6 +99,7 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 - 浅色 / 深色主题、版本更新检查、设置中查看系统日志、重启系统、Telegram 连接列表与连接数上限、忘记密码时的重置方式
 - 运行截图不再写入数据库（实测 527MB → 35MB），面板首屏体积减少约 70%
 
+<!-- dockerhub:end -->
 ---
 
 ## 功能特性
@@ -155,6 +159,7 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 
 ---
 
+<!-- dockerhub:start -->
 ## 快速开始
 
 ```bash
@@ -171,10 +176,13 @@ docker run -d \
 
 镜像同时发布到 Docker Hub 与 GitHub 容器仓库（GHCR），二者内容一致，可任选其一：`liveinaus/bemby:pro` 或 `ghcr.io/liveinaus/bemby:pro`。
 
+镜像标签：`:pro` 为 Pro 稳定版（推荐）；`:dev` 为开发版；`:beta` 为测试版；`:latest` 是最后一个开源版本 v1.0.0，不再更新。从 `:latest` 升级只需把镜像改为 `liveinaus/bemby:pro`，数据目录可直接沿用。
+
 > `JWT_SECRET` 为必填项，且不能使用公开的占位值（如 `change-me-in-production`），否则应用将拒绝启动。请用 `openssl rand -hex 32` 生成。
 
 默认值：端口 `3000`，数据库 `/app/data/bemby.db`，时区 UTC。如需指定时区，追加 `-e TZ=Asia/Shanghai`。
 
+<!-- dockerhub:end -->
 ---
 
 
@@ -333,6 +341,7 @@ Bemby 仅供个人自动化和学习目的使用。请负责任地使用，并�
 
 ---
 
+<!-- dockerhub:start -->
 <a name="english"></a>
 
 <p align="center">
@@ -345,11 +354,12 @@ Bemby 仅供个人自动化和学习目的使用。请负责任地使用，并�
 [![Changelog](https://img.shields.io/badge/changelog-view-blue)](CHANGELOG.md)
 [![Telegram](https://img.shields.io/badge/Telegram-community-2CA5E0?logo=telegram&logoColor=white)](https://t.me/cool_bemby)
 
-[简体中文](#bemby-v100) | **English**
+[简体中文](#bemby-pro) | **English**
 
 > If Bemby saves you time, please consider giving it a star on GitHub. It helps others find the project and keeps development going.
 
 A self-hosted automation tool for managing daily Telegram bot check-ins (签到) and Emby video-watch sessions. Includes a web admin portal for managing multiple accounts and jobs.
+<!-- dockerhub:end -->
 
 **Bemby can check in to every server out there**, given the right configuration: inside Telegram, on a web page, in a Mini App, or behind a question to answer or a captcha to solve. Bemby also ships a complete web Telegram client, with bulk group joining, subscribing, lucky draws and plenty more to discover. Thanks to everyone in the community group for their suggestions, feedback and testing.
 
@@ -384,6 +394,7 @@ A self-hosted automation tool for managing daily Telegram bot check-ins (签到)
 
 ---
 
+<!-- dockerhub:start -->
 ### What Pro adds over the open-source 1.0.0
 
 The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Everything since is in Pro only (the `:pro` image). The main additions are below; the [changelog](CHANGELOG.md) has the details.
@@ -430,6 +441,7 @@ The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Ever
 - Light / dark theme, update check, system log in Settings, system reboot, Telegram connections panel with a connection cap, and a way back in from a forgotten password
 - Run screenshots kept out of the database (527MB to 35MB on a real install), and a panel whose first load is about 70% smaller
 
+<!-- dockerhub:end -->
 ---
 
 ### Features
@@ -489,6 +501,7 @@ The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Ever
 
 ---
 
+<!-- dockerhub:start -->
 ### Quick Start
 
 ```bash
@@ -505,10 +518,13 @@ docker run -d \
 
 Images are published to both Docker Hub and the GitHub Container Registry (GHCR) with identical contents; use either `liveinaus/bemby:pro` or `ghcr.io/liveinaus/bemby:pro`.
 
+Image tags: `:pro` is the stable Pro build (recommended); `:dev` is the development build; `:beta` is the beta; `:latest` is the last open-source release, v1.0.0, and no longer moves. To move from `:latest`, change the image to `liveinaus/bemby:pro`; the data directory carries over as it is.
+
 > `JWT_SECRET` is required and must not be a publicly known placeholder (e.g. `change-me-in-production`), or the app refuses to start. Generate one with `openssl rand -hex 32`.
 
 Defaults: port `3000`, database at `/app/data/bemby.db`, timezone UTC. To set a timezone add `-e TZ=Australia/Sydney`.
 
+<!-- dockerhub:end -->
 ---
 
 
