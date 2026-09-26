@@ -275,12 +275,11 @@ Bemby 仅供个人自动化和学习目的使用。请负责任地使用，并�
 
 ## 许可证
 
-版权所有 (c) 2024 Bemby contributors
+版权所有 (c) 2024-2026 Bemby contributors。保留所有权利。
 
-特此免费授予任何人获取本软件副本并使用、复制、修改、分发的权利，须遵守以下条件：
-
-- **署名** — 任何分发的副本或衍生作品，无论是否修改，必须清晰注明原始来源（提供本仓库链接即可）。
-- 以上版权声明和本许可声明须包含在软件的所有副本或主要部分中。
+- Bemby 以 Docker 镜像的形式免费提供，可自由下载、部署与使用。
+- 源代码不公开。未经书面许可，不得复制、修改、重新分发或出售本软件及其镜像，也不得基于其制作衍生作品。
+- 2026 年 9 月 26 日之前发布的版本（v1.0.0 及更早）仍适用其发布时附带的许可证。
 
 本软件按"原样"提供，不附带任何形式的保证。在任何情况下，作者均不对因使用本软件而产生的任何索赔、损害或其他责任负责。
 
@@ -563,11 +562,10 @@ The authors accept no liability for account suspension, data loss, service disru
 
 ### Licence
 
-Copyright (c) 2024 Bemby contributors
+Copyright (c) 2024-2026 Bemby contributors. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software to use, copy, modify, and distribute it, subject to the following conditions:
-
-- **Attribution** — any distributed copy or derivative work, whether modified or unmodified, must clearly state the original source (a link to this repository is sufficient).
-- The above copyright notice and this permission notice must be included in all copies or substantial portions of the software.
+- Bemby is provided free of charge as a Docker image, which anyone may download, deploy and use.
+- The source code is not published. Without written permission, the software and its images may not be copied, modified, redistributed or sold, and no derivative works may be made from them.
+- Versions released before 26 September 2026 (v1.0.0 and earlier) remain under the licence they were released with.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
