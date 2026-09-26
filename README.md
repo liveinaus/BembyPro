@@ -50,6 +50,54 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 
 ---
 
+## Pro 版比开源版 1.0.0 多了什么
+
+开源版停在 v1.0.0（镜像 `:latest`，2026 年 8 月）。之后的开发都只在 Pro（镜像 `:pro`）中，主要新增如下；逐条说明见[更新日志](CHANGELOG.md)。
+
+**网页与小程序自动化**
+- **大量新的网页子步骤** -- 键盘输入、按键（Enter / Ctrl+Enter）、长按与按偏移长按、拖动滑块或拼图、下拉选择、跳转与后退、滚动到元素、读取文字、选取与收集元素、在页面运行脚本
+- **流程控制** -- 条件分支（if / else）、按次数循环、按列表逐个循环（for each）、提前以成功或失败结束任务、把任务移交给另一个模板
+- **变量与 AI 填写** -- 设置变量（含随机占位符）、AI 按提示写入输入框、运行中途发送通知
+- **邮箱与两步验证** -- 从邮件读取验证码或验证链接、从地址池领取邮箱、msOauth2api 邮箱登录、抓取两步验证密钥并计算动态码（TOTP）
+- **通行密钥（Passkey）** -- 用虚拟安全密钥注册并保存通行密钥，之后用它登录，无需硬件
+- **图片验证码** -- AI 识别 hCaptcha 一类的选图验证码；AI 可一次点击多个位置；小程序内也能过 Cloudflare Turnstile；支持 iframe 内的页面
+- **实时查看与手动操作浏览器** -- 通过 VNC 实时观看任务中的浏览器，也可以手动打开浏览器操作；浏览器配置文件（Profile）可管理、改名、清理，也可不使用配置文件
+- **回复键盘里的小程序** -- 输入框上方的小程序按钮也能打开，其 `sendData` 结果会像官方客户端一样转交给机器人
+
+**数据**
+- **数据仓库** -- 以文件夹和记录的形式长期保存数据（注册出的账号、邀请码等），任务中用 `{data.文件夹.键}` 读取，也可在任务中写入和删除；支持排序、筛选、导入、导出（含明文格式）
+- **按数据文件夹逐条循环** -- 每条记录执行一轮，可跳过已处理的记录，重跑时从上次停下处继续
+
+**Telegram 账户**
+- **导入卡密（session）账户** -- 批量导入购买的 session 账户，导入前可检查是否存活，之后可批量接管所有权
+- **批量设置隐私**、**批量提取消息**（按关键词和正则从某个聊天中提取内容，可写入数据仓库）
+- **资料批量设置** -- 随机头像（可预先上传头像图库，支持 zip）、用户名（@handle）
+- **分享手机号**、账户搜索与筛选、手机号校验、Telegram 头像与用户 ID 列、「轻度限制」识别、手动重新连接
+
+**消息页（Messenger）**
+- 频道私信、投票与测验（可投票并查看结果）、@提及没有用户名的群成员、群成员搜索、群服务消息、被回复消息的预览与跳转、贴纸显示、按账户记住所选文件夹
+- 升级到 Telegram 第 229 层，可以显示机器人发来的富文本页面消息
+
+**任务与调度**
+- **一次性任务**、所有任务类型都支持「每 X 天运行一次」、任务图标、任务列表筛选
+- **签到更灵活** -- 按文字匹配按钮、多个关键词、优先点击置顶消息中的按钮、从最后一条消息的关键词点击签到按钮
+- **入群验证** -- 用 AI 选择入群验证按钮（可自定义提示），以测验投票形式出的入群题也能作答
+- **批量任务** -- 在后台运行，可暂停、跳过、调整间隔；从模板批量创建任务时可按多种条件筛选账户
+- **单个任务可覆盖代理**；在任务列表中直接编辑模板
+- **调度更稳** -- 升级后保持原定时间、卡死的运行会被回收、当天错过的运行当天补上、同时运行上限可调
+
+**代理**
+- **节点订阅**（VLESS / VMess / Trojan / Shadowsocks，内置 Xray 核心）、**全局代理**（适合中国大陆使用）、随机代理池、代理健康检查与测试、自动刷新
+
+**Emby 观看**
+- 支持更多服务器（包括需要播放会话的网关）、可忽略无效 SSL 证书、可为观看任务单独设置代理
+
+**系统**
+- 浅色 / 深色主题、版本更新检查、设置中查看系统日志、重启系统、Telegram 连接列表与连接数上限、忘记密码时的重置方式
+- 运行截图不再写入数据库（实测 527MB → 35MB），面板首屏体积减少约 70%
+
+---
+
 ## 功能特性
 
 - **多账号** — 管理多个 Telegram 账号，每个账号通过 MTProto 独立认证；支持拖拽排序；会话失效时自动标记并显示重新认证按钮；代理徽章直接显示在账号行；账号列表新增 TG 账号列，显示 Telegram 显示名称和用户名（存储于数据库，首次访问自动获取，可手动刷新）；手机号下方自动显示根据号码解析出的国旗与国家名称；可切换显示"额外信息"列（登录邮箱、受限状态、通行密钥标记）；表格中可按住 Shift 点击选中连续区间；名称、手机号、状态、添加时间列支持点击排序（升序 → 降序 → 恢复手动顺序，排序状态跨刷新保留，排序或搜索时停用拖拽）；添加/编辑账号表单校验名称、手机号及（无全局默认凭据时的）API ID/Hash
@@ -333,6 +381,54 @@ A self-hosted automation tool for managing daily Telegram bot check-ins (签到)
     <td align="center" width="33.33%"><img src="docs/pass-group-verify.png" alt="pass a group join verification" width="100%" /><br/><sub>group join verification</sub></td>
   </tr>
 </table>
+
+---
+
+### What Pro adds over the open-source 1.0.0
+
+The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Everything since is in Pro only (the `:pro` image). The main additions are below; the [changelog](CHANGELOG.md) has the details.
+
+**Web and Mini App automation**
+- **Many new page steps** -- type on the keyboard, press a key (Enter / Ctrl+Enter), press and hold (also at an offset), drag a slider or puzzle piece, pick a dropdown option, go to a URL and back, scroll to an element, read text, pick or collect elements, run a script on the page
+- **Flow control** -- if / else branches, repeat a number of times, for each value in a list, end the job early as a success or failure, hand the job over to another template
+- **Variables and AI input** -- set variables (random placeholders included), have the AI write into a field, send a notification mid-run
+- **Email and 2FA** -- read a verification code or link from email, take an address from a mailbox pool, msOauth2api mailbox sign-in, capture a two-factor secret and work out its authenticator code (TOTP)
+- **Passkeys** -- register a passkey on a virtual security key, save it and sign in with it later, no hardware needed
+- **Picture captchas** -- the AI solves hCaptcha-style image grids and can click several positions at once; Cloudflare Turnstile inside Mini Apps; pages inside iframes
+- **Watch and drive the browser** -- follow a job's browser live over VNC, or open one by hand; manage, rename and clear browser profiles, or run without one
+- **Mini Apps on the reply keyboard** -- the app buttons above the composer open too, and their `sendData` result is passed to the bot as the official client does
+
+**Data**
+- **Data store** -- folders of records that outlive a run (accounts a signup made, invite codes), read in any field as `{data.folder.key}` and written or deleted from a job; sort, filter, import and export (plain text too)
+- **Loop over a data folder** -- one round per record, skipping records already done, so a rerun carries on where the last stopped
+
+**Telegram accounts**
+- **Session (card) accounts** -- bulk-import bought session accounts, check they are alive first, then take ownership of them in bulk
+- **Bulk Set Privacy** and **Bulk Extract Messages** (pull text out of one chat by keyword and regex, optionally into the data store)
+- **Bulk profile extras** -- random avatars (an avatar pool you can stock ahead, zip upload included) and usernames (@handle)
+- **Share phone number**, account search and filters, phone number validation, a Telegram avatar and user ID column, low-limited spam status, manual reconnect
+
+**Messenger**
+- Channel DMs, polls and quizzes (vote and see the results), @-mentions of group members who have no username, member search in groups, group service messages, reply previews with jump-to, stickers, and each account's folder remembered
+- Telegram layer 229, so a bot's rich page messages render instead of showing blank
+
+**Jobs and scheduling**
+- **One-time jobs**, run-every-X-days for every job type, job icons, filters on the jobs list
+- **More flexible check-in** -- match buttons by text, several keywords, a button from the pinned message first, the check-in button from the last message's keyword
+- **Group join verification** -- the AI picks the verification button (with a custom hint), and a check posed as a quiz poll is answered too
+- **Bulk jobs** -- run in the background, can be paused and skipped, with an adjustable gap; account filters when creating jobs from a template
+- **Per-job proxy override**, and template editing straight from the jobs list
+- **A sturdier scheduler** -- planned times survive an upgrade, hung runs are reclaimed, runs missed today are caught up today, and the simultaneous run cap is a setting
+
+**Proxies**
+- **Node subscriptions** (VLESS / VMess / Trojan / Shadowsocks, with the Xray core), a **global proxy** for censored networks, random proxy pools, proxy health checks and testing, auto refresh
+
+**Emby Watch**
+- More servers (including play-session gateways), ignore an invalid SSL certificate, and a proxy of its own for the watch job
+
+**System**
+- Light / dark theme, update check, system log in Settings, system reboot, Telegram connections panel with a connection cap, and a way back in from a forgotten password
+- Run screenshots kept out of the database (527MB to 35MB on a real install), and a panel whose first load is about 70% smaller
 
 ---
 
