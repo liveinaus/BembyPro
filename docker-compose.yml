@@ -2,6 +2,8 @@ services:
   bemby:
     image: liveinaus/bemby:pro
     restart: unless-stopped
+    # Room for a clean stop: the app, then the last cloud-backup upload when one is set up
+    stop_grace_period: 30s
     ports:
       - "3000:3000"
     volumes:
@@ -32,3 +34,9 @@ services:
       # Cloudflare in front of one of those. Needed for rate limiting and for the viewer
       # to know it is being served over https.
       TRUST_PROXY: ${TRUST_PROXY:-0}
+      # Optional backup to Cloudflare R2 or any S3-compatible bucket: docs/cloud-backup.md
+      # Leave BACKUP_S3_BUCKET empty to keep it off.
+      BACKUP_S3_BUCKET: ${BACKUP_S3_BUCKET:-}
+      BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
+      BACKUP_S3_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:-}
+      BACKUP_S3_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:-}

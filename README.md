@@ -191,6 +191,8 @@ docker run -d \
 不熟悉命令行或 Docker 的用户可通过以下云平台快速部署 Bemby，无需在本地安装任何工具。
 
 > Bemby 使用 SQLite 存储数据。请确认所选平台支持**持久化存储卷**，否则服务重启后数据会丢失。
+>
+> **平台没有持久化存储？** 可开启云备份，把数据自动同步到 Cloudflare R2（免费额度内即可），重启后自动恢复。设置步骤见 [云备份指南](docs/cloud-backup.md#中文)。
 
 ### Railway（推荐）
 
@@ -533,6 +535,8 @@ Defaults: port `3000`, database at `/app/data/bemby.db`, timezone UTC. To set a 
 Not comfortable with the command line or Docker? Deploy Bemby to a cloud platform in a few clicks — no local tooling required.
 
 > Bemby uses SQLite for storage. Make sure your chosen platform supports a **persistent volume**, otherwise data is lost on every restart.
+>
+> **No persistent volume?** Turn on cloud backup: your data is kept in Cloudflare R2 (inside its free tier) and restored automatically on every restart. See the [cloud backup guide](docs/cloud-backup.md#english) for setup.
 
 #### Railway *(recommended)*
 
