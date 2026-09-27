@@ -4,6 +4,60 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.2.0
+
+模板商店（浏览、一键安装、更新与自动更新作者发布的模板），无持久化存储也能部署的云备份（Cloudflare R2 免费额度内），Emby 观看的备用地址，批量提取消息读取按钮内容，从日志直接打开任务对应的聊天，按实例选择配色；并修复空闲内存占用从约 150MB 涨到约 500MB、升级后仍显示旧版本号等问题。
+
+Template store (browse, install, update and auto-update published templates), cloud backup for hosts without a persistent disk (inside Cloudflare R2's free tier), fallback URLs for Emby Watch, Bulk Extract Messages reading what buttons hold, opening a job's chat straight from its log, and a colour scheme per instance; plus fixes for idle memory climbing from about 150MB to about 500MB and the panel reporting its old version after an upgrade.
+
+### 中文
+
+**修复**
+
+- **升级后仍显示旧版本号** -- 用 Portainer「重新创建」或 NAS 的容器管理（群晖、Unraid、1Panel 等）升级时，这类工具会照抄旧容器的配置来建新容器，其中也包括旧镜像写入的版本号环境变量，于是新镜像启动后仍自称旧版本（例如已是 dev-v1.1.0 却显示 dev-v1.0.0-25）：「版本与更新」一直提示有新版本，模板商店也把需要 Bemby 1.1.0 的模板判为无法安装。版本号现在写在镜像内的文件里，随镜像一起替换，不再受容器配置影响。从本版本起生效；已受影响的面板升级到本版本后即恢复正常，无需改动配置。
+- **选择器支持带括号的 XPath** -- CSS 难以唯一命中时，所有填选择器的地方（网页步骤与小程序 `css:`）本就可以写以 `//` 开头或带 `xpath=` 前缀的 XPath，但最常用来取「第几个」的 `(//button)[2]` 会被当成 CSS 而找不到任何元素。现在以括号开头的 XPath 也能识别，iframe 前缀 `frame:` 中同样适用；步骤说明里补充了 XPath 的写法。
+
+- **小程序步骤的 css: 选择器支持按文字查找** -- 网页步骤的选择器可以写 `button:has-text("签到")`，小程序步骤列表里的 `css:` 却找不到任何元素，因为它直接交给页面自己的 querySelector，而它不认识 `:has-text`。现在点击与 `if(css:...)` 都和网页步骤一样先经 Playwright 解析，`:has-text()`、`:text-is()`、`:text-matches()`、`:visible` 均可使用。
+
+- **观看运行中的任务时显示配置文件与代理** -- 点日志上的眼睛图标查看运行中的任务时，「配置文件」常常是空的，代理也不显示：它们只在打开的那一刻读取一次，浏览器尚未启动或正在重启时就读不到。现在会每 5 秒从该任务当前的浏览器读取，浏览器启动后即显示，换了代理也会跟着更新。查看窗口也放大到几乎整个页面。
+
+- **修复空闲时内存占用从约 150MB 涨到约 500MB** -- v1.1.0 给数据库加了 64MB 缓存和 256MB 内存映射，读过的页面会一直留在进程里。于是一次完整读取（日志大小合计、每天的数据库整理 VACUUM）之后，空闲占用就比实际需要多出几百 MB，而且直到重启都不会回落，在 `docker stats` 里看起来像内存泄漏。实测 345MB 的数据库：v1.1.0 整理后占用 439MB，现在 54MB（v1.0.0 为 75MB）。缓存改为 8MB，取消内存映射，整理后立即释放缓存；文件的读取缓存交给操作系统，内存紧张时它会自动让出。
+
+**新功能**
+
+- **模板商店** -- 模板页新增「模板商店」：浏览作者发布的模板，可按分类筛选（签到、观看、数据获取、加群、抽奖、小程序）并只看已安装或未安装的模板；有期限的模板（如抽奖）会标出截止日期或精确到分钟的截止时间，过期后商店不再提供安装、默认隐藏（可勾选显示），已安装的副本在模板列表中标为「已过期」，关联任务不会被自动停用；查看作者、所需前提（数据管理、msOauth2api、AI 密钥，本面板未配置的会标黄）、各版本更新内容，一键安装为普通模板。已安装的模板在列表中带有商店版本标记；有新版本时标记变为「v1.0.0 → v1.1.0」，点击即可查看更新内容并更新，「模板商店」按钮上的数字表示有更新的模板数量，商店里还可「全部更新」，也可切换回旧版本；每个已安装的模板可单独设置自动更新（跟随默认 / 开 / 关），默认值在「设置 → 版本与更新」中开启（默认关闭），开启后每 6 小时检查一次并自动更新；更新会同步到关联任务，同时保留你自己改过的名称、启用状态、代理和图标。每个模板还新增「导出到模板商店」，生成发布用的 template.json，并自动去掉本面板专属的代理、登录凭据与上传的图标。
+- **Emby 观看支持备用地址** -- 不少 Emby 服务器提供多条线路。任务与模板的服务器地址下方新增「备用地址」，每行一个；主地址连不上（或返回 5xx 等错误）时按顺序依次尝试，第一个登录成功的地址用于本次运行，日志详情会注明用了哪个备用地址。密码错误（401）在每条线路上都一样，因此不会再换线重试。保存前的连接测试同样会依次尝试。
+
+- **批量提取消息可取出按钮里的内容** -- 兑换码之类常常只放在按钮里（如「Copy Code」，点一下复制），消息文字中没有。输出行格式与数据存储的键 / 值新增三个占位符：`{copy}` 为复制按钮要复制的文字，只看按钮类型、不看名称，按钮改名也照样取到；`{button:名称}` 为名称包含该文字的按钮所带的内容（复制文字或链接，`|` 分隔多种写法，不区分大小写）；`{buttons}` 以"名称: 内容"列出全部按钮。消息下方的按钮与第 229 层富文本消息页面内的按钮都会读取。例如会话填机器人、正则填 `You won`、格式填 `{account}\t{copy}`，即可一次取出每个账户的中奖兑换码。
+
+- **从日志直接打开任务对应的聊天** -- 日志行上的「打开消息页」按钮此前只切换到该任务的账户，还得自己去找机器人或群组。现在会直接打开任务涉及的聊天：依次尝试任务的机器人，以及各步骤中指定的联系人与群组（如加群、发送到指定联系人、抢注的验证码群），打开第一个该账户能打开的。已在聊天列表中的直接打开，不向 Telegram 查询；其余支持 @用户名、t.me 链接、已加入群组的邀请链接与会话 ID（私有群按 ID 从聊天列表中找到）。都打不开时会提示并停留在该账户。
+
+- **按实例选择配色** -- 设置 →「外观」新增「配色」，可选靛蓝（默认）、蓝、青、绿、橙、玫红、紫、石板灰八种，改变强调色与侧边栏颜色，浅色与深色模式各有对应的色值。配色保存在实例上而非浏览器中，同时运行多个 Bemby 时给每个选不同的颜色即可一眼分清；页面加载时直接以上次的配色绘制，登录页也一样，不会先闪一下默认色。消息页的高亮与小程序拿到的主题色也随之变化。
+
+- **无持久化存储也能部署：云备份** -- 在没有持久化存储卷的平台（如 Railway、Render）上，每次重启或重新部署数据都会清空。现在设置 `BACKUP_S3_BUCKET`、`BACKUP_S3_ENDPOINT`、`BACKUP_S3_ACCESS_KEY_ID`、`BACKUP_S3_SECRET_ACCESS_KEY` 四个变量即可开启云备份：每次启动先从存储桶恢复数据库、上传的任务图标、头像图片池与浏览器配置，运行时每 10 秒把数据库改动传回，文件夹有变化时再上传。正常停止或重新部署不丢数据，意外崩溃最多丢失约 10 秒的写入。推荐 Cloudflare R2：默认设置即使数据库一刻不停地写入，每月也只用约 41 万次 A 类操作，在 100 万次免费额度之内；其他 S3 兼容服务同样可用。存储桶中带锁，重叠部署时新容器会等旧容器停止后再启动，不会损坏备份。未设置时一切照旧。设置步骤见 [云备份指南](docs/cloud-backup.md#中文)。
+
+### English
+
+**Fixes**
+
+- **The panel reported its old version after an upgrade** -- Portainer's Recreate and NAS container managers (Synology, Unraid, 1Panel and the like) upgrade by building the new container from the old one's config, which includes the version the old image set in the environment. The new image then called itself the old version (running dev-v1.1.0 code while showing dev-v1.0.0-25): Version & Updates kept offering an update, and the template store refused templates that need Bemby 1.1.0. The version now lives in a file inside the image, which is replaced with it whatever recreates the container. A panel already affected is right again once it runs this version, with nothing to change.
+- **Selectors take bracketed XPath** -- where CSS cannot pin one element down, every selector (web steps and Mini App `css:` rows) already took XPath starting with `//` or prefixed `xpath=`, but `(//button)[2]`, the usual way to ask for the nth match, was read as CSS and matched nothing. A bracketed XPath is now recognised, in a `frame:` prefix too, and the step hints show the XPath forms.
+- **Mini App css: steps can match on text** -- a web step's selector could say `button:has-text("Check in")`, but the same thing as a `css:` row in a Mini App's step list matched nothing: it went straight to the page's own querySelector, which knows no `:has-text`. Pressing and `if(css:...)` now resolve the selector as web steps do, so `:has-text()`, `:text-is()`, `:text-matches()` and `:visible` all work.
+- **Watching a running job shows its profile and proxy** -- the eye on a log row opened a viewer whose Profile was often blank and whose proxy was missing: both were read once, as it opened, and a browser not yet started or mid-relaunch had neither. They are now read from the job's current browser every 5 seconds, so they appear once it is up and follow it to another proxy. The viewer also fills nearly the whole window.
+- **Fixed idle memory climbing from about 150MB to about 500MB** -- v1.1.0 gave the database a 64MB cache and a 256MB memory map, and every page read stays in the process. One full read -- the log size total, the daily VACUUM -- left the idle footprint several hundred MB above what the app needs, never falling back until a restart, which looks like a leak in `docker stats`. On a 345MB database: 439MB after a VACUUM on v1.1.0, 54MB now (75MB on v1.0.0). The cache is 8MB, the file is no longer mapped, and the cache is released after a VACUUM; keeping the file warm is left to the OS page cache, which gives memory back under pressure.
+
+**Features**
+
+- **Template store** -- the Templates page gains **Store**: browse the templates published there, filtered by kind if you like (check-in, watch, data fetch, join group, draw, Mini App) and by installed or not. A template with an end date or an exact end time (a draw, typically) shows it; once past it the store stops offering it and hides it unless asked, and an installed copy is marked Expired in the list, its jobs left as they are; with their author, what they need (the data store, msOauth2api, an AI key -- flagged when this panel lacks it) and what changed in each version, and install one as an ordinary template. An installed template carries its store version in the list; when a newer one is out that turns into "v1.0.0 → v1.1.0", which shows what changed and updates on a click, the Store button counts the templates with an update, and the store offers **Update all** as well as a switch back to an older version. Each installed template can also update itself (follow the default / on / off), with the default under Settings → Version & updates, off unless turned on; templates that do are checked every 6 hours; either is pushed down to its linked jobs, keeping the name, enabled state, proxy and icon you gave it. Each template also gains **Export for store**, which writes the template.json a store is published from, less this panel's own proxies, login credentials and uploaded icon.
+- **Fallback URLs for Emby Watch** -- many Emby servers offer more than one route. Jobs and templates gain **Fallback URLs** under the server URL, one per line. When the server URL can't be reached (or answers with a 5xx or similar), they are tried in order and the first that signs in serves the run; the log detail names the fallback used. A wrong password (401) is the same on every route, so it doesn't move on to the next. The pre-save connection test walks the list the same way.
+- **Bulk Extract Messages reads what buttons hold** -- a prize code is often only on a button ("Copy Code", which copies it on a tap) and never in the message text. Line formats and data store keys / values gain three placeholders: `{copy}` is what a copy button copies, going by the button's kind rather than its label, so a renamed button still gives it up; `{button:Label}` is what the button whose label contains Label carries (its copy text or link, `|` between alternative wordings, case ignored); `{buttons}` lists every button as "label: value". Both the keyboard under a message and the buttons inside a layer-229 rich message page are read. With the bot as the chat, `You won` as the regex and `{account}\t{copy}` as the format, every account's prize code comes out in one run.
+- **Open the job's chat straight from a log** -- the Open Messenger button on a log row switched to the job's account and left finding the bot or group to you. It now opens the chat the job is about: the job's bot first, then the contacts and groups its steps name (a join, a send-to-contact, an auto-registration's code group), taking the first one the account can open. A chat already in the list opens without asking Telegram; otherwise an @username, a t.me link, the invite link of a joined group, or a chat ID works (a private group is found by ID in the chat list). When none opens, a notice says so and the Messenger stays on the account.
+- **A colour scheme per instance** -- Settings → Appearance gains **Colour scheme**: indigo (the default), blue, teal, green, orange, rose, purple or slate, tinting the accent and the sidebar, with values of its own in light and dark mode. It is saved on the instance rather than in the browser, so with several Bembys running, give each its own colour and they are told apart at a glance. The page paints in the last-seen scheme from the start, the login page included, with no flash of the default. The Messenger's highlights and the theme colour handed to Mini Apps follow it too.
+
+- **Run without a persistent disk: cloud backup** -- on a platform with no persistent volume (Railway, Render and the like) every restart or redeploy wiped the data. Setting `BACKUP_S3_BUCKET`, `BACKUP_S3_ENDPOINT`, `BACKUP_S3_ACCESS_KEY_ID` and `BACKUP_S3_SECRET_ACCESS_KEY` now turns on cloud backup: each start first restores the database, uploaded job icons, the avatar pool and browser profiles from the bucket, then database changes go back every 10 seconds and the folders whenever they change. A normal stop or redeploy loses nothing; a crash loses at most about 10 seconds of writes. Cloudflare R2 is the recommended store: even with a database written to without pause, the defaults use about 410k Class A operations a month, inside the free million; any S3-compatible service works too. A lock in the bucket makes an overlapping deploy wait for the old container to stop rather than corrupt the backup. Left unset, nothing changes. Setup: the [cloud backup guide](docs/cloud-backup.md#english).
+
+---
+
 ## v1.1.0
 
 第一个 Pro 版本（镜像 `:pro`），包含开源版 v1.0.0 之后的全部开发：大量网页子步骤与流程控制、数据仓库、邮箱验证码 / TOTP / 通行密钥、卡密账户导入与接管、实时查看浏览器、节点订阅与全局代理、深色主题、Telegram 第 229 层；计划任务在升级后保持原定日期，运行日志不再撑爆数据库（实测 527MB → 35MB），面板首屏体积减少约 70%。
