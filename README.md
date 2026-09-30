@@ -66,6 +66,7 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 - **图片验证码** -- AI 识别 hCaptcha 一类的选图验证码；AI 可一次点击多个位置；小程序内也能过 Cloudflare Turnstile；支持 iframe 内的页面
 - **实时查看与手动操作浏览器** -- 通过 VNC 实时观看任务中的浏览器，也可以手动打开浏览器操作；浏览器配置文件（Profile）可管理、改名、清理，也可不使用配置文件
 - **回复键盘里的小程序** -- 输入框上方的小程序按钮也能打开，其 `sendData` 结果会像官方客户端一样转交给机器人
+- **浏览器自检与伪装** -- 选择出口，用 BrowserScan、CreepJS、FingerprintJS 与真实 Cloudflare 验证页给浏览器打分（0–100，附扣分原因）；浏览器可伪装为 Windows / macOS / Linux，可上传自己的 Windows / Mac 字体，时区跟随出口 IP 所在城市
 
 **数据**
 - **数据仓库** -- 以文件夹和记录的形式长期保存数据（注册出的账号、邀请码等），任务中用 `{data.文件夹.键}` 读取，也可在任务中写入和删除；支持排序、筛选、导入、导出（含明文格式）
@@ -88,6 +89,7 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 - **批量任务** -- 在后台运行，可暂停、跳过、调整间隔；从模板批量创建任务时可按多种条件筛选账户
 - **单个任务可覆盖代理**；在任务列表中直接编辑模板
 - **调度更稳** -- 升级后保持原定时间、卡死的运行会被回收、当天错过的运行当天补上、同时运行上限可调
+- **手动标记成功或失败** -- 更正最近一次运行的结果，或记录一次手动完成，并据此重新安排下次运行
 
 **代理**
 - **节点订阅**（VLESS / VMess / Trojan / Shadowsocks，内置 Xray 核心）、**全局代理**（适合中国大陆使用）、随机代理池、代理健康检查与测试、自动刷新
@@ -120,6 +122,7 @@ Bemby可签到市面上所有的服（需要正确配置）。无论是TG内，�
 - **AI 按钮识别** — 签到按钮文字设为 `{aiBtn}` 时，自动通过视觉大模型识别应点击的按钮（支持图片验证码类场景）；AI 返回结果与可用按钮不符时自动重试（最多不超过任务重试次数，硬性上限 5 次）；可在设置页面配置 API 地址、密钥和模型；支持配置多个服务商，默认模型报错时自动切换；默认模型精确锁定到具体的"服务商 + 模型"记录，避免不同服务商提供同名模型时用错凭据
 - **小程序（Mini App）** — 在 Messenger 中直接打开机器人的小程序：聊天头部按钮、左侧机器人菜单，以及贴在输入框旁的机器人菜单小程序，均由 Telegram 按当前账户签名后打开；可选择在 Bemby 内嵌或浏览器打开。内嵌前先探测目标是否允许被嵌入，不允许时经内置代理提供同一页面（剥掉阻止内嵌的响应头、注入小程序桥接、补齐主题/版本/平台等启动参数），并使用仅对该站点有效的一次性票据而非面板令牌；设置 `WEBVIEW_PUBLIC_ORIGIN` 可让小程序拥有自己的源以正确路由自身路径
 - **网页与小程序自动化** — 自定义任务可打开小程序（按钮、`t.me/<机器人>/<应用>` 链接、普通网址或机器人菜单）并在其中编排子步骤：点击、填写、按键（Enter / Ctrl+Enter，适用于没有发送按钮的输入框）、长按、拖动（滑块/拼图：指针沿轨迹分多次小步移动并带轻微弧度，而非瞬间跳到终点）、选择下拉框、设置变量、发送通知、等待元素、滚动、断言文字、勾选 Cloudflare Turnstile 复选框（小程序内的操作步骤写 `{turnstile}`；IP 良好时验证自动通过、页面上没有复选框时同样算成功）；支持 CSS 选择器与多语言标签候选；由内置的指纹修补浏览器（CloakBrowser）驱动，可按出口轮换代理以通过 Cloudflare 验证
+- **浏览器自检与伪装** — 设置中可选测试出口，并用 BrowserScan、CreepJS、FingerprintJS 与真实 Cloudflare 验证页给浏览器打分（0–100，列出扣分原因与完整报告）；浏览器可伪装为 Windows、macOS 或 Linux（ARM 服务器推荐 macOS），可上传自己的 Windows / Mac 字体到数据目录；时区跟随出口 IP 所在城市，WebRTC 报告出口 IP
 - **变量与中途通知** — 「设置变量」可先定下取值（支持 `{word:6}`、`{alpha:12}`、`{randomFirstName}` 等随机占位符，也可引用已有变量），后续任一字段用 `{变量名}` 引用；一个步骤可设多个变量，按从上到下的顺序赋值，后一行可引用前面几行（如 `{fn}_{ln}_{num:4}`）；「发送通知」则在运行途中经通知机器人发出一条消息。两者合起来正是注册流程要的：先定好用户名与密码 → 用它们填注册表单 → 完成后把 `{username}----{password}` 发给自己，否则这次运行结束后就无从查起
 - **数据（Data）** — 在设置中开启后，左侧菜单出现「数据」：按文件夹存放记录，每条记录有一个键和一个取值（JSON 对象，或字符串、数字这样的单个值）。与任务变量不同，这里的数据在本次运行结束后依然存在——刚注册好的账号、站点发放的邀请码都可以存下来。任务中在任意文本框写 `{data.文件夹.键}` 读取整条记录，写 `{data.文件夹.键.字段}` 读取其中某个字段（嵌套用 `login.password`，数组用 `items.0`）；写入与删除则用网页步骤「保存到数据」「删除数据」，填了字段路径时只覆盖该字段；把文件夹当队列逐条取用时（例如一批待用账号）用「按序号取记录」——按添加顺序取第 N 条（0 起），记录的键存入变量，配合「删除数据」用完即删，下次运行自动取下一条。数据可在「数据」页面查看、修改与导出（整体或按文件夹的 JSON），也可**导出为文本**：按自定的每行格式下载 `文件夹名.txt`，例如 `{key}----{password}`；占位除 `{key}`、`{value}`、`{updatedAt}` 外，其他名称表示取值中的字段，`\t`／`\n` 可生成 Tab 分隔文件，下载前有预览，格式记在该文件夹上供下次复用。数据同时随设置页的完整备份一并导出
 - **列表遍历与 AI 撰写** — 「收集全部元素」把选择器匹配到的值（如列表页上的全部帖子 ID）一次性存成列表，「遍历列表」再逐个执行子步骤，本轮的值在任一字段中写作 `{列表名}`——因此循环里可以离开列表页，逐个打开帖子再返回；可正则提取、按文字筛选、限制数量，并记住已处理过的值（按任务记录，只有整轮成功才记下，下次运行不再重复）。另有「AI 撰写并输入」：由你给出输入框的 CSS 选择器与提示词，AI 按提示写出内容并填入；提示词中可引用前面步骤读到的变量（如 `{postText}`），也可限制字数、把写出的内容另存为变量。与既有的「循环 N 次 + 挑选一个元素」互补：列表页每轮都会变动时用后者，需要离开列表页时用前者
@@ -238,12 +241,12 @@ Railway 支持直接从 Docker Hub 镜像部署，无需 Fork 或连接 GitHub�
 | 服务器地址              | Emby 服务器地址，如 `https://emby.example.com:443`（仅 Emby 观看）；粘贴含协议和端口的完整 URL 时可自动解析 |
 | Emby 用户名/密码        | Emby 账号凭证（仅 Emby 观看）                                     |
 | 播放时长                | 模拟播放的秒数；实际时长在此基础上随机延长 0–10%（仅 Emby 观看）  |
-| 播放后标记已看          | 播放结束后将该剧集/电影标记为已看（默认开启，仅 Emby 观看）       |
+| 播放后标记已看          | 播放结束后将该剧集/电影标记为已看（默认关闭，仅 Emby 观看）       |
 | 真实观看                | 以真实播放速率直连拉取实际媒体字节，产生真实串流流量；会消耗大量下行流量（仅 Emby 观看） |
-| 顺序播放                | 从上次离开处续播，看完一集自动接着下一集，仅看完整集才标记已看（仅 Emby 观看） |
+| 顺序播放                | 从上次离开处续播，看完一集自动接着下一集，仅看完整集才标记已看（默认开启，仅 Emby 观看） |
 | 限定媒体库              | 媒体库名称或序号（从 1 开始）；匹配不到或库内无可播内容时回退到整个服务器（仅 Emby 观看，可不填） |
 | 账号（可选）            | 关联的 Telegram 账号，用于发送成功/失败通知（仅 Emby 观看，可不填）|
-| 时间窗口开始/结束        | 每日执行时间窗口，格式 HHMM，如 `1400`–`1600`                    |
+| 时间窗口开始/结束        | 每日执行时间窗口，格式 HHMM，默认 `1300`–`2200`                    |
 | 每隔多少天执行          | 执行间隔天数，填数字（如 `7`）或范围（如 `7-15`）；范围会在每次排程时随机取一个天数 |
 | 最大重试次数            | 失败时的重试次数                                                   |
 
@@ -410,6 +413,7 @@ The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Ever
 - **Picture captchas** -- the AI solves hCaptcha-style image grids and can click several positions at once; Cloudflare Turnstile inside Mini Apps; pages inside iframes
 - **Watch and drive the browser** -- follow a job's browser live over VNC, or open one by hand; manage, rename and clear browser profiles, or run without one
 - **Mini Apps on the reply keyboard** -- the app buttons above the composer open too, and their `sendData` result is passed to the bot as the official client does
+- **Browser self-test and persona** -- pick an exit and score the browser on BrowserScan, CreepJS, FingerprintJS and real Cloudflare challenge pages (0-100, with what cost points); the browser can claim Windows, macOS or Linux, takes your own Windows / Mac fonts, and keeps the exit IP city's timezone
 
 **Data**
 - **Data store** -- folders of records that outlive a run (accounts a signup made, invite codes), read in any field as `{data.folder.key}` and written or deleted from a job; sort, filter, import and export (plain text too)
@@ -432,6 +436,7 @@ The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Ever
 - **Bulk jobs** -- run in the background, can be paused and skipped, with an adjustable gap; account filters when creating jobs from a template
 - **Per-job proxy override**, and template editing straight from the jobs list
 - **A sturdier scheduler** -- planned times survive an upgrade, hung runs are reclaimed, runs missed today are caught up today, and the simultaneous run cap is a setting
+- **Mark a job successful or failed by hand** -- correct the latest run's verdict or record the work as done by hand, and the next run is planned from that
 
 **Proxies**
 - **Node subscriptions** (VLESS / VMess / Trojan / Shadowsocks, with the Xray core), a **global proxy** for censored networks, random proxy pools, proxy health checks and testing, auto refresh
@@ -464,6 +469,7 @@ The open-source build stopped at v1.0.0 (the `:latest` image, August 2026). Ever
 - **AI button detection** — set the check-in button to `{aiBtn}` and a vision model automatically identifies which button to click, including image-based CAPTCHA-style challenges; when the AI response does not match an available button it retries automatically (up to the job's max retries, hard-capped at 5); a fresh install pre-configures OpenRouter (`https://openrouter.ai/api/v1`) with the `nvidia/nemotron-nano-12b-v2-vl:free` model — just add your API key in Settings to activate it; configure multiple providers and enable auto-fallback so a rate-limited default model rolls over to another provider; the default model is pinned to an exact provider + model combination so two identically named models from different providers never get mixed up
 - **Mini Apps** — open a bot's Mini App straight from Messenger: from the chat header, from the bot's left-hand menu, and the one a bot pins beside the composer, each signed by Telegram for the current account; choose whether they open inside Bemby or in the browser. Framing is probed first, and where a site refuses it the same page is served through a built-in proxy (framing headers dropped, the Mini App bridge injected, and the launch parameters a real client adds -- theme, version, platform -- filled in), reached with a single-use ticket good for that one site rather than the panel's session token; `WEBVIEW_PUBLIC_ORIGIN` gives the app an origin of its own so its router sees its own paths
 - **Web and Mini App automation** — a custom job can open a Mini App (from a button, a `t.me/<bot>/<app>` link, a plain address, or the bot's menu) and drive sub-steps inside it: click, fill, press a key (Enter or Ctrl+Enter, for a box with no send button), press and hold, press and drag (a slider handle or a puzzle piece: the pointer is walked across in small eased moves with a slight arc rather than teleported, since the moves are what a slider check watches), choose a dropdown option, set a variable, send a notification, wait for an element, scroll, assert text, tick a Cloudflare Turnstile checkbox (`{turnstile}` among the in-app steps; a page that shows no checkbox passes, since Turnstile clears itself for an address it likes), with CSS selectors and multi-language label alternatives; it runs on the bundled fingerprint-patched browser (CloakBrowser) and can rotate proxies per exit to get past Cloudflare
+- **Browser self-test and persona** — pick an exit in Settings and score the browser on BrowserScan, CreepJS, FingerprintJS and real Cloudflare challenge pages (0-100, with what cost points and a full report); the browser can claim Windows, macOS or Linux (macOS is the one to pick on an ARM server), your own Windows / Mac fonts can be uploaded into the data dir, the timezone follows the exit IP's city and WebRTC reports the exit IP
 - **Variables, and a notification mid-run** — **Set variables** settles values up front (taking the random placeholders `{word:6}`, `{alpha:12}`, `{randomFirstName}` and the names already set) for any later field to use as `{name}` -- one step holds as many as the round needs, set from the top down so a row may be built out of the ones above it (`{fn}_{ln}_{num:4}`), and **Send a notification** puts a message through the notification bot from the middle of a run. Together they are what a signup needs: settle a username and password, fill the form in with them, and send `{username}----{password}` on at the end -- nothing else in the run keeps them once it is over
 - **Data** — switched on in Settings, **Data** takes its own menu entry: folders of records, each record a key and a value (a JSON object, or a single piece of data like a string or a number). Unlike a job variable, what is here outlives the run -- the account a signup just made, an invite code a site handed out. A job reads it by writing `{data.folder.key}` in any text field for the whole record, or `{data.folder.key.field}` for one field of it (`login.password` for a nested one, `items.0` into a list); writing and deleting are the **Save to Data** and **Delete from Data** page steps, and with a field path only that field is written. To work through a folder as a queue -- a batch of accounts waiting to be used -- **Take a record by position** hands back the Nth record oldest first (counting from 0) with its key in a variable, which is what a **Delete from Data** step needs to move the queue on. Records can be read, corrected and exported from the Data view -- JSON for the whole store or one folder, or **as text**: `foldername.txt`, a line per record to a format you write, such as `{key}----{password}`. Besides `{key}`, `{value}` and `{updatedAt}`, any other name is a field of the value, `\t` / `\n` give a tab-separated file, a preview shows the lines before the download, and the format is kept on the folder for next time. Everything also travels in the full backup from Settings
 - **Work through a list, and have the AI write** — **Collect** reads every value a selector matches (all the post ids on a list page, say) into one list, and **For each** runs its sub-steps once per value, `{name}` standing for the one in hand — so the loop can leave the list page behind, opening each post in turn and coming back. Values can be narrowed by a regex or by their text, capped in number, and remembered once handled (per job, and only when the whole round got through, so the next run skips them). **AI writes into a field** takes the CSS selector of the input plus a hint of what to write; the hint can quote what an earlier step read (`{postText}`), the answer can be capped in length and held under a name of its own. This pairs with the existing Repeat + Pick: use Pick when the list moves under the job, Collect when the round leaves the list behind
@@ -582,13 +588,13 @@ Go to **Jobs** and click **Add Job**. Configure:
 | Server URL              | Emby server address, e.g. `https://emby.example.com:443` (Emby Watch only); paste a full URL with protocol and port to auto-fill the fields |
 | Emby Username/Password  | Emby account credentials (Emby Watch only)                                           |
 | Play Duration           | Seconds to simulate playback; actual duration is this value plus 0–10% random extra (Emby Watch only) |
-| Mark as watched         | Mark the episode/movie as watched in Emby after playback ends (default on, Emby Watch only) |
+| Mark as watched         | Mark the episode/movie as watched in Emby after playback ends (default off, Emby Watch only) |
 | Real Watch              | Pull the actual media bytes at real playback pace so the server sees genuine streaming traffic; uses significant download bandwidth (Emby Watch only) |
-| Sequence Play           | Resume from the last position and chain into the next episode when one finishes; only marks an episode watched when it actually finishes (Emby Watch only) |
+| Sequence Play           | Resume from the last position and chain into the next episode when one finishes; only marks an episode watched when it actually finishes (default on, Emby Watch only) |
 | Ignore invalid SSL certificate | Skip TLS certificate verification for this server, for self-signed, expired or mismatched certificates (default off, Emby Watch only) |
 | Limit to library        | Library name or index (starting from 1); falls back to the whole server when it can't be matched or has nothing to play (Emby Watch only, optional) |
 | Account (optional)      | Telegram account to send success/failure notifications via (Emby Watch only; leave blank to disable notifications) |
-| Window Start/End        | Daily schedule window in HHMM format, e.g. `1400`–`1600`                            |
+| Window Start/End        | Daily schedule window in HHMM format, `1300`–`2200` by default                      |
 | Run every (days)        | Interval between runs: a number (e.g. `7`) or a range (e.g. `7-15`), where a range picks a random day count each time it schedules |
 | Max Retries             | Number of retry attempts on failure                                                  |
 
