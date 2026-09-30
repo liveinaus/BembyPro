@@ -4,6 +4,52 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.3.0
+
+浏览器自检（可选出口，并用 BrowserScan、CreepJS、FingerprintJS 与真实 Cloudflare 验证页打分，给出 0–100 总分与扣分原因），浏览器可伪装为 Windows、macOS 或 Linux，可上传自己的 Windows / Mac 字体，按出口所在城市设置时区、WebRTC 报告出口 IP、不再被判为无痕模式；任务可手动标记成功或失败；新任务默认时间窗口改为 13:00–22:00、Emby 观看默认值调整；并修复消息页文件下载失败等问题。
+
+Browser self-test (pick the exit, score it on BrowserScan, CreepJS, FingerprintJS and real Cloudflare challenge pages, ending in a 0-100 score with what cost points), a Windows, macOS or Linux browser persona, uploading your own Windows / Mac fonts, the exit city's timezone, WebRTC reporting the exit IP and no longer reading as incognito; marking a job successful or failed by hand; new jobs default to a 13:00-22:00 window and new Emby Watch defaults; plus fixes for Messenger file downloads and more.
+
+### 中文
+
+**新功能**
+
+- **浏览器自检** -- 设置 → Cloudflare 验证中的「浏览器自检」现为独立区块：可选择测试出口（与未设代理的任务相同、服务器自身 IP，或代理列表中任一代理），可多选指纹检测网站（BrowserScan、CreepJS、FingerprintJS）与真实的 Cloudflare 验证页（ScrapingCourse、NopeCHA、nowsecure.nl 的整页验证，Cloudflare 官方 Turnstile 演示与 2Captcha 的复选框）。检测结束给出 0–100 的总分与等级（85 以上良好、70–84 一般、50–69 较弱、50 以下差）、各项分数和扣分原因；各网站的结论与截图、原始数据收在可展开的「完整报告」中。检测进行中显示当前浏览器、正在检测的步骤与已用时间。内置检测新增 WebRTC 泄露检查（是否暴露服务器真实 IP）与 CPU 架构检查。
+- **浏览器系统可选 Windows / macOS / Linux** -- 默认仍为 Windows。ARM 服务器（如 Oracle ARM）上建议选择 macOS：CPU 架构会从浏览器中泄露，而苹果芯片的 Mac 恰好就是 ARM，与之完全一致。切换后，之前在另一系统下创建的浏览器配置会在下次使用时自动清空（Cookie 与登录状态一并清除）。
+- **上传自己的 Windows / Mac 字体** -- 浏览器伪装成 Windows 或 Mac 却没有对应字体，本身就是破绽；这些字体属微软、苹果版权，无法代为下载。现在可以在设置中选择整个字体文件夹、字体文件或 .zip 上传，面板列出需要的 8 个文件、所在位置与一键复制命令。字体保存在数据目录（`cf-fonts/`），升级无需重传，浏览器只会看到所伪装系统的字体；Windows 的 8 个字体齐全后自动启用 Windows 字体度量。
+- **更像真实浏览器** -- 每次启动时读取出口当前 IP：浏览器时区改用 IP 所在城市（如墨尔本而非统一的悉尼，需在设置中点一次「下载 IP 位置数据库」，约 70MB）；WebRTC 报告出口 IP 而不是完全被屏蔽；存储配额按常见笔记本硬盘报告，不再被判为无痕模式。实测 BrowserScan 真实度从 80% 提升到 100%。
+- **任务可手动标记成功或失败** -- 任务列表新增两个按钮：最近一次运行的结果不对时可直接更正，没有可更正的运行时则记录一次今天的手动完成。标记后按运行记录重新安排下次运行；一次性任务标记成功后自动停用，撤销成功则重新启用。
+- **新的默认值** -- 新任务的默认时间窗口由 14:00–16:00 改为 13:00–22:00；新的 Emby 观看任务默认不标记已看、开启播放前校验、关闭真实观看、开启顺序播放。已有任务不受影响。
+- **CloakBrowser 升级到 0.5.11** -- 更自然的打字、滚动与点击，授权席位中途失效时给出明确错误。
+
+**修复**
+
+- **消息页无法下载文件** -- 文件链接中的访问凭据 15 分钟后过期、后端重启后也会失效，页面打开较久后点击文件只会下载到错误；另外超过 25MB 的文件一律无法下载。现在点击时才生成新的凭据，文件改为边从 Telegram 读取边传给浏览器，大小不再受限，并以原文件名保存。
+- **浏览器自检误报** -- 「No WebGL2」是检测方法本身的错误（在已有 WebGL1 的画布上请求 WebGL2 永远失败），字体列表也无论是否安装都会列出；两者均已改正。
+- **被封禁的账户在垃圾检测中显示为「受限」** -- @SpamBot 对因违反服务条款被封禁的账户回复「Your account was blocked for violations of the Telegram Terms of Service」，并附四个按钮（Understood / I won't do it again / My account was hacked / This is a mistake）。检测按按钮数量判断时，四个按钮一律当作「受限」，还没读到回复里的"blocked"。现在这组按钮直接判为「已封禁」；其他语言的同类按钮，只要回复文字写明封禁或冻结，也以文字为准。已误标为受限的账户重新检测一次即可更正。
+- **冻结账户的消息搜索不再显示「未找到」** -- 账户被冻结后，Telegram 拒绝它的一切查找，消息页搜索却只显示空结果，看起来像是机器人或群组不存在。现在会提示该账户已被冻结，在 Telegram 解除限制前无法搜索或打开新聊天（详情见 @SpamBot）；已在聊天列表中的匹配项照常显示。
+
+### English
+
+**Features**
+
+- **Browser self-test** -- the self-test under Settings → Cloudflare solver is now a section of its own: pick the exit to test through (as a job with no proxy, the server's own IP, or any proxy in the list), and tick any of the fingerprint sites (BrowserScan, CreepJS, FingerprintJS) and real Cloudflare challenge pages (full-page challenges on ScrapingCourse, NopeCHA and nowsecure.nl; the Turnstile checkbox on Cloudflare's own demo and 2Captcha's). It ends in a 0-100 score and a grade (85+ good, 70-84 fair, 50-69 weak, under 50 poor), each part's score and what cost points; each site's verdict, its screenshot and the raw data sit in a collapsible full report. While it runs, it shows which build and step it is on and how long it has taken. The built-in check now also looks for a WebRTC leak (the server's real address behind a proxy) and a CPU architecture mismatch.
+- **Browser OS: Windows, macOS or Linux** -- Windows stays the default. On an ARM server (Oracle ARM, for one) macOS is the recommended choice: the CPU type shows through the browser, and an Apple-silicon Mac is ARM too, so it stays consistent. After a switch, each browser profile made under another OS is cleared the next time it is used (its cookies and sign-ins go with it).
+- **Upload your own Windows / Mac fonts** -- a browser claiming Windows or a Mac without that system's fonts is itself a tell, and the fonts are Microsoft's and Apple's, so they cannot be downloaded for you. Settings now takes a whole font folder, font files or a .zip, and lists the 8 files that matter, where to find them and commands to copy them. They are kept in the data dir (`cf-fonts/`), so an upgrade does not ask again, and the browser only sees the fonts of the OS it claims; with all 8 Windows fonts present it switches on Windows font metrics.
+- **More like a real browser** -- each launch reads the exit's current address: the browser's timezone is its city's (Melbourne rather than Sydney for every Australian exit; click "Download IP location database" in Settings once, about 70MB), WebRTC reports the exit's address instead of being blocked outright, and the storage quota is a common laptop drive's, so it no longer reads as incognito. BrowserScan's authenticity went from 80% to 100% in testing.
+- **Mark a job successful or failed by hand** -- two new buttons on the job list: correct the latest run when its verdict was wrong, or record the work as done by hand today when there is none to correct. The job is then planned again from its history; a one-time job marked successful switches off, and taking the success back switches it on again.
+- **New defaults** -- new jobs default to a 13:00-22:00 window instead of 14:00-16:00, and new Emby Watch jobs default to not marking watched, checking the file is playable, Real Watch off and Sequence Play on. Existing jobs are unchanged.
+- **CloakBrowser 0.5.11** -- more natural typing, scrolling and clicking, and a clear error when a licence seat is lost mid-run.
+
+**Fixes**
+
+- **Messenger file downloads failed** -- a file link carried an access ticket that expired after 15 minutes or with a backend restart, so a file clicked in a chat that had been open a while downloaded an error instead; and any file over 25MB could not be downloaded at all. The ticket is now issued at the click, and files are streamed from Telegram as they arrive, with no size cap and under their own name.
+- **Browser test false alarms** -- "No WebGL2" came from the check itself (a canvas already holding WebGL1 never hands out WebGL2), and the font list named fonts whether or not they were installed; both are fixed.
+- **Blocked accounts showed as limited in the spam check** -- @SpamBot answers an account blocked for Terms of Service violations with "Your account was blocked for violations of the Telegram Terms of Service" and four buttons (Understood / I won't do it again / My account was hacked / This is a mistake). The check read any four-button keyboard as limited before it looked at the text, so the word "blocked" never counted. That keyboard now reads as blocked, and in other languages a reply whose text states a block or a freeze outranks the button count. An account already marked limited is corrected by checking it again.
+- **Messenger search on a frozen account no longer says nothing was found** -- Telegram refuses every lookup from a frozen account, and the Messenger's search showed that as an empty result, as if the bot or group did not exist. It now says the account is frozen and cannot search or open new chats until Telegram lifts the restriction (see @SpamBot); matches already in the chat list still show.
+
+---
+
 ## v1.2.0
 
 模板商店（浏览、一键安装、更新与自动更新作者发布的模板），无持久化存储也能部署的云备份（Cloudflare R2 免费额度内），Emby 观看的备用地址，批量提取消息读取按钮内容，从日志直接打开任务对应的聊天，按实例选择配色；并修复空闲内存占用从约 150MB 涨到约 500MB、升级后仍显示旧版本号等问题。
