@@ -5,7 +5,7 @@
 
 # Bemby Pro
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/liveinaus/bemby)](https://hub.docker.com/r/liveinaus/bemby)
+[![Docker Pulls](https://img.shields.io/docker/pulls/liveinaus/bemby-pro)](https://hub.docker.com/r/liveinaus/bemby-pro)
 [![更新日志](https://img.shields.io/badge/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97-%E6%9F%A5%E7%9C%8B-blue)](https://github.com/liveinaus/BembyPro/blob/main/CHANGELOG.md)
 [![Telegram](https://img.shields.io/badge/Telegram-%E4%BA%A4%E6%B5%81%E7%BE%A4-2CA5E0?logo=telegram&logoColor=white)](https://t.me/cool_bemby)
 
@@ -177,12 +177,12 @@ docker run -d \
   -e ADMIN_USERNAME=admin \
   -e ADMIN_PASSWORD=changeme \
   -e JWT_SECRET="$(openssl rand -hex 32)" \
-  liveinaus/bemby:pro
+  liveinaus/bemby-pro:latest
 ```
 
-镜像发布在 Docker Hub：`liveinaus/bemby:pro`。
+镜像发布在 Docker Hub：[`liveinaus/bemby-pro`](https://hub.docker.com/r/liveinaus/bemby-pro)。
 
-镜像标签：`:pro` 为 Pro 稳定版（推荐）；`:dev` 为开发版；`:beta` 为测试版；`:latest` 是最后一个开源版本 v1.0.0，不再更新。从 `:latest` 升级只需把镜像改为 `liveinaus/bemby:pro`，数据目录可直接沿用。
+镜像标签：`:latest`（同 `:pro`）为 Pro 稳定版（推荐）；`:beta` 为测试版；`:dev` 为开发版。旧镜像 `liveinaus/bemby` 已停止更新：从 `liveinaus/bemby:pro` 或 `liveinaus/bemby:latest` 迁移，只需把镜像改为 `liveinaus/bemby-pro:latest`，数据目录可直接沿用。
 
 > `JWT_SECRET` 为必填项，且不能使用公开的占位值（如 `change-me-in-production`），否则应用将拒绝启动。请用 `openssl rand -hex 32` 生成。
 
@@ -358,7 +358,7 @@ Bemby 仅供个人自动化和学习目的使用。请负责任地使用，并�
 
 ## English
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/liveinaus/bemby)](https://hub.docker.com/r/liveinaus/bemby)
+[![Docker Pulls](https://img.shields.io/docker/pulls/liveinaus/bemby-pro)](https://hub.docker.com/r/liveinaus/bemby-pro)
 [![Changelog](https://img.shields.io/badge/changelog-view-blue)](CHANGELOG.md)
 [![Telegram](https://img.shields.io/badge/Telegram-community-2CA5E0?logo=telegram&logoColor=white)](https://t.me/cool_bemby)
 
@@ -527,12 +527,12 @@ docker run -d \
   -e ADMIN_USERNAME=admin \
   -e ADMIN_PASSWORD=changeme \
   -e JWT_SECRET="$(openssl rand -hex 32)" \
-  liveinaus/bemby:pro
+  liveinaus/bemby-pro:latest
 ```
 
-Images are published on Docker Hub: `liveinaus/bemby:pro`.
+Images are published on Docker Hub: [`liveinaus/bemby-pro`](https://hub.docker.com/r/liveinaus/bemby-pro).
 
-Image tags: `:pro` is the stable Pro build (recommended); `:dev` is the development build; `:beta` is the beta; `:latest` is the last open-source release, v1.0.0, and no longer moves. To move from `:latest`, change the image to `liveinaus/bemby:pro`; the data directory carries over as it is.
+Image tags: `:latest` (the same as `:pro`) is the stable Pro build (recommended); `:beta` is the beta; `:dev` is the development build. The old `liveinaus/bemby` image no longer gets updates: to move from `liveinaus/bemby:pro` or `liveinaus/bemby:latest`, change the image to `liveinaus/bemby-pro:latest`; the data directory carries over as it is.
 
 > `JWT_SECRET` is required and must not be a publicly known placeholder (e.g. `change-me-in-production`), or the app refuses to start. Generate one with `openssl rand -hex 32`.
 

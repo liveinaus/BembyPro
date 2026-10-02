@@ -9,7 +9,10 @@ run-name: Release ${{ inputs.tag || github.ref_name }}
 # Started by scripts/release.sh in the source repo, which tags the source first.
 # Pushing a tag to this repo by hand starts it too.
 #
-#   v1.0.1, v1.0.1-patch-1   stable: images :<ver> and :pro, a GitHub release
+# Images go to Docker Hub only, as liveinaus/bemby-pro. (liveinaus/bemby holds the
+# open-source builds and the Pro builds up to v1.4.0; nothing is pushed there any more.)
+#
+#   v1.0.1, v1.0.1-patch-1   stable: images :<ver>, :latest and :pro, a GitHub release
 #                            here (what the panel's update check reads), and the
 #                            changelog copied to this repo's front page
 #   v1.0.1-beta.1            beta: images :<ver> and :beta, a tag here
@@ -43,6 +46,7 @@ concurrency:
 
 env:
   SOURCE_REPO: liveinaus/Bemby-code
+  IMAGE_REPO: bemby-pro
 
 jobs:
   meta:
@@ -65,8 +69,7 @@ jobs:
           TAG="${INPUT_TAG:-$GITHUB_REF_NAME}"
 
           # Same naming the images have always used: dev tags keep their name,
-          # everything else drops the leading v. Stable goes to :pro; :latest
-          # stays the last open-source build and is never pushed from here.
+          # everything else drops the leading v. Stable goes to :latest and :pro.
           if [[ "$TAG" =~ ^dev-.+ ]]; then
             CHANNEL="dev";    SEMVER="$TAG"
           elif [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+-beta ]]; then
@@ -147,7 +150,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/bemby:${{ needs.meta.outputs.semver }}-${{ matrix.suffix }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}:${{ needs.meta.outputs.semver }}-${{ matrix.suffix }}
           # Stamped into the image so the running app knows its own build, which is
           # what the panel's update check compares against this repo's releases
           build-args: |
@@ -160,7 +163,8 @@ jobs:
             org.opencontainers.image.version=${{ needs.meta.outputs.semver }}
             org.opencontainers.image.revision=${{ steps.src.outputs.sha }}
 
-  # One multi-arch manifest, under the version and the channel alias
+  # One multi-arch manifest, under the version and the channel alias (and :latest
+  # for stable, so a bare `docker pull liveinaus/bemby-pro` gets the current release)
   merge:
     needs: [meta, build]
     runs-on: ubuntu-latest
@@ -180,10 +184,11 @@ jobs:
           set -euo pipefail
           VER='${{ needs.meta.outputs.semver }}'
           CHANNEL='${{ needs.meta.outputs.channel }}'
-          IMG='${{ secrets.DOCKERHUB_USERNAME }}/bemby'
+          IMG='${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_REPO }}'
+          TAGS=(-t "${IMG}:${VER}" -t "${IMG}:${CHANNEL}")
+          if [ "$CHANNEL" = "pro" ]; then TAGS+=(-t "${IMG}:latest"); fi
           docker buildx imagetools create \
-            -t "${IMG}:${VER}" \
-            -t "${IMG}:${CHANNEL}" \
+            "${TAGS[@]}" \
             "${IMG}:${VER}-amd64" \
             "${IMG}:${VER}-arm64"
 
@@ -275,5 +280,5 @@ jobs:
             echo "### Bemby ${{ needs.meta.outputs.tag }} (${{ needs.meta.outputs.channel }})"
             echo
             echo "- Source \`${{ env.SOURCE_REPO }}@${{ needs.meta.outputs.source_ref }}\`"
-            echo "- Image \`liveinaus/bemby:${{ needs.meta.outputs.semver }}\`"
+            echo "- Image \`liveinaus/${{ env.IMAGE_REPO }}:${{ needs.meta.outputs.semver }}\`"
           } >> "$GITHUB_STEP_SUMMARY"

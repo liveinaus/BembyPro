@@ -51,6 +51,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: ${{ secrets.DOCKERHUB_USERNAME }}/bemby
+          repository: ${{ secrets.DOCKERHUB_USERNAME }}/bemby-pro
           readme-filepath: ${{ runner.temp }}/DOCKERHUB.md
           short-description: Self-hosted Telegram check-in and Emby watch session automation with web admin portal

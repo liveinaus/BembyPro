@@ -1,6 +1,6 @@
 services:
   bemby:
-    image: liveinaus/bemby:pro
+    image: liveinaus/bemby-pro:latest
     restart: unless-stopped
     # Room for a clean stop: the app, then the last cloud-backup upload when one is set up
     stop_grace_period: 30s
