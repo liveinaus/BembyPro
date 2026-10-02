@@ -4,6 +4,64 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.0
+
+自定义任务新增「重复执行」（固定轮数或直到某个时间）、退出群组 / 取消订阅频道、模板任务选项与按赔率点击按钮 `{rateBtn}`；批量设置用户名支持名字、单词、数字等多种变量；可手动添加 Shadowsocks 代理；入群支持经链接加入与私聊验证码；同时保持的 Telegram 连接上限提高到 200；并修复群内机器人消息被当作回复、云备份在 R2 上失败等问题。
+
+Custom jobs gain **Repeat** (a set number of rounds, or until a time of day), quitting a group / unsubscribing from a channel, template job options and clicking a button by its odds with `{rateBtn}`; bulk usernames take names, words, digits and more; Shadowsocks proxies can be added by hand; joining a group works from a saved link and answers captchas in the bot's private chat; up to 200 Telegram connections at once; plus fixes for a bot's group posts being read as its reply, cloud backup failing on R2, and more.
+
+### 中文
+
+**新功能**
+
+- **重复执行** -- 新的「重复执行」动作把其中的步骤按顺序执行固定轮数，或一轮接一轮直到任务时区的某个时间（如 `00:00` 即当晚零点；到点时正在进行的一轮会执行完，这样的任务单次运行最长 24 小时），`{round}` 为当前轮数。默认某轮失败只记录并继续下一轮，也可设为失败即停止。不需要数据文件夹，适合整天进行的群内游戏与抢红包。
+- **退出群组 / 取消订阅频道** -- 新的动作，填写 @用户名、t.me 链接、邀请链接或群组 ID（支持 `{变量}`，可退出之前「保存消息链接」存下的群组）。账号本就不在其中时视为成功，重复运行不会报错。
+- **模板任务选项** -- 自定义模板可为任务提供几个选项（名称、标签、可选值、默认值），在任务表单顶部选择；每个任务的选择在模板更新后保留，并在动作按钮中以 `{名称}` 引用。
+- **按赔率点击按钮** -- 按钮文字可写 `{rateBtn:1-1.6}`，随机点击一个赔率（按钮文字末尾 `×` 前的数字，如「上靶 · 1.14×」）在该范围内的按钮。
+- **批量设置用户名支持更多变量** -- 批量修改资料中的用户名格式新增 `{firstName}`、`{lastName}`、`{initials}`、`{word}` / `{word:5}`（随机英文单词）、`{num:4}`、`{rand:4}`、`{letters:3}`、`{year}`，`:N` 设定长度（对名字为截断）。名字取本次要写入的名字，否则取账号当前名字，中文等非英文名换成随机英文名。默认格式改为 `{firstName}{lastName}{num:3}`。
+- **手动添加 Shadowsocks 代理** -- 「添加代理」中协议选 Shadowsocks，填写地址、端口、加密方式与密码，或粘贴 `ss://` 链接自动填写；由 Xray 内核承载，添加前实际连通测试。
+- **入群更灵活** -- 加入群组的群组字段支持 `{变量}`，可加入之前「保存消息链接」存下的邀请链接；需要在机器人私聊中完成的入群验证，若是算术题等验证码，`{aiBtn}` 会交给 AI 选出答案；公开群组中仍在等待审批的入群申请不再被当作已加入。
+- **任务不保存截图** -- 自定义任务（或其模板）可勾选「不保存网页截图」，浏览器步骤的日志只保留文字。默认保存。
+- **同时保持的 Telegram 连接上限提高到 200**（原为 50）。
+- **模板的时区** -- 任务列表在时间窗口下显示任务自己的时区；从模板批量创建任务时，提示时间窗口按模板时区计算。
+
+**修复**
+
+- **机器人在群里的消息被当作回复** -- 等待机器人回复时，同一机器人在账号所在群组中发的消息（如下注机器人的每一轮）会被当作它的回复。现在只认它在自己私聊中的消息。
+- **小程序中失败的网页步骤被当作成功** -- 小程序内某个子步骤失败时，整个动作现在会判为失败。
+- **`{aiInput}` 没有可读图片时不再无声出错** -- 前面缺少「等待回复」步骤时，会提示需要先添加该步骤。
+- **入群验证误判通过** -- 「验证通过后……」这样的提示不再被当作已通过验证。
+- **商店安装的一次性模板被改到明天** -- 运行间隔 0 天被当成缺省值，现在保持当天运行。
+- **云备份在 Cloudflare R2 上失败** -- 请求缺少 R2 要求的 `x-amz-content-sha256` 头（镜像中的 curl 不会自动添加）；另外查询请求会一直等到超时（600 秒），导致关机时释放锁超过宽限时间。两者均已修复。
+- **更新检查报「不是有效的 JSON」** -- 代理去掉了压缩标记却保留压缩内容时，更新检查现在仍能读出 GitHub 的回答。
+
+### English
+
+**Features**
+
+- **Repeat** -- a new **Repeat** action runs its steps a set number of times, or round after round until a time of day in the job's timezone (`00:00` is the coming midnight; a round under way at that time is finished, and a run like this may last up to 24 hours), with `{round}` holding the round number. A failed round is logged and the next one runs by default, or the job can stop at the first failure. No data folder needed: made for group games and red packets that go on all day.
+- **Quit a group / unsubscribe from a channel** -- a new action taking an @username, a t.me link, an invite link or a chat ID (`{variables}` work, so a group saved by an earlier *Save message link* step can be left). An account that is not in it counts as done, so a rerun does not fail.
+- **Template job options** -- a custom template can offer its jobs a few choices (name, label, options, default), picked at the top of the job form; each job keeps its picks through template updates, and its action buttons read them as `{name}`.
+- **Click a button by its odds** -- a button field can say `{rateBtn:1-1.6}` to click a random button whose odds (the number before `×` at the end of its text, as in "上靶 · 1.14×") fall in that range.
+- **More placeholders for bulk usernames** -- the username pattern in Bulk Rename TG Profile now takes `{firstName}`, `{lastName}`, `{initials}`, `{word}` / `{word:5}` (a random English word), `{num:4}`, `{rand:4}`, `{letters:3}` and `{year}`, with `:N` setting the length (and cutting names). Names are the ones written in the same batch, else the account's current ones; a non-Latin name becomes a random English one. The default pattern is now `{firstName}{lastName}{num:3}`.
+- **Shadowsocks proxies, added by hand** -- pick Shadowsocks under *Add proxy* and fill in the server, port, cipher and password, or paste an `ss://` link; carried by the Xray core and tested through it before it is added.
+- **Joining groups** -- the group field of *Join group* takes `{variables}`, so an invite link saved by an earlier *Save message link* step can be joined; when the join is verified in the bot's private chat with a captcha (a sum answered by one of a row of numbers), `{aiBtn}` has the AI pick the answer; and a public group the account has only asked to join, with the request still pending, no longer reads as joined.
+- **No screenshots for a job** -- a custom job (or its template) can tick *Don't save web screenshots*, so its browser steps are logged as text only. Screenshots are saved by default.
+- **Up to 200 Telegram connections at once** (was 50).
+- **Template timezones** -- the job list shows a job's own timezone under its window, and creating jobs from a template says the window is read in the template's timezone.
+
+**Fixes**
+
+- **A bot's posts in a group were read as its reply** -- while waiting for a bot to answer, the same bot posting in a group the account is in (a betting bot's rounds, say) was taken for its reply. Only its messages in its own chat count now.
+- **A failed page step inside a Mini App read as success** -- the action now fails with it.
+- **`{aiInput}` with no image to read** -- now says a *Wait reply* step is needed before it, instead of failing obscurely.
+- **Group verification passed too early** -- a prompt like "验证通过后…" ("once verified…") no longer reads as passed.
+- **Store installs moved a one-time template to tomorrow** -- a 0-day interval was read as missing; it now stays on today.
+- **Cloud backup failed on Cloudflare R2** -- requests lacked the `x-amz-content-sha256` header R2 insists on (the image's curl does not add it), and a lookup waited out its 600-second timeout, so releasing the lock at shutdown could outlast the grace period. Both are fixed.
+- **Update check said "not valid JSON"** -- a proxy that drops the compression header but keeps the compressed body no longer breaks it.
+
+---
+
 ## v1.3.0
 
 浏览器自检（可选出口，并用 BrowserScan、CreepJS、FingerprintJS 与真实 Cloudflare 验证页打分，给出 0–100 总分与扣分原因），浏览器可伪装为 Windows、macOS 或 Linux，可上传自己的 Windows / Mac 字体，按出口所在城市设置时区、WebRTC 报告出口 IP、不再被判为无痕模式；任务可手动标记成功或失败；新任务默认时间窗口改为 13:00–22:00、Emby 观看默认值调整；并修复消息页文件下载失败等问题。
