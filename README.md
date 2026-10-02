@@ -180,7 +180,7 @@ docker run -d \
   liveinaus/bemby:pro
 ```
 
-镜像同时发布到 Docker Hub 与 GitHub 容器仓库（GHCR），二者内容一致，可任选其一：`liveinaus/bemby:pro` 或 `ghcr.io/liveinaus/bemby:pro`。
+镜像发布在 Docker Hub：`liveinaus/bemby:pro`。
 
 镜像标签：`:pro` 为 Pro 稳定版（推荐）；`:dev` 为开发版；`:beta` 为测试版；`:latest` 是最后一个开源版本 v1.0.0，不再更新。从 `:latest` 升级只需把镜像改为 `liveinaus/bemby:pro`，数据目录可直接沿用。
 
@@ -530,7 +530,7 @@ docker run -d \
   liveinaus/bemby:pro
 ```
 
-Images are published to both Docker Hub and the GitHub Container Registry (GHCR) with identical contents; use either `liveinaus/bemby:pro` or `ghcr.io/liveinaus/bemby:pro`.
+Images are published on Docker Hub: `liveinaus/bemby:pro`.
 
 Image tags: `:pro` is the stable Pro build (recommended); `:dev` is the development build; `:beta` is the beta; `:latest` is the last open-source release, v1.0.0, and no longer moves. To move from `:latest`, change the image to `liveinaus/bemby:pro`; the data directory carries over as it is.
 

@@ -52,7 +52,6 @@ jobs:
       semver: ${{ steps.resolve.outputs.semver }}
       channel: ${{ steps.resolve.outputs.channel }}
       source_ref: ${{ steps.resolve.outputs.source_ref }}
-      ghcr_image: ${{ steps.resolve.outputs.ghcr_image }}
     steps:
       - name: Resolve tag, channel and source
         id: resolve
@@ -101,8 +100,6 @@ jobs:
             echo "semver=$SEMVER"
             echo "channel=$CHANNEL"
             echo "source_ref=$SOURCE_REF"
-            # GHCR wants a lowercase owner
-            echo "ghcr_image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/bemby"
           } >> "$GITHUB_OUTPUT"
           echo "Releasing $TAG ($CHANNEL) from $SOURCE_REPO@$SOURCE_REF"
 
@@ -111,7 +108,6 @@ jobs:
     needs: meta
     permissions:
       contents: read
-      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -144,13 +140,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build and push platform image
         uses: docker/build-push-action@v6
         with:
@@ -159,7 +148,6 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/bemby:${{ needs.meta.outputs.semver }}-${{ matrix.suffix }}
-            ${{ needs.meta.outputs.ghcr_image }}:${{ needs.meta.outputs.semver }}-${{ matrix.suffix }}
           # Stamped into the image so the running app knows its own build, which is
           # what the panel's update check compares against this repo's releases
           build-args: |
@@ -172,26 +160,18 @@ jobs:
             org.opencontainers.image.version=${{ needs.meta.outputs.semver }}
             org.opencontainers.image.revision=${{ steps.src.outputs.sha }}
 
-  # One multi-arch manifest per registry, under the version and the channel alias
+  # One multi-arch manifest, under the version and the channel alias
   merge:
     needs: [meta, build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
     steps:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: docker/setup-buildx-action@v3
 
@@ -200,13 +180,12 @@ jobs:
           set -euo pipefail
           VER='${{ needs.meta.outputs.semver }}'
           CHANNEL='${{ needs.meta.outputs.channel }}'
-          for IMG in '${{ secrets.DOCKERHUB_USERNAME }}/bemby' '${{ needs.meta.outputs.ghcr_image }}'; do
-            docker buildx imagetools create \
-              -t "${IMG}:${VER}" \
-              -t "${IMG}:${CHANNEL}" \
-              "${IMG}:${VER}-amd64" \
-              "${IMG}:${VER}-arm64"
-          done
+          IMG='${{ secrets.DOCKERHUB_USERNAME }}/bemby'
+          docker buildx imagetools create \
+            -t "${IMG}:${VER}" \
+            -t "${IMG}:${CHANNEL}" \
+            "${IMG}:${VER}-amd64" \
+            "${IMG}:${VER}-arm64"
 
   # Only once the images exist, so the update check never offers a build that
   # cannot be pulled yet.
@@ -296,5 +275,5 @@ jobs:
             echo "### Bemby ${{ needs.meta.outputs.tag }} (${{ needs.meta.outputs.channel }})"
             echo
             echo "- Source \`${{ env.SOURCE_REPO }}@${{ needs.meta.outputs.source_ref }}\`"
-            echo "- Images \`liveinaus/bemby:${{ needs.meta.outputs.semver }}\`, \`${{ needs.meta.outputs.ghcr_image }}:${{ needs.meta.outputs.semver }}\`"
+            echo "- Image \`liveinaus/bemby:${{ needs.meta.outputs.semver }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
