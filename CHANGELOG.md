@@ -4,6 +4,20 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.3-patch-1
+
+### 中文
+
+- **修复编辑过的模板任务从不下注** -- 在任务表单中保存基于模板的自定义任务（例如修改了最高赔率）时，任务会丢失模板的选项定义，只留下所选的值。之后每次运行 `{minRate}`、`{maxRate}`、`{grabRedPacket}` 等都不会被替换：「LuckyHouse 按赔率下注刷奖品」会去找名为 `{rateBtn:{minRate}-{maxRate}}` 的按钮，于是每盘都跳过，而同一模板下没编辑过的任务一切正常。现在表单保存时会一并保存模板的选项，运行时若任务已丢失选项也会从模板补回，已受影响的任务在升级后首次启动时会自动修复（日志显示「restored template options on N job(s)」），无需逐个打开保存。
+- **补丁版本被当作旧版本** -- `v1.4.3-patch-1` 这样的补丁版本此前被视为早于 `v1.4.3`：更新检查不会提示升级到补丁，模板商店也会误报需要更新 Bemby。现在补丁版本排在其正式版之后。
+
+### English
+
+- **Fixed an edited template job never betting** -- saving a template-linked custom job from the job form (to change its top odds, say) dropped the template's option definitions and kept only the values picked. Every run after that left `{minRate}`, `{maxRate}`, `{grabRedPacket}` and the like unfilled: "LuckyHouse 按赔率下注刷奖品" looked for a button named `{rateBtn:{minRate}-{maxRate}}` and skipped every round, while a job on the same template that was never edited worked. The form now saves the template's options with the picks, and a run takes them from the template when a job has already lost them, and every affected job is mended on the first start after the update (the log says "restored template options on N job(s)"), so none has to be opened and saved again.
+- **Patch releases read as older** -- a patch such as `v1.4.3-patch-1` was taken for older than `v1.4.3`: the update check would not offer it and the template store asked for a newer Bemby. A patch now ranks after its release.
+
+---
+
 ## v1.4.3
 
 **升级前请注意：从这个版本起，Bemby 需要激活码。** 升级后面板会显示激活页面和本机的实例 ID；把实例 ID 发给我们，换取这台面板专属的激活码。基础版包含签到与 Emby 观看任务；Pro 版包含全部功能。原有账号、任务与日志全部保留，激活后照常运行。另外：长时间运行的自定义任务在运行中即可查看步骤日志；条件判断可读取机器人的弹窗与任务选项；点击按钮前可等待片刻；并修复代理压缩的 AI 回复、批量操作遇到 Telegram 限流等问题。
