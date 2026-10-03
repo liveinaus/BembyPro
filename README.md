@@ -220,6 +220,15 @@ Railway 支持直接从 Docker Hub 镜像部署，无需 Fork 或连接 GitHub�
 
 ## 初次使用
 
+### 0. 激活面板
+
+从 v1.4.3 起，Bemby 需要激活码。首次登录后面板会显示激活页面和本机的**实例 ID**（之后也可在 **设置 → 激活** 中查看）；把实例 ID 发给我们，换取这台面板专属的激活码，粘贴后点击 **激活**。激活码只对签发时的那个实例有效。
+
+- **基础版**：签到与 Emby 观看任务。
+- **Pro 版**：全部功能，包括自定义任务、自动注册、模板与模板商店、消息、数据、浏览器与批量账户管理。
+
+从旧版本升级时，原有账号、任务与日志全部保留，激活后照常运行。
+
 ### 1. 添加 Telegram 账号（签到任务需要）
 
 1. 进入 **账号** 页面，点击 **添加账号**
@@ -569,6 +578,15 @@ Click the button and follow these steps:
 ---
 
 ### First-time setup
+
+#### 0. Activate the panel
+
+From v1.4.3 on, Bemby needs an activation code. After the first sign-in the panel shows an activation page with its **instance ID** (also under **Settings → Activation** later); send us that ID to get a code made for this panel, paste it in and click **Activate**. A code works only on the instance it was made for.
+
+- **Basic**: check-in and Emby watch jobs.
+- **Pro**: everything, including custom jobs, auto-registration, templates and the template store, the Messenger, Data, the browser and bulk account management.
+
+Upgrading from an earlier version keeps every account, job and log; they carry on once the panel is activated.
 
 #### 1. Add a Telegram account (for check-in jobs)
 
