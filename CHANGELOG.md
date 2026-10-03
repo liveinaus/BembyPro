@@ -4,6 +4,62 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.3
+
+**升级前请注意：从这个版本起，Bemby 需要激活码。** 升级后面板会显示激活页面和本机的实例 ID；把实例 ID 发给我们，换取这台面板专属的激活码。基础版包含签到与 Emby 观看任务；Pro 版包含全部功能。原有账号、任务与日志全部保留，激活后照常运行。另外：长时间运行的自定义任务在运行中即可查看步骤日志；条件判断可读取机器人的弹窗与任务选项；点击按钮前可等待片刻；并修复代理压缩的 AI 回复、批量操作遇到 Telegram 限流等问题。
+
+**Before you upgrade: from this version on, Bemby needs an activation code.** After the upgrade the panel shows an activation page with this panel's instance ID; send us that ID to get a code made for this panel. Basic covers check-in and Emby watch jobs; Pro covers everything. Accounts, jobs and logs are all kept and carry on once the panel is activated. Also: a long custom job shows its steps while it is still running; checks can read a bot's pop-up and a job's options; a button press can wait a moment first; plus fixes for AI replies a proxy had compressed, bulk work running into Telegram flood waits, and more.
+
+### 中文
+
+**激活码**
+
+- **激活码与两个版本** -- 每个面板有自己的实例 ID（设置 → 激活），激活码只对签发时的那个实例有效。**基础版**：签到与 Emby 观看任务，以及它们需要的账号、日志、设置、AI 供应商与备份。**Pro 版**：在基础版之上，还有自定义任务、自动注册、模板与模板商店、消息、数据、浏览器（Cloudflare 验证、浏览器配置、手动打开浏览器）与批量账户管理。单个账号的工具（资料、用户名、两步验证、通行密钥、会话、登录邮箱、垃圾检测、头像、导入导出）都属于基础版。
+- **未激活时** -- 只能登录、激活和查看更新；定时任务会跳过并记一行日志，不再每天发送失败通知。基础版面板上需要 Pro 的任务（自定义、自动注册或基于模板的任务）标为 PRO，只能停用或归档，数据原样保留，升级到 Pro 后即可继续使用。
+- **模板商店需要 Pro 激活码** -- 商店的内容只能用 Pro 激活码打开；之前签发的激活码若提示不含商店权限，请用实例 ID 申请新的 Pro 激活码。
+
+**新功能**
+
+- **长时间任务运行中即可查看日志** -- 自定义任务（如循环到凌晨 2 点的下注任务）的步骤日志在运行过程中就会显示，并且每分钟保存一次，服务器重启时已执行的步骤不会丢失。步骤很多时日志页每 5 秒刷新一次。
+- **条件判断读取机器人的弹窗** -- 按下按钮后，机器人若只用弹窗回答（如「您今天已经签到过了。」），「机器人回复内容」判断现在也能读到。
+- **条件判断：任务参数的值** -- 新的判断类型，把任务参数（如 `{grabRedPacket}`）与文字比较，模板可借此让某个步骤变为可选。
+- **等待回复：只等新消息** -- 只接受本步骤开始之后到达的消息，之后的点击也只看这一轮的消息。适合机器人自己定时推送、任务在两轮之间不发送消息的情况。
+- **看到按钮后等待再点** -- 点击按钮的动作可设置看到按钮后等待几秒再点，可填 `0.5`、范围 `0.5-1.5`（每次随机）或任务参数 `{名称}`，避免一出现就秒点。
+- **小程序返回机器人** -- 小程序通过 `openTelegramLink` 把人送回机器人（`t.me/bot?start=…`）时，任务会像客户端一样带着参数启动机器人，每个链接一次。常温西瓜（XGFree）的签到结果改由这种链接提交，现已支持。
+
+**修复**
+
+- **AI 回复报「不是有效的 JSON」** -- 代理压缩了 AI 的回复却去掉了压缩标记时，签到与自定义任务会失败。现在 AI 请求要求不压缩，并能解开 gzip、brotli、deflate 内容。
+- **批量操作遇到 Telegram 限流** -- 批量添加与批量修改资料会按自己的节奏重试限流（如等待 17.6 小时的限流在 300 秒后重试）。现在较短的等待会完整等完，超过 15 分钟的则结束该项并说明可再试的时间。
+- **更新检查漏掉最新的开发版** -- 标签较多时最新的开发版或测试版可能读不到，现在从 git 引用列表读取全部标签。
+- **创建不填机器人的自定义任务时出错** -- 已修复。
+
+### English
+
+**Activation codes**
+
+- **Activation codes and two tiers** -- every panel has its own instance ID (Settings → Activation), and a code works only on the instance it was made for. **Basic**: check-in and Emby watch jobs, with the accounts, logs, settings, AI suppliers and backups they need. **Pro**: everything in Basic plus custom jobs, auto-registration, templates and the template store, the Messenger, Data, the browser (Cloudflare checks, browser profiles, opening a browser by hand) and bulk account management. The single-account tools (profile, username, 2FA, passkeys, sessions, login email, spam check, avatar, import and export) are all Basic.
+- **Before activation** -- only signing in, activating and the update check work; scheduled jobs are skipped with one log line instead of sending a failure notice every day. On a Basic panel a job that needs Pro (custom, auto-registration, or built on a template) is marked PRO and can only be switched off or retired; its data stays as it is and carries on once the panel has Pro.
+- **The template store needs a Pro code** -- the store opens only with a Pro code; if an earlier code says it has no store access, ask for a new Pro code with the instance ID.
+
+**Features**
+
+- **Long runs show their log while running** -- a custom job's steps (a betting job that loops until 02:00, say) appear while it is still going, and are saved every minute, so a server restart keeps the steps that ran. With many steps the log page refreshes every 5 s.
+- **Checks read a bot's pop-up** -- when a bot answers a button press with only a pop-up (such as 您今天已经签到过了。), a *What the bot replied* check now sees it.
+- **Check a job input's value** -- a new kind of check compares one of the job's inputs (such as `{grabRedPacket}`) with words, so a template can make a step optional.
+- **Wait reply: new messages only** -- accepts only a message that arrives after the step starts, and the clicks after it see only that round. For a bot that posts on its own schedule while the job sends nothing between rounds.
+- **Wait before pressing** -- the button actions can wait a few seconds once the button is in view: `0.5`, a range such as `0.5-1.5` (random each time) or a job input `{name}`, so a button is not pressed the instant it appears.
+- **Mini Apps that send you back to the bot** -- when a Mini App returns to its bot with `openTelegramLink` (`t.me/bot?start=…`), the job starts the bot with that parameter, as a client does, once per link. 常温西瓜 (XGFree) now submits its check-in this way, and works again.
+
+**Fixes**
+
+- **AI replies failing as "not valid JSON"** -- a proxy that compressed the AI's reply but dropped the header saying so broke check-in and custom jobs. AI requests now ask for no compression and decode gzip, brotli and deflate bodies.
+- **Bulk work and Telegram flood waits** -- bulk add and bulk profile retried a flood wait on their own schedule (a 17.6-hour wait retried after 300 s). Short waits are now sat out in full; one longer than 15 minutes ends that item and says when it can be tried again.
+- **The update check missed the newest dev builds** -- with many tags the newest dev or beta build could fall off the list; tags are now read from git's ref list in one go.
+- **Creating a custom job with no bot crashed** -- fixed.
+
+---
+
 ## v1.4.0
 
 自定义任务新增「重复执行」（固定轮数或直到某个时间）、退出群组 / 取消订阅频道、模板任务选项与按赔率点击按钮 `{rateBtn}`；批量设置用户名支持名字、单词、数字等多种变量；可手动添加 Shadowsocks 代理；入群支持经链接加入与私聊验证码；同时保持的 Telegram 连接上限提高到 200；并修复群内机器人消息被当作回复、云备份在 R2 上失败等问题。
