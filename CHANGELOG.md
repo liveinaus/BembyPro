@@ -4,6 +4,28 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.4
+
+按钮可以按几率选择：赔率范围与下注金额都能设置各自的几率，积分不够时自动改用最小金额。模板商店中的「LuckyHouse 按赔率下注刷奖品」1.2.0 需要此版本。
+
+Buttons can be drawn by chance: odds ranges and bet amounts each take their own chances, with a fall back to the smallest amount when points run short. "LuckyHouse 按赔率下注刷奖品" 1.2.0 in the template store needs this version.
+
+### 中文
+
+**新功能**
+
+- **按几率选择赔率范围** -- `{rateBtn:1-1.6:50, 1.6-2:30, 2-3:15, 3-5:5}` 每次按几率抽一个赔率范围，再在范围内随机点一个按钮。本盘没有某个范围的按钮时，只在有按钮的范围中按原比例抽取；几率为 0 的范围永远不会被选中。原来的 `{rateBtn:1-1.6}` 写法不变。
+- **按几率选择按钮** -- `{chance:1万:70, 5万:30}` 按几率点击其中一个按钮；`{chanceMin:…}` 点击几率大于 0 的最小金额（`万`、`k` 等单位会换算），用于抽中的金额积分不够时改用最小金额再试。几率为相对比例，不必加起来等于 100；中英文逗号、冒号与 `%` 都可以。可填任务参数，如 `{chance:{amountChances}}`。
+
+### English
+
+**Features**
+
+- **Odds ranges drawn by chance** -- `{rateBtn:1-1.6:50, 1.6-2:30, 2-3:15, 3-5:5}` draws an odds range by its chance each time, then clicks a random button inside it. A range the panel has no button in drops out of the draw and the rest keep their proportions; a range at 0 is never used. The plain `{rateBtn:1-1.6}` form works as before.
+- **Buttons drawn by chance** -- `{chance:1万:70, 5万:30}` clicks one of the buttons by its chance, and `{chanceMin:…}` the smallest amount that has a chance above 0 (units such as `万` and `k` are read), for falling back when the drawn amount is more than the account can cover. Chances are relative, so they need not add up to 100; commas, colons and `%` in either width all work. A job input can supply them, as in `{chance:{amountChances}}`.
+
+---
+
 ## v1.4.3-patch-1
 
 ### 中文
