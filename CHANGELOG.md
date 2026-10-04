@@ -4,6 +4,26 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.9
+
+模板商店可多选：勾选模板（可全选当前筛选结果或取消全选），一键安装或更新所选。
+
+The template store takes a selection: tick templates (all shown, or none) and install or update them in one go.
+
+### 中文
+
+**新功能**
+
+- **模板商店批量安装/更新** -- 每个商店模板前新增勾选框，筛选栏下方的操作栏（列表滚动时保持可见）可「全选当前 N 个」或「取消全选」，并「安装/更新所选」：未安装的模板按所选版本安装，已安装但落后于最新版的全部更新到最新；已是最新、已过期或需要更新 Bemby 的会跳过，原因显示在按钮提示中。不会重复安装已安装的模板，只处理当前筛选可见的勾选项；执行前确认，显示进度，单个失败不影响其余。
+
+### English
+
+**Features**
+
+- **Install or update store templates in bulk** -- Each store template has a checkbox, and a bar under the filters (pinned while the list scrolls) selects all shown or none and installs/updates the selection: a template not on the panel is installed at the version picked for it, every install behind the latest is updated, and one already up to date, expired or needing a newer Bemby is skipped, with the reasons on the button's tooltip. It never installs a second copy, acts only on ticks still shown by the filters, asks first, shows progress, and carries on past a failure.
+
+---
+
 ## v1.4.8
 
 从账户一侧批量创建任务：在账户行打开，列出该账户还没有任务的全部模板，可按类型、分类、名称和数量筛选。同一模板的任务在计划中尽量隔开，计划页可一键重新打乱。表格筛选下拉框可输入搜索；账户可一眼看到群组、频道和私聊数量。Emby 客户端 UA 更新到各应用当前版本。
