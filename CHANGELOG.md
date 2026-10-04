@@ -4,6 +4,46 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.8
+
+从账户一侧批量创建任务：在账户行打开，列出该账户还没有任务的全部模板，可按类型、分类、名称和数量筛选。同一模板的任务在计划中尽量隔开，计划页可一键重新打乱。表格筛选下拉框可输入搜索；账户可一眼看到群组、频道和私聊数量。Emby 客户端 UA 更新到各应用当前版本。
+
+Jobs can be created from an account's side: every template the account has no job for yet, narrowed by type, category, name and a cap. Jobs from one template are spread apart in the schedule, which can be reshuffled in one click. Table filter dropdowns take typing; accounts show how many groups, channels and private chats they are in. Emby client user agents move to the versions the apps ship now.
+
+### 中文
+
+**新功能**
+
+- **从账户创建任务** -- 账户行新增「从模板创建任务」按钮，列出该账户还没有任务（不含已移除任务）的全部启用模板，可按任务类型、分类（签到、观看、抽奖、入群、注册、小程序、网页、其他，按模板类型、步骤和名称自动判断）、模板名称筛选，并限制最多创建数量。任务名沿用「模板名 - 账户名」，所有任务共用一个时间段（默认 13:00-22:00），可创建后保持停用；观看模板需填写各自的 Emby 用户名和密码并先验证。服务端会跳过账户已有任务的模板，重复点击不会重复创建。
+- **同模板任务在计划中隔开** -- 安排运行时间时，在保证任务间最小间隔的前提下，同一模板的任务尽量相隔最远，其他模板的任务填入其间；时间仍在可选范围内随机。时段太挤时仍会尽量避开同一分钟。
+- **重新打乱计划** -- 计划页与任务页的计划卡片新增「重新打乱」按钮：所有未运行的任务在原来那天、各自的时间窗口内重新抽取时间，任务多的模板先排，同一模板尽量隔开；一分钟内即将运行的任务不动，新计划重启后保持。
+- **账户群组/频道/私聊数量** -- 账户设备名下方用图标显示所在群组（含超级群）、频道和私聊（含机器人，不含收藏夹，含已归档）数量，在「获取账户信息」时刷新，复用状态检查的同一连接，不额外连接。
+- **从模板创建任务可限制数量** -- 新增「最多创建任务数」（0 为不限），只为列表中从上往下前 N 个已勾选账户创建，超出的变灰，按钮显示实际数量。
+- **账户筛选新增选项** -- 「无 Bemby 邮箱」、「无 Bemby 通行密钥」、「无限制 + 轻度限制」。
+
+**改进**
+
+- **可搜索的筛选下拉框** -- 任务、日志、账户、模板、数据、系统日志的表格筛选，以及 Messenger 的账户选择，点击后可直接输入筛选（多个词任意顺序），支持方向键、回车和 Esc。
+- **Emby 客户端 UA 更新** -- SenPlayer 6.2.2、Yamby 2.1.0.11、Hills Windows 1.5.4、Lenna 1.0.16、VidHub 3.0.7，Apple 系客户端使用 iOS/macOS 26.6 的 CFNetwork/Darwin。升级时默认 UA、预设和已有任务、模板中旧版本的已知客户端自动更新；自定义 UA、未知客户端和更新版本保持不变，重复的预设合并。
+
+### English
+
+**Features**
+
+- **Create jobs from an account** -- A "create jobs from templates" button on each account lists every enabled template it has no job for yet (retired jobs aside), narrowed by job type, category (check-in, watch, draw, join group, sign-up, Mini App, web, other -- read off the template's type, steps and name), template name, and a cap on how many to create. Jobs are named "<template> - <account>", share one window (13:00-22:00 to start with) and can be created switched off; a watch template takes its own Emby login, checked first. The server skips a template the account already has a job for, so a second click creates nothing twice.
+- **Jobs from one template spread apart** -- When a run is placed, the minutes that keep the general gap are narrowed to those nearly as far as possible from the same template's runs, and other templates' jobs fill in between; times still vary. In a window too crowded for the gap, a free minute is still preferred.
+- **Shuffle the schedule** -- A Shuffle button on the schedule page and the jobs page's schedule card redraws every pending run on its own day and inside its own window, the biggest templates first and each template spread apart. Runs due within the minute are left alone, and the new plan survives a restart.
+- **Group, channel and private chat counts** -- Under each account's device name, icons count the groups (supergroups included), channels and private chats (bots included, Saved Messages left out, archived counted) it is in. Fetch info refreshes them on the connection the status check already opens.
+- **Cap on creating jobs from a template** -- A "most jobs to create" box (0 is no limit): only the first N ticked accounts, top of the list down, get a job; the rest are greyed out and the button counts what will be created.
+- **More account filters** -- No Bemby email, No Bemby passkey, and Unlimited + low limited.
+
+**Improvements**
+
+- **Searchable filter dropdowns** -- The filters above the jobs, logs, accounts, templates, data and system log tables, and the Messenger's account picker, narrow as you type (every word, any order), with arrow keys, Enter and Esc.
+- **Emby client user agents updated** -- SenPlayer 6.2.2, Yamby 2.1.0.11, Hills Windows 1.5.4, Lenna 1.0.16 and VidHub 3.0.7, the Apple clients on the CFNetwork/Darwin of iOS/macOS 26.6. On upgrade, a known client on an older version moves to the current one in the default UA, the presets and existing jobs and templates; a custom UA, an unknown client or a newer version stays, and duplicate presets merge.
+
+---
+
 ## v1.4.7
 
 入群验证不再动辄调用 AI：算术题直接计算、「点击 😀」直接点名、唯一的验证按钮直接点击、只是欢迎消息则不点；只有看不懂的提示才交给 AI。任务列表可显示并按创建/修改时间排序。
