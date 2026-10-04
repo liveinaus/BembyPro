@@ -4,6 +4,34 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.6
+
+模板列表显示最后修改时间并可按其排序；要求「等几秒再点」的入群验证会先等待再作答。模板商店中的新入群模板（「结束バンド-WEB」1.0.1、「小幻影视 | Rodel Player」等）需要此版本。
+
+Templates show when they were last modified and sort by it; a group verification that says to wait is waited out before it is answered. The new join templates in the template store ("結束バンド-WEB" 1.0.1, "小幻影视 | Rodel Player" and others) need this version.
+
+### 中文
+
+**新功能**
+
+- **模板修改时间** -- 模板列表在「添加时间」旁新增「修改时间」列（含具体时间）。编辑模板或从商店更新会刷新它；启用/停用或未改动的保存不会。从未编辑过的模板显示为添加时间。日期列首次点击按最新排序。
+
+**修复**
+
+- **需要等待的入群验证** -- 有些验证提示先显示诱饵按钮，几秒后才换成正确的（如「请在 5 秒后，待 🥵 变成 😀 时点击 😀」），提前点击会验证失败。提示要求等待时，现在会先等够秒数、重新读取提示，再由 AI 选择按钮。
+
+### English
+
+**Features**
+
+- **Template modified time** -- the template list has a Modified column beside Added, with the time. An edit or a store update moves it; switching a template on or off, or saving it unchanged, does not. A template never edited reads as modified when it was added. Date columns sort newest first on the first click.
+
+**Fixes**
+
+- **Verifications that say to wait** -- some prompts show a decoy button and swap the right one in seconds later ("Please wait 5 seconds, then click 😀 once 🥵 changes to 😀"); pressing early fails the verification. When a prompt asks for a wait, the verifier now waits it out and reads the prompt again before the AI picks.
+
+---
+
 ## v1.4.5
 
 循环可以连续运行多天、只在每天随机抽取的时段内执行，并可独占账号；入群验证能应对更多机器人。模板商店中的「LuckyHouse 按赔率下注刷奖品」1.4.1，以及新的入群模板，需要此版本。
