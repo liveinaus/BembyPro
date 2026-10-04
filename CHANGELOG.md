@@ -4,6 +4,20 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.9-patch-1
+
+### 中文
+
+- **修复一次性任务全部排在同一天** -- 关闭「检查每日运行」（用于测试，允许任务当天重复运行）时，新建的一次性任务不再从模板的天数范围中随机抽取，而是全部排在当天：一批「加入群组」模板（0-10 天）会集中在同一天运行。一次性任务从不参考上次成功时间，这个开关不应影响它：现在一次性任务总是从自己的范围抽取运行日期。
+- **重新打乱也重抽一次性任务的日期** -- 「重新打乱」会为尚未运行的一次性任务从今天起按其范围重新抽取日期，已经堆在同一天的任务点一次即可分散；其他任务仍保持原来那天。升级后点一次「重新打乱」即可分散已排在同一天的任务。
+
+### English
+
+- **Fixed one-time jobs all planned for one day** -- with "check daily run" switched off (meant for testing, to let a job run again the same day), a new one-time job was planned for today instead of a day drawn from its range, so a batch of join templates (0-10 days) all landed on the same day. A one-time job never looks at its last success, so the switch has no say over it: it now always draws its day from its range.
+- **Shuffle draws one-time jobs' days again** -- Shuffle now redraws the day of every one-time job yet to run, from its range counted from today, so a batch stacked on one day spreads out in one click; other jobs keep their day. After updating, one Shuffle spreads the jobs already stacked up.
+
+---
+
 ## v1.4.9
 
 模板商店可多选：勾选模板（可全选当前筛选结果或取消全选），一键安装或更新所选。
