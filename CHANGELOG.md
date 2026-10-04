@@ -4,6 +4,50 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.5
+
+循环可以连续运行多天、只在每天随机抽取的时段内执行，并可独占账号；入群验证能应对更多机器人。模板商店中的「LuckyHouse 按赔率下注刷奖品」1.4.1，以及新的入群模板，需要此版本。
+
+Loops can run for days, only inside time windows drawn afresh each day, with the account to themselves; group entry verification copes with more bots. "LuckyHouse 按赔率下注刷奖品" 1.4.1 and the new join templates in the template store need this version.
+
+### 中文
+
+**新功能**
+
+- **按时段循环** -- 「重复」动作可设「执行时段」，如 `{8-9}:{0-59}-10:{0-59}, {15-19}:{0-59}-20:{0-59}`：`{...}` 每天从列出的数字或范围中随机取一个，时段外循环会等到下一个时段。空格、全角标点、换行、`::` 与 `~` 都能正确识别。
+- **一直循环直到停止** -- 「重复」可不设结束时间，每天重新抽取时段。
+- **独占账号运行** -- 任务和模板新增「独占账号运行」：此任务运行时，同一账号的其他任务不会启动（跳过并注明原因，「立即运行」会被拒绝）；它自己的定时启动最多等 30 分钟，让该账号正在运行的任务先结束。
+
+**改进**
+
+- 正在运行的任务不会被再次启动（「立即运行」也会提示）；一直循环的任务不再占用运行名额，不会让其他任务等上几个小时。
+- 入群验证：群内提示同时给出频道链接与「完成验证」时，先加入频道再点击验证；提示先显示诱饵表情、几秒后才换成正确按钮时（如「等 🥵 变成 😀 再点击」），会重新读取提示再选择，而不是直接失败。
+- 在群里发送消息后检查回复时，只看回复了这条消息的内容（如抽奖机器人确认口令），不再被群里其他人的消息误判。
+
+**修复**
+
+- 跨夜等待的循环在午夜后会抽取当天的新时段，不再沿用前一天的时间，导致每天第一个时段偏晚。
+
+### English
+
+**Features**
+
+- **Loops in time windows** -- a repeat can take "during" windows such as `{8-9}:{0-59}-10:{0-59}, {15-19}:{0-59}-20:{0-59}`: each `{...}` is a random pick from the listed numbers and ranges, drawn once a day, and outside the windows the loop waits for the next one. Spaces, full-width punctuation, line breaks, `::` and `~` are all read sensibly.
+- **Repeat until stopped** -- a repeat need not have an end time; its windows are drawn afresh each day.
+- **Exclusive account** -- jobs and templates have a new "独占账号运行" setting: while such a job runs, the account's other jobs do not start (skipped with the reason, Run now refused), and its own scheduled start waits up to 30 minutes for the account's other runs to end.
+
+**Improvements**
+
+- A job whose run is still going is not started again (Run now says so); a run looping until stopped no longer holds one of the run slots, so it does not keep other jobs out for hours.
+- Group entry verification: a prompt pairing a channel link with a 完成验证 button gets the channel joined before the press, and a prompt that shows a decoy and edits the real button in seconds later ("click 😀 once 🥵 changes to 😀") is read again rather than given up on.
+- Checking for a reply in a group the job has posted in reads only replies to that message (a lottery bot acknowledging a passphrase), not whatever anyone else says next.
+
+**Fixes**
+
+- A loop waiting overnight draws the new day's windows just after midnight, instead of starting the day at yesterday's times and so running every first window late.
+
+---
+
 ## v1.4.4
 
 按钮可以按几率选择：赔率范围与下注金额都能设置各自的几率，积分不够时自动改用最小金额。模板商店中的「LuckyHouse 按赔率下注刷奖品」1.2.0 需要此版本。
