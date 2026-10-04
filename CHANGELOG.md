@@ -4,6 +4,34 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.7
+
+入群验证不再动辄调用 AI：算术题直接计算、「点击 😀」直接点名、唯一的验证按钮直接点击、只是欢迎消息则不点；只有看不懂的提示才交给 AI。任务列表可显示并按创建/修改时间排序。
+
+Group entry verification stops calling the AI for prompts that say what to press: sums are computed, "click 😀" presses the named button, a lone verify button is pressed, and a welcome message gets nothing pressed; only prompts that need reading go to the AI. The jobs list can show and sort by when jobs were created and last modified.
+
+### 中文
+
+**新功能**
+
+- **任务创建/修改时间** -- 任务页新增「创建时间」与「修改时间」列，默认关闭，可在设置「任务日期列」中开启。只有任务设置真正改变时才更新修改时间（自身编辑、批量修改时段、模板保存下发），启用/停用和运行不算；从未编辑的任务显示为创建时间。日期列首次点击按最新排序。
+
+**改进**
+
+- **入群验证节省 AI 请求** -- `{aiBtn}` 先读取验证消息再决定是否询问 AI：算术题（如 `4 * 6 = ?`、`9 + 9?`）直接计算答案；「点击 😀」直接点击被点名的按钮；只有一个带「验证」字样的按钮（完成验证、开始验证、在私信中验证、我已关注，立即验证……）时直接点击；只是欢迎消息、没有要求验证时不点击任何按钮。图片题或看不明白的提示仍交给 AI。群内、机器人私聊和投票形式的验证都适用。用当天 119 条需要 AI 的验证记录回放，114 条不再需要 AI。
+
+### English
+
+**Features**
+
+- **Job created and modified times** -- Created and Modified columns on the jobs page, each off until turned on in Settings (Job date columns). Modified moves only when a setting of the job really changes -- its own edit, a bulk window change, a template save pushed down -- not for switching it on or off or for its runs; a job never edited reads as modified when it was created. Date columns sort newest first on the first click.
+
+**Improvements**
+
+- **Fewer AI requests for group verification** -- `{aiBtn}` reads the prompt before asking the model: a sum (`4 * 6 = ?`, `9 + 9?`) is computed, "click 😀" presses the button named, a lone 验证-worded button (完成验证, 开始验证, 在私信中验证, 我已关注，立即验证, ...) is pressed, and a welcome message that asks nothing has nothing pressed. A question in a picture or an unclear keyboard still goes to the model. Applies in the group, in the bot's private chat and to quiz polls. Replaying a day's 119 verification prompts that went to the AI, 114 needed none.
+
+---
+
 ## v1.4.6
 
 模板列表显示最后修改时间并可按其排序；要求「等几秒再点」的入群验证会先等待再作答。模板商店中的新入群模板（「结束バンド-WEB」1.0.1、「小幻影视 | Rodel Player」等）需要此版本。
