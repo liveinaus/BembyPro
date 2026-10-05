@@ -4,6 +4,36 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.10
+
+TG 账户页可批量创建任务：选择多个账户，按模板一次性为它们创建任务。大量账户、任务和日志时页面保持流畅。
+
+Create jobs for many accounts at once from the TG accounts page; large installs stay responsive.
+
+### 中文
+
+**新功能**
+
+- **为多个账户批量创建任务** -- TG 账户页选择多个账户后，批量操作菜单新增「从模板创建任务」。对话框列出至少有一个所选账户尚无其任务的启用模板，每个模板旁显示「n/m 个账户」（悬停查看是哪些账户），并沿用单账户时的类型、分类、名称搜索和「最多创建」筛选。勾选的模板会为每个尚无该任务的所选账户各创建一个任务，名为「模板 - 账户」；未登录或已停用的账户会被跳过。观看模板需为每个账户单独填写 Emby 登录，请逐个账户创建。重复点击不会创建重复任务。
+- **页面步骤中的值可供后续动作使用** -- 打开网页 / 小程序内的 web_eval 或 web_set 设置的变量现在会传回任务，后续的 if_check 可据此判断（例如小程序下注循环在积分用完时结束任务）。
+
+**性能**
+
+- **大规模安装保持流畅** -- 运行日志列表使用覆盖索引，日志页按需加载任务；账户页的会话检查限流并在后台进行，列表只读取显示的列；调度器保存时只刷新改动的任务；筛选下拉和日程面板限制一次绘制的数量。
+
+### English
+
+**Features**
+
+- **Create jobs for many accounts at once** -- Select accounts on the TG accounts page and the bulk menu has "Create jobs from templates". It lists every enabled template that at least one selected account has no job for, with an "n/m accounts" badge (hover for which), and keeps the type, category, name and "most to create" filters of the single-account dialog. Each ticked template makes one "Template - Account" job for every selected account still without one; accounts not logged in or disabled are skipped. Watch templates need an Emby login per account, so create those one account at a time. A second click creates nothing twice.
+- **Values a page's steps hold reach the job's later actions** -- A web_eval or web_set inside open_url or a Mini App now hands its variables back to the job, so a later if_check can act on what the page found (e.g. a Mini App betting loop ending the job when points run out).
+
+**Performance**
+
+- **Large installs stay responsive** -- The run log list is served from covering indexes and the logs page fetches jobs on demand; the accounts page's session sweep is throttled and runs in the background, and the list reads only shown columns; the scheduler refreshes only the jobs edited; filter dropdowns and the schedule panel cap how much they draw at once.
+
+---
+
 ## v1.4.9-patch-1
 
 ### 中文
