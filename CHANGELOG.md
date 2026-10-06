@@ -4,6 +4,42 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.12
+
+列表页更快：设置读取不再每次都运行外部程序，排序、翻页时会取消上一次未完成的请求。确认与提示改为面板内对话框；超长的任务失败通知不再丢失。
+
+List pages are faster: reading settings no longer runs outside programs each time, and sorting or paging cancels the request still in flight. Confirmations and messages are in-panel dialogs, and an over-long failure notification is no longer lost.
+
+### 中文
+
+**改进**
+
+- **列表页更快** -- 读取设置时不再每次都运行 Xray 和 x11vnc 来获取版本、统计 x11vnc 大小，这些操作会让后端在运行期间暂停响应。账户页每次排序、翻页都会读取设置，在 NAS 等较慢的机器上尤为明显。现在每个版本的程序只检查一次。
+- **取消过时的列表请求** -- 在账户、任务、模板和日志页反复排序、翻页或筛选时，上一次尚未返回的请求会被取消，较慢的旧结果不会再覆盖新的列表。离开页面时也会取消。
+- **面板内确认对话框** -- 删除、移除等确认与提示改用面板自己的对话框，跟随深浅色主题，不再使用浏览器弹窗；回车确认，Esc 取消。
+- **批量添加与批量修改资料** -- 改用与其他批量任务相同的后台队列，单个账户有超时上限，不会无限卡住队列；终止后未处理的行显示「Terminated」。
+
+**修复**
+
+- **超长失败通知** -- 任务失败时的错误若是一整页 HTML，通知会超过 Telegram 4096 字符上限而被拒，导致告警丢失。现在会截断并注明省略的字符数。
+- **删除账户无反应** -- 仍有任务使用该账户时，服务器拒绝删除，但面板没有显示原因。现在会弹出提示并列出这些任务。
+
+### English
+
+**Improvements**
+
+- **Faster list pages** -- reading settings no longer runs Xray and x11vnc for their versions, nor adds up the x11vnc files, on every read; the backend stopped answering while it did. The accounts page reads settings on every sort and page change, so this showed most on slower machines such as a NAS. Each build of those programs is now checked once.
+- **Stale list requests are cancelled** -- re-sorting, paging or filtering the accounts, jobs, templates or logs table cancels the request still in flight, so a slow, older reply can no longer replace the newer list. Leaving the page cancels it too.
+- **In-panel confirmations** -- confirmations and messages use the panel's own dialog, in the current theme, instead of the browser's popup; Enter confirms and Esc cancels.
+- **Bulk add and bulk profile** -- run on the same background queue as the other bulk tasks, so one account can no longer hold the queue indefinitely, and rows a terminated batch never reached read "Terminated".
+
+**Fixes**
+
+- **Over-long failure notifications** -- a failed job whose error was a whole HTML page produced a notification over Telegram's 4096-character limit, which was rejected and lost. It is now cut to fit, noting how much was left out.
+- **Deleting an account did nothing** -- while jobs still use the account the server refuses, but the panel did not say so. It now shows the reason and the jobs in question.
+
+---
+
 ## v1.4.11
 
 入群任务可在账户已是成员时直接算成功；批量清理可自选步骤，并可删除历史头像；更换头像时会删除旧头像。
