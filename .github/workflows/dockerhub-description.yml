@@ -21,7 +21,7 @@ jobs:
 
       # Docker Hub keeps only the first 25,000 bytes, and the full README is several times
       # that. So it gets the parts marked <!-- dockerhub:start --> ... <!-- dockerhub:end -->
-      # (header, what Pro adds, quick start, in both languages) and a link to the rest.
+      # (header, feature overview, quick start, in both languages) and a link to the rest.
       # Relative links and images are made absolute, since they resolve against nothing there.
       - name: Build the Docker Hub description
         run: |
