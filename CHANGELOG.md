@@ -4,6 +4,46 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.0
+
+升级不再打断工作：服务器重启后，后台任务从中断处继续，被中断的任务运行会重新执行。对话框整体加宽。
+
+Upgrades no longer interrupt work: after a server restart, background tasks carry on where they stopped and interrupted job runs are run again. Dialogs are wider throughout.
+
+### 中文
+
+**新功能**
+
+- **后台任务在重启后继续** -- 批量任务（垃圾检查、获取属性、修改登录邮箱、修改凭据、接管账户、通行密钥、隐私设置、清理、提取消息、批量运行任务、批量添加账户、批量修改资料）在运行过程中会保存到数据库。服务器重启（例如升级）后自动继续：已完成的账户保持不变，中断时正在处理的账户重新执行，已暂停的任务仍保持暂停，重试次数保留，等待中的重试会等完剩余的冷却时间（常为 Telegram 的限流等待）。含密码的任务设置（Gmail 应用专用密码、2FA）与 Telegram 会话一样加密保存。提取消息会从头重新读取（已读取的内容只保存在内存中），写入数据存储按键覆盖，不会重复。
+- **被中断的任务重新运行** -- 运行中途遇到服务器重启的任务会从头重新运行：定时任务立即重新执行，之后按原计划继续；不在计划中的任务（已停用或手动运行）按「立即运行」重新启动；批量运行中的任务由该批量任务重新运行，不会重复执行。被中断的那次运行仍记录为失败，并注明是否已重新运行，无法启动时附上原因。
+- **「服务器重启后重新运行」选项** -- 自定义任务与模板新增此选项，默认勾选。重复执行会有影响的任务（如下注、购买）请取消勾选，此时被中断的运行只记录为失败，不会再次执行。
+
+**改进**
+
+- **对话框加宽** -- 所有对话框整体加宽：默认 480 → 640px，账户页的大对话框 640 → 860px，确认框 360–420 → 520px，任务与模板的添加/编辑 560 → 760px，模板商店 960px；手机上仍占满屏幕宽度。
+
+**修复**
+
+- **对话框变窄** -- v1.4.12 起，部分对话框（模板商店、账户页的批量操作等）的宽度设置失效，退回到 480px。现已恢复。账户页有 4 个对话框在手机上可能超出屏幕，现已修正。
+
+### English
+
+**Features**
+
+- **Background tasks carry on after a restart** -- bulk tasks (spam check, attribute refresh, login email, credentials, take ownership, passkeys, privacy, clean, message extraction, job runs, bulk add and bulk profile) are saved to the database as they run, and pick up where they stopped after a server restart such as an upgrade: finished accounts stay finished, the account in flight runs again, a paused task stays paused, retry counts are kept, and a waiting retry sits out the rest of its cooldown (often Telegram's own flood wait). Task options that hold passwords (Gmail app password, 2FA) are stored encrypted, like Telegram sessions. Message extraction reads every account again, since what it had read was held in memory; data store writes are keyed, so nothing is written twice.
+- **Interrupted job runs are run again** -- a run cut off by a server restart is run again from the start: a scheduled job runs straight away and then keeps its schedule, one not on the schedule (switched off, or run by hand) is started as Run now would, and a job inside a background job run is rerun by that run, never twice. The interrupted run is still logged as a failure, saying whether it was run again, and why not when it could not be started.
+- **"Run again if a server restart cuts it off"** -- a new option on custom jobs and templates, on by default. Untick it for a job that must not repeat what it did, such as placing a bet or buying something: its interrupted run is then only logged as failed.
+
+**Improvements**
+
+- **Wider dialogs** -- every dialog is a size up: the default from 480 to 640px, the accounts page's large ones from 640 to 860px, confirmations from 360-420 to 520px, the job and template forms from 560 to 760px, and the template store 960px. A phone still gets the full width.
+
+**Fixes**
+
+- **Dialogs that had narrowed** -- since v1.4.12 some dialogs (the template store, the accounts page's bulk actions and others) lost their own width and fell back to 480px. They are back, and four accounts dialogs that could run off a phone's screen now fit.
+
+---
+
 ## v1.4.12
 
 列表页更快：设置读取不再每次都运行外部程序，排序、翻页时会取消上一次未完成的请求。确认与提示改为面板内对话框；超长的任务失败通知不再丢失。
