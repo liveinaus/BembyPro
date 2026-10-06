@@ -4,6 +4,36 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.4.11
+
+入群任务可在账户已是成员时直接算成功；批量清理可自选步骤，并可删除历史头像；更换头像时会删除旧头像。
+
+Joins can count an account already in the group as a success; bulk clean lets you pick its steps and can delete old profile photos; changing an avatar removes the old ones.
+
+### 中文
+
+**新功能**
+
+- **已是成员时结束任务** -- 「加入群组」动作新增「已是成员时结束任务（视为成功）」。账户已在群内时，不再执行后面的动作，本次运行直接算成功。适用于验证放在后续步骤的入群任务：例如在 @nmnmfunbot 中打开小程序完成 nmBot 验证的模板，以前已在群内的账户收不到新的验证消息，任务会以「No Mini App button matching "中验证"」失败。模板商店中的 10 个 nmBot 入群模板已更新到 1.0.1 并启用此项（需要本版本）。
+- **批量清理可选步骤** -- 账户页「批量清理」对话框把每项清理列为复选框，可只执行勾选的步骤；新增「删除所有历史头像（保留当前头像）」与「删除当前头像」两项，默认不勾选，不改动对话框时清理内容与以前相同。
+
+**改进**
+
+- **更换头像时删除旧头像** -- 设置头像（含批量随机头像）后会删除此前的所有头像，并重新读取列表确认、必要时重试；未能删除的旧头像会在结果中报告，而不只是写入日志。
+
+### English
+
+**Features**
+
+- **Already a member ends the job** -- the Join group action gains "Already a member ends the job as a success". When the account is in the group already, the actions after it are skipped and the run counts as a success. It is for joins whose verification is a later step: a template that opens nmBot's Mini App in @nmnmfunbot used to fail on an account already in the group with `No Mini App button matching "中验证"`, since a member gets no new prompt. The store's 10 nmBot join templates are at 1.0.1 with it on (they need this version).
+- **Pick the steps of a bulk clean** -- the accounts page's Bulk clean dialog lists each step as a checkbox and runs only those ticked, with two new ones: delete old profile photos (the current one is kept) and delete the current profile photo. Both start unticked, so an unchanged dialog cleans as before.
+
+**Improvements**
+
+- **Changing an avatar removes the old ones** -- setting a profile photo (bulk random avatars included) deletes every earlier photo, reads the list back and retries, and reports any old photo it could not remove rather than only logging it.
+
+---
+
 ## v1.4.10
 
 TG 账户页可批量创建任务：选择多个账户，按模板一次性为它们创建任务。大量账户、任务和日志时页面保持流畅。
