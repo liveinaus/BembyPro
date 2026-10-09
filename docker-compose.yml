@@ -6,6 +6,9 @@ services:
     stop_grace_period: 30s
     ports:
       - "3000:3000"
+    labels:
+      # The only container the watchtower service below may touch
+      - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - /docker/bemby-data:/app/data
     environment:
@@ -40,3 +43,29 @@ services:
       BACKUP_S3_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
       BACKUP_S3_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:-}
       BACKUP_S3_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:-}
+      # One-click upgrade from Settings → Updates, carried out by the watchtower service below
+      # (found by its service name on this file's network). Only Watchtower gets the Docker
+      # socket; Bemby holds this token, which can do nothing but ask for its own image to be updated.
+      WATCHTOWER_TOKEN: ${WATCHTOWER_TOKEN:?set WATCHTOWER_TOKEN to a long random string, e.g. openssl rand -hex 32}
+
+  # Pulls Bemby's newer image and recreates the container when "Upgrade now" is pressed in
+  # Settings. It does nothing on its own: only its update endpoint is on, scheduled updates are
+  # off, and it manages only the labelled bemby container. Its API is not published to the host --
+  # Bemby reaches it over this file's network. Remove this service (and the token line above)
+  # to upgrade by hand instead.
+  watchtower:
+    # Maintained fork; the original containrrr/watchtower was archived in December 2025
+    image: nickfedor/watchtower:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_HTTP_API_ENDPOINTS: update
+      # Manage only containers labelled for it (bemby above), whatever else runs on this host
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_TOKEN:?set WATCHTOWER_TOKEN to a long random string, e.g. openssl rand -hex 32}
+      # Drop the old image once the new one runs, so upgrades do not fill the disk
+      WATCHTOWER_CLEANUP: "true"
+      # As long as Bemby's own stop_grace_period, for the last backup upload
+      WATCHTOWER_TIMEOUT: 30s
+
