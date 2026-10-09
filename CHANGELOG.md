@@ -4,6 +4,56 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.2
+
+浏览器每天定时自动升级（只在无人使用时）；计划页可点开任务查看详情并手动设定下次运行时间；修复全天监听群组的任务在数小时后断开连接的问题。
+
+The browser upgrades itself daily at a set time, only while it is idle; a run on the Schedule page opens its job's details and its time can be set by hand; and a group watch no longer loses its Telegram connection a few hours in.
+
+### 中文
+
+**新功能**
+
+- **浏览器定时自动升级** -- 设置 → CloakBrowser 新增每日自动升级，默认开启、默认 05:00（按面板默认时区），时间可修改。已安装的 Pro 版与免费版各自升级到最新构建；新版本下载到旧版本旁边，完成后才删除旧版本。只在没有浏览器运行、也没有安装进行时执行，升级期间新启动的浏览器会稍等片刻；到时浏览器正被使用，会在 3 小时内每分钟重试，仍在使用则当天跳过。设置页显示上次检查的结果。
+- **计划页任务详情与手动定时** -- 点击计划中的任务，可查看类型、账户、目标、时间窗口、运行间隔、上次成功、代理与下次运行时间，并可直接设定下次运行的日期时间（可在时间窗口之外），也可跳过这次或打开任务编辑。手动设定的时间以图钉标出，重启与备份恢复后保留，「重新打乱」不会移动它；之后的运行照常排期。
+- **watch_buttons 抢到后致谢** -- 抢到红包后可在群里回复致谢：从回复列表中随机选取，或按 AI 提示生成（失败时改用列表），可按弹窗内容判断是否致谢，并随机延迟片刻，不影响继续监听。
+- **编辑 UA 预设** -- 设置中可直接编辑 UA 预设，使用旧 UA 的任务和模板会一并改为编辑后的 UA。
+- **列表每页条数** -- 列表页新增每页 200、500、1000、2000 条。
+
+**改进**
+
+- **监听日志** -- 监听中的每次点击与致谢旁显示该消息的发送时间；单次点击失败显示为错误，不再误标为「重试」。
+
+**修复**
+
+- **全天监听断开连接** -- 运行超过 3 小时的监听任务，其 Telegram 连接会被当作泄漏回收并关闭，之后每次点击都报「Cannot send requests while disconnected」。长时运行现在在整个运行期间持有连接；若连接仍被关闭（例如账户重连），watch_buttons 与 watch_codes 会改用账户的新连接继续监听。
+- **一键升级无响应** -- Watchtower 未做任何更新时（容器缺少标签、或该标签没有新镜像），面板会说明原因，不再等待 15 分钟。
+- **聊天头像丢失** -- 消息页打开 15 分钟后头像不再消失；加载失败的头像会自动重试，也可点击重新加载。媒体凭证提前续期，后台标签页也不会过期。
+- **批量创建任务的模板列表** -- 「成功过的模板」列表列出全部模板，而不只是当前页的模板。
+
+### English
+
+**Features**
+
+- **Scheduled browser upgrade** -- Settings → CloakBrowser gains a daily upgrade, on by default at 05:00 in the panel's default time zone, with the time changeable. Each installed build, Pro and free, moves to its newest release; the new build downloads beside the old one, which is removed only after. It runs only while no browser is open and no install is running, and a browser asked for meanwhile starts once it is done. Busy at the set time, it retries each minute for 3 hours, then skips the day. Settings shows the last check's result.
+- **Job details and hand-set runs on the Schedule page** -- click a scheduled run to see its job's type, account, target, window, interval, last success, proxy and next run, and set that run's date and time by hand (outside the window too), skip it, or open the job's editor. A run set by hand is marked with a pin, kept across a restart and a backup, and left alone by Shuffle; the runs after it are drawn as usual.
+- **watch_buttons thanks after a win** -- after a successful press it can reply in the group: a line picked at random from a list, or written from an AI hint with the list as fallback, optionally only when the popup matches, after a short random delay and without holding up the watch.
+- **Editable UA presets** -- UA presets can be edited in Settings; jobs and templates on the old UA move to the edited one.
+- **Larger list pages** -- list pages offer 200, 500, 1000 and 2000 rows.
+
+**Improvements**
+
+- **Watch logs** -- each press and thank-you during a watch shows when its message was posted, and a failed press shows as an error rather than RETRIED.
+
+**Fixes**
+
+- **Group watch disconnected** -- a watch running past 3 hours had its Telegram connection taken for a leak and closed, and every press after that failed with "Cannot send requests while disconnected". A long run now keeps its connection for the whole run, and if it is closed anyway (an account reconnect, say) watch_buttons and watch_codes carry on with the account's new one.
+- **One-click upgrade waiting for nothing** -- when Watchtower updates nothing (the container lacks its label, or there is nothing newer on the tag), the panel says why instead of waiting 15 minutes.
+- **Chat photos going missing** -- photos no longer disappear after the messenger has been open 15 minutes; a failed one retries and can be clicked to load again, and the media ticket renews early enough for a background tab.
+- **Create jobs template list** -- the "succeeded on" list offers every template, not just the table's current page.
+
+---
+
 ## v1.5.1
 
 在设置中一键升级面板；任务可指定只用 Pro 浏览器，入群验证不再落到免费版上；新增两个全天监听群组的动作：自动点按钮与自动抢码。
