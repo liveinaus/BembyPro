@@ -4,6 +4,58 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.1
+
+在设置中一键升级面板；任务可指定只用 Pro 浏览器，入群验证不再落到免费版上；新增两个全天监听群组的动作：自动点按钮与自动抢码。
+
+One-click upgrade from Settings; a job can be held to the Pro browser, so a join verification never meets the free build; and two new actions that watch a group all day: one presses a button, the other tries codes.
+
+### 中文
+
+**新功能**
+
+- **一键升级** -- 设置 → 更新 中出现「立即升级」：由面板旁的 Watchtower 拉取当前标签的新镜像并重建容器，页面等待新版本启动后自动刷新。只有 Watchtower 能访问 Docker socket；Bemby 的令牌只能请求更新它自己的镜像，Watchtower 不做定时更新，只管理 bemby 容器。新的 docker-compose.yml 已包含 watchtower 服务，需要设置 WATCHTOWER_TOKEN；旧的 compose 文件可按设置页给出的片段添加。详见 docs/one-click-upgrade.md。
+- **浏览器版本：仅 Pro / 仅免费版** -- 自定义任务与模板新增「浏览器版本」。仅 Pro：运行开始前先占用一个 CloakBrowser 授权并向授权服务验证密钥，整个运行期间保持占用，绝不改用免费版；没有空闲授权时最多等待 10 分钟，仍无则在执行任何动作前失败（例如不会发送入群申请）。适合只有一次机会的验证，如 nmBot 的入群验证。仅免费版：不占用授权，把授权留给重要任务。模板上设置后，关联任务可单独覆盖。
+- **watch_buttons 动作** -- 全天监听一个群组，每条带有指定按钮的新消息都用本账号点一次。同一群组、同一按钮的任务共用一个监听；每次点击单独记入日志，附机器人弹窗与点击用时。默认运行 15 小时，属于长时运行，不占运行名额。
+- **watch_codes 动作** -- 监听群组中发出的码，用正则提取后依次发给机器人（如 "/start {code}"），直到有一个成功；成功的码保存为 {code}，后续步骤接着机器人的回复继续。我方账号之间不会重复尝试同一个码，开始监听前 10 分钟以上发出的码会跳过。
+- **批量运行可并行** -- 批量运行对话框新增「同时运行的任务数」：大于 1 时，下一个任务不等上一个结束就开始，间隔用于错开启动时间（0 为同时启动）。
+- **Bemby 置顶消息** -- 选中消息可看到其会话与消息 ID，并可在 Bemby 中置顶；切换账号时自动打开该会话并滚动到这条消息。超级群组与频道的历史消息在账号之间共享缓存，冷启动的账号也能立即显示。
+
+**改进**
+
+- **浏览器启动日志折叠** -- 运行日志中浏览器启动的长输出默认只显示第一行。
+
+**修复**
+
+- **Pro 授权未释放** -- 浏览器关闭超时时会被强制结束后再归还授权；保存密钥列表时，正在运行的浏览器继续占用其密钥；停止 Bemby 时先关闭浏览器；环境变量中的密钥与其他密钥一样只算一个并发会话。
+- **只有 Pro 版时授权被拒** -- 磁盘上只有 Pro 版、而授权会话被拒时，会自动下载一次免费版作为后备，不再直接失败。
+- **VLESS 链接** -- 未写 type 但带有 REALITY、flow 或 encryption 的 VLESS 链接按 TCP 处理，不再生成无法连接的 WebSocket 节点；后量子 VLESS 加密（ENC）会传给内核，不再丢弃该节点。
+- **模板选项占位提示** -- 选项输入框的占位提示改为 value1, value2, value3。
+
+### English
+
+**Features**
+
+- **One-click upgrade** -- Settings → Updates offers "Upgrade now": a Watchtower beside the panel pulls the panel's own image on its current tag and recreates the container, and the page waits for the new build and reloads. Only Watchtower gets the Docker socket; Bemby's token can only ask for its own image, and Watchtower runs no scheduled updates and manages only the bemby container. The new docker-compose.yml ships the watchtower service and needs WATCHTOWER_TOKEN; Settings shows a snippet to add it to an older compose file. See docs/one-click-upgrade.md.
+- **Browser build: Pro only / Free only** -- a new "Browser build" choice on custom jobs and templates. Pro only: before the first action the run takes a CloakBrowser licence seat and checks the key with the licence service, holds the seat until the run ends, and never falls back to the free build. With every seat busy it waits up to 10 minutes, then fails before doing anything (no join request is sent, say). For a check you only get one go at, such as nmBot's join verification. Free only: takes no seat, leaving them to the jobs that matter. Set on a template, a linked job can override it.
+- **watch_buttons action** -- watches a group all day and presses a button on every new message that carries it, with the job's own account. Jobs on the same group and button share one watch; each press is its own step in the log, with the bot's popup and how soon it landed. Runs 15 hours by default and counts as a long run, so it takes no run slot.
+- **watch_codes action** -- watches a group for codes, pulls them out with a regex and tries them on a bot ("/start {code}") until one works; the code is kept as {code} and the steps after it carry on from the bot's answer. Our accounts never try the same code twice, and codes posted more than 10 minutes before the watch began are skipped.
+- **Bulk run in parallel** -- "Jobs running at once" in the bulk run dialog: above 1, the next job starts without waiting for the last, and the gap spaces the starts out (0 starts them together).
+- **Bemby pin** -- a highlighted message shows its chat and message IDs and can be pinned in Bemby; switching account opens that chat and scrolls to the message. Supergroup and channel history is shared between accounts' caches, so a cold account shows it straight away.
+
+**Improvements**
+
+- **Browser startup logs fold** -- a browser's startup output in a run step shows only its first line until opened.
+
+**Fixes**
+
+- **Pro licence seats left held** -- a browser that will not close in time is killed before its seat goes back; saving the key list keeps running browsers' keys leased; stopping Bemby closes its browsers first; the environment's key is one seat like any other.
+- **Refused licence with only the Pro build** -- with only the Pro build on disk, a licence refusal now downloads the free build once to fall back on instead of failing the run.
+- **VLESS links** -- a link with no type that carries REALITY, a flow or encryption is raw TCP, not a WebSocket node Xray cannot connect; post-quantum VLESS encryption (ENC) reaches the core instead of the node being dropped.
+- **Template option placeholder** -- the options box now hints value1, value2, value3.
+
+---
+
 ## v1.5.0
 
 升级不再打断工作：服务器重启后，后台任务从中断处继续，被中断的任务运行会重新执行。对话框整体加宽。
