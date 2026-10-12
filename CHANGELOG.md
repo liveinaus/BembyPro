@@ -4,6 +4,36 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.3
+
+Emby 观看的播放时长可设为一个范围，每次运行随机取一个时长；关联模板的观看任务可设置自己的播放时长，保存任务或模板时不再被覆盖。
+
+An Emby watch's play duration can be a range, with each run watching a random length from it; and a watch job linked to a template can set its own play duration, which saving the job or the template no longer overwrites.
+
+### 中文
+
+**新功能**
+
+- **播放时长范围** -- Emby 观看任务与模板的「播放时长（秒）」可填一个时长（如 `1200`）或一个范围（如 `500-1800`）。范围内每次运行随机取一个时长（含两端）；单个时长仍会随机增加 0-10%。少于 30 秒或无法识别的内容在保存时会提示。
+- **关联模板任务的播放时长** -- 关联了模板的观看任务现在可以在任务编辑中设置自己的播放时长（也可以是范围）；留空则跟随模板，输入框中以灰字显示模板的时长。
+
+**修复**
+
+- **保存后播放时长被重置** -- 关联模板的观看任务若带有自己的播放时长，保存该任务或保存模板时会被重置为模板的时长。现在两种保存都会保留任务自己的时长；只是沿用模板旧值的任务仍会跟随模板的新值。
+
+### English
+
+**Features**
+
+- **Play duration ranges** -- an Emby watch job's or template's Play Duration (s) takes one length (`1200`) or a range (`500-1800`). A range has each run watch a random length from it, both ends included; a single length still gets 0-10% added. Anything under 30 seconds, or that cannot be read, is refused on save.
+- **A linked watch job's own play duration** -- a watch job linked to a template can now set its own play duration (a range too) in the job editor. Blank follows the template, whose length shows in the field as a placeholder.
+
+**Fixes**
+
+- **Play duration reset on save** -- a linked watch job holding its own play duration had it reset to the template's when the job, or the template, was saved. Both saves now keep it; a job that only carried the template's old value still follows the template's new one.
+
+---
+
 ## v1.5.2
 
 浏览器每天定时自动升级（只在无人使用时）；计划页可点开任务查看详情并手动设定下次运行时间；修复全天监听群组的任务在数小时后断开连接的问题。
