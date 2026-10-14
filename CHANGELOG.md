@@ -4,6 +4,48 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.4
+
+内置网页播放器，可直接用 Emby 观看任务的身份在浏览器里观看；TG 账户可打标签（可带值）并按标签筛选；可从账户列表为选中账户批量运行模板任务；新增「小程序 HTTP 调用」，不开浏览器直接调用小程序接口；支持由守护机器人在小程序中审核的入群申请。
+
+A built-in web player that watches as an Emby watch job; Telegram accounts take tags (with optional values) and the list filters on them; template jobs run for the selected accounts from the account list; a new "Mini App via HTTP" step calls a Mini App's own API with no browser; and groups whose join requests a guard bot decides in a Mini App can now be joined.
+
+### 中文
+
+**新功能**
+
+- **网页播放器** -- Emby 观看任务新增「在浏览器中观看」，以该任务的登录、UA、设备名和代理打开内置播放器（基于 Bemplayer），服务器看到的始终是同一台设备。侧边栏新增「播放」入口（Pro），可选任意观看任务浏览并播放其服务器上的内容（只沿用其登录、UA、设备名和代理）。设置中可关闭播放器，默认开启；关闭后菜单与任务中的入口隐藏，已打开的播放器在下一次请求时停止。
+- **账户标签** -- TG 账户可添加标签，标签可只有名称，也可带值（如「luckybar 积分: 12345」）。可在账户编辑中或批量添加，显示在「附加信息」列；列表上方的标签栏可按标签筛选，搜索框也会匹配标签值。账户导出/导入与完整备份都会带上标签。
+- **按标签值筛选与自动打标签** -- 筛选面板可添加标签条件（有/没有、=、≠、包含、> ≥ < ≤，全部满足才显示），数字比较忽略千位逗号。账户批量任务可给每个成功的账户加上标签；新增自定义步骤「保存标签」，按正则从回复中读取值（或直接填写）写到本次运行的账户上。
+- **从账户列表运行模板任务** -- 选中账户后选择模板，这些模板为选中账户建的任务（包括已关闭的）会在一个后台队列中依次运行；已在运行或排队的任务会跳过。
+- **小程序 HTTP 调用（无浏览器）** -- 新的自定义步骤：由 Telegram 按本任务账户签名小程序后，运行模板中的脚本直接调用小程序自己的接口，每轮只是几个请求，几乎不占内存和 CPU。脚本在沙盒（QuickJS）中运行，只能访问该小程序所在网站，请求从任务的出口（默认账户自己的代理）发出；登录凭据过期时可重新签名。脚本的日志在运行中实时显示；网络出错时会说明具体原因（连接被拒、超时、代理无法连通等）。商店中的「LuckyHouse 百家乐 HTTP 下注」即用此步骤。
+- **守护机器人审核的入群** -- 群组把入群申请交给机器人在小程序中审核（如 Group Help 的「Group rules / I accept」）时，消息页的加入和邀请链接加入会打开该小程序；新增任务步骤「通过机器人小程序入群」：提交申请、打开小程序（默认等 5 秒后点「I accept」），然后等待入群结果。
+- **观看任务记录代理** -- Emby 观看的运行日志会显示本次使用的出口（按代理列表中的名称，或直连）；失败时错误信息末尾也附上出口。
+
+**修复**
+
+- **Bemby 密钥标记不更新** -- 在编辑窗口添加 Bemby 的通行密钥后，列表中该行的标记立即变为绿色，不必刷新列表。
+- **后端未就绪时打开面板** -- 面板打开时若后端尚未启动，授权读取失败会自动重试，不再隐藏所有 Pro 工具直到手动刷新。
+
+### English
+
+**Features**
+
+- **Web player** -- Emby watch jobs gain "Watch in browser", which opens a built-in player (based on Bemplayer) signed in as that job, with its User-Agent, device name and proxy, so the server sees one device throughout. A Player entry in the sidebar (Pro) opens it on its own, to pick any watch job and watch anything on its server (only its sign-in, User-Agent, device name and proxy are used). A Settings switch turns the player off (on by default); off hides it from the menu and the jobs, and a player already open stops at its next request.
+- **Account tags** -- a Telegram account can carry tags, a name alone or a name with a value ("luckybar points: 12345"). Edit them in the account dialog or in bulk; they show in the Extra Info column, a tag bar over the list filters on them, and the search box matches their values. Account export/import and the full backup carry them.
+- **Tag value filters, and tags set by tasks** -- the filter panel takes tag conditions (has / lacks, =, ≠, contains, > ≥ < ≤), all of which must hold; number comparisons ignore thousands commas. Account bulk tasks can tag each account they succeed on, and a new custom step, Save tag, writes a tag onto the run's account, its value read off the reply by a regex or given outright.
+- **Run template jobs from the account list** -- select accounts, pick templates, and every job those templates made for them runs in one background queue, switched-off jobs included; jobs already running or queued are skipped.
+- **Mini App via HTTP (no browser)** -- a new custom step. Telegram signs the Mini App for the job's account, then the template's script calls the app's own API: a few small requests a round, next to no memory or CPU. The script runs sandboxed (QuickJS), reaches only the app's own site, and its calls leave by the job's exit (the account's proxy by default); the sign-in can be renewed when it expires. Its log lines show on the run as they are written, and a network failure says what failed (refused, timed out, a proxy that would not tunnel). The store's "LuckyHouse baccarat betting (HTTP, no browser)" is built on it.
+- **Joins decided by a guard bot** -- for a group that hands its join requests to a bot's Mini App (Group Help's "Group rules / I accept"), joining from the messenger, or by invite link, now opens that app; and a new job step, Join through the bot's app, files the request, opens the app (by default waits 5 s and presses "I accept"), then waits for the membership.
+- **Watch runs name their proxy** -- an Emby watch run's log shows the exit it left by (as the proxy list names it, or direct), and a failed run's error ends with it.
+
+**Fixes**
+
+- **Bemby passkey tag** -- after adding Bemby's passkey in the edit dialog, the row's tag turns green at once instead of after the list is reloaded.
+- **Panel opened while the backend starts** -- a failed licence read is retried, rather than hiding every Pro tool until a manual reload.
+
+---
+
 ## v1.5.3
 
 Emby 观看的播放时长可设为一个范围，每次运行随机取一个时长；关联模板的观看任务可设置自己的播放时长，保存任务或模板时不再被覆盖。
