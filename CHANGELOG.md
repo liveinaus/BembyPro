@@ -4,6 +4,34 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.5
+
+群组按钮监视可在机器人重新开放按钮时再点（LuckyHouse「群猜码」分批查看），并可把私聊收到的遮码转发到你的群；可跳过每份积分太少的红包；道谢默认直接发在群里；新增「保存数据」步骤，把机器人回复中列出的每一项存入数据文件夹。
+
+Group button watching presses again when a bot reopens the button (LuckyHouse's 群猜码 batches) and can post the masked code it is sent to a group of yours; small red packets can be skipped; the thank-you is said plainly in the group by default; and a new Save data step stores each item a bot's reply lists in a data folder.
+
+### 中文
+
+**新功能**
+
+- **群猜码分批查看** -- 「持续监视群组并点击按钮」在机器人编辑消息、按钮仍在时会再点一次，直到点中；本批名额已满时，在机器人给出的倒计时结束后立即再点，倒计时期间的编辑不再触发点击。打开中的消息每次轮询都会按 ID 重新读取，推送丢失也不会错过下一批。新增「同时盯的按钮」及其开关，可在同一个任务里同时点多个按钮（如 领取红包 与 私聊查看遮码）。商店中的「LuckyHouse 领取红包 + 群猜码」即用此功能。
+- **转发私聊收到的码** -- 点中后，在 20 秒内等机器人私聊发来的内容（如群猜码的遮码），发到你指定的群组或频道；内容可用 {gift}、{code}、{message} 自定。同一次掉落只发一次（无论几个账户看到），只发任务运行期间的新掉落，同一个码不会重复发。
+- **跳过小红包** -- 可设置「每份至少」：消息中 总积分 ÷ 份数 低于此值的不点，并在运行日志中记一行；不含总额的消息（如群猜码）照常点。
+- **道谢直接发在群里** -- 抢到红包后的道谢默认直接发在群里；新增「以回复红包的方式道谢」，选 是 则像以前一样回复红包消息。
+- **保存数据** -- 新的自定义步骤：用正则匹配机器人回复，每个匹配写一条记录到数据文件夹（键和 JSON 值可用命名分组、{match}、{accountName}、{accountPhone}）；已存在的键不覆盖，重复运行只添加新的。商店中的 LuckyHouse 礼品记录即用此步骤。
+
+### English
+
+**Features**
+
+- **群猜码 batches** -- "Watch a group and press a button" presses again when the bot edits the message with the button still up, until a press wins; when a batch is full it presses again the moment the countdown the bot named runs out, and the edits during that countdown no longer set off presses. An open message is re-read by ID on every poll, so a lost push does not miss the next batch. New "Also watch for" buttons, behind a switch, let one job press several buttons (such as 领取红包 and 私聊查看遮码). The store's "LuckyHouse red packets + 群猜码" is built on it.
+- **Post what the bot sends privately** -- after a win, waits up to 20 s for the bot's private message (a 群猜码 masked code, say) and posts it to a group or channel you name, worded with {gift}, {code} and {message}. Each drop is posted once however many accounts saw it, only drops that came while the job was running, and never the same code twice.
+- **Skip small red packets** -- an "At least a share" minimum: a message whose total divided by its share count is below it is left alone and noted in the run log; a message that states no amount (a 群猜码 drop) is pressed as usual.
+- **Thank-you said plainly in the group** -- the thank-you after a red packet win is now sent straight to the group; the new "Thank as a reply to the packet" switch replies to the packet as before.
+- **Save data** -- a new custom step: a regex runs over the bot's reply and each match writes one record to a data folder, its key and JSON value filled from named groups, {match}, {accountName} and {accountPhone}. Keys already there are left alone, so a rerun adds only what is new. The store's LuckyHouse gifts template uses it.
+
+---
+
 ## v1.5.4
 
 内置网页播放器，可直接用 Emby 观看任务的身份在浏览器里观看；TG 账户可打标签（可带值）并按标签筛选；可从账户列表为选中账户批量运行模板任务；新增「小程序 HTTP 调用」，不开浏览器直接调用小程序接口；支持由守护机器人在小程序中审核的入群申请。
