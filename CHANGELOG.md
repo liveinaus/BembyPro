@@ -6,29 +6,25 @@ All notable changes to Bemby are documented here.
 
 ## v1.5.5
 
-群组按钮监视可在机器人重新开放按钮时再点（LuckyHouse「群猜码」分批查看），并可把私聊收到的遮码转发到你的群；可跳过每份积分太少的红包；道谢默认直接发在群里；新增「保存数据」步骤，把机器人回复中列出的每一项存入数据文件夹。
+可跳过每份积分太少的红包；道谢默认直接发在群里；新增「保存数据」步骤，把机器人回复中列出的每一项存入数据文件夹。
 
-Group button watching presses again when a bot reopens the button (LuckyHouse's 群猜码 batches) and can post the masked code it is sent to a group of yours; small red packets can be skipped; the thank-you is said plainly in the group by default; and a new Save data step stores each item a bot's reply lists in a data folder.
+Small red packets can be skipped; the thank-you is said plainly in the group by default; and a new Save data step stores each item a bot's reply lists in a data folder.
 
 ### 中文
 
 **新功能**
 
-- **群猜码分批查看** -- 「持续监视群组并点击按钮」在机器人编辑消息、按钮仍在时会再点一次，直到点中；本批名额已满时，在机器人给出的倒计时结束后立即再点，倒计时期间的编辑不再触发点击。打开中的消息每次轮询都会按 ID 重新读取，推送丢失也不会错过下一批。新增「同时盯的按钮」及其开关，可在同一个任务里同时点多个按钮（如 领取红包 与 私聊查看遮码）。商店中的「LuckyHouse 领取红包 + 群猜码」即用此功能。
-- **转发私聊收到的码** -- 点中后，在 20 秒内等机器人私聊发来的内容（如群猜码的遮码），发到你指定的群组或频道；内容可用 {gift}、{code}、{message} 自定。同一次掉落只发一次（无论几个账户看到），只发任务运行期间的新掉落，同一个码不会重复发。
-- **跳过小红包** -- 可设置「每份至少」：消息中 总积分 ÷ 份数 低于此值的不点，并在运行日志中记一行；不含总额的消息（如群猜码）照常点。
+- **跳过小红包** -- 可设置「每份至少」：消息中 总积分 ÷ 份数 低于此值的不点，并在运行日志中记一行；不含总额的消息照常点。
 - **道谢直接发在群里** -- 抢到红包后的道谢默认直接发在群里；新增「以回复红包的方式道谢」，选 是 则像以前一样回复红包消息。
-- **保存数据** -- 新的自定义步骤：用正则匹配机器人回复，每个匹配写一条记录到数据文件夹（键和 JSON 值可用命名分组、{match}、{accountName}、{accountPhone}）；已存在的键不覆盖，重复运行只添加新的。商店中的 LuckyHouse 礼品记录即用此步骤。
+- **保存数据** -- 新的自定义步骤：用正则匹配机器人回复，每个匹配写一条记录到数据文件夹（键和 JSON 值可用命名分组、{match}、{accountName}、{accountPhone}）；已存在的键不覆盖，重复运行只添加新的。
 
 ### English
 
 **Features**
 
-- **群猜码 batches** -- "Watch a group and press a button" presses again when the bot edits the message with the button still up, until a press wins; when a batch is full it presses again the moment the countdown the bot named runs out, and the edits during that countdown no longer set off presses. An open message is re-read by ID on every poll, so a lost push does not miss the next batch. New "Also watch for" buttons, behind a switch, let one job press several buttons (such as 领取红包 and 私聊查看遮码). The store's "LuckyHouse red packets + 群猜码" is built on it.
-- **Post what the bot sends privately** -- after a win, waits up to 20 s for the bot's private message (a 群猜码 masked code, say) and posts it to a group or channel you name, worded with {gift}, {code} and {message}. Each drop is posted once however many accounts saw it, only drops that came while the job was running, and never the same code twice.
-- **Skip small red packets** -- an "At least a share" minimum: a message whose total divided by its share count is below it is left alone and noted in the run log; a message that states no amount (a 群猜码 drop) is pressed as usual.
+- **Skip small red packets** -- an "At least a share" minimum: a message whose total divided by its share count is below it is left alone and noted in the run log; a message that states no amount is pressed as usual.
 - **Thank-you said plainly in the group** -- the thank-you after a red packet win is now sent straight to the group; the new "Thank as a reply to the packet" switch replies to the packet as before.
-- **Save data** -- a new custom step: a regex runs over the bot's reply and each match writes one record to a data folder, its key and JSON value filled from named groups, {match}, {accountName} and {accountPhone}. Keys already there are left alone, so a rerun adds only what is new. The store's LuckyHouse gifts template uses it.
+- **Save data** -- a new custom step: a regex runs over the bot's reply and each match writes one record to a data folder, its key and JSON value filled from named groups, {match}, {accountName} and {accountPhone}. Keys already there are left alone, so a rerun adds only what is new.
 
 ---
 
@@ -43,10 +39,10 @@ A built-in web player that watches as an Emby watch job; Telegram accounts take 
 **新功能**
 
 - **网页播放器** -- Emby 观看任务新增「在浏览器中观看」，以该任务的登录、UA、设备名和代理打开内置播放器（基于 Bemplayer），服务器看到的始终是同一台设备。侧边栏新增「播放」入口（Pro），可选任意观看任务浏览并播放其服务器上的内容（只沿用其登录、UA、设备名和代理）。设置中可关闭播放器，默认开启；关闭后菜单与任务中的入口隐藏，已打开的播放器在下一次请求时停止。
-- **账户标签** -- TG 账户可添加标签，标签可只有名称，也可带值（如「luckybar 积分: 12345」）。可在账户编辑中或批量添加，显示在「附加信息」列；列表上方的标签栏可按标签筛选，搜索框也会匹配标签值。账户导出/导入与完整备份都会带上标签。
+- **账户标签** -- TG 账户可添加标签，标签可只有名称，也可带值（如「积分: 12345」）。可在账户编辑中或批量添加，显示在「附加信息」列；列表上方的标签栏可按标签筛选，搜索框也会匹配标签值。账户导出/导入与完整备份都会带上标签。
 - **按标签值筛选与自动打标签** -- 筛选面板可添加标签条件（有/没有、=、≠、包含、> ≥ < ≤，全部满足才显示），数字比较忽略千位逗号。账户批量任务可给每个成功的账户加上标签；新增自定义步骤「保存标签」，按正则从回复中读取值（或直接填写）写到本次运行的账户上。
 - **从账户列表运行模板任务** -- 选中账户后选择模板，这些模板为选中账户建的任务（包括已关闭的）会在一个后台队列中依次运行；已在运行或排队的任务会跳过。
-- **小程序 HTTP 调用（无浏览器）** -- 新的自定义步骤：由 Telegram 按本任务账户签名小程序后，运行模板中的脚本直接调用小程序自己的接口，每轮只是几个请求，几乎不占内存和 CPU。脚本在沙盒（QuickJS）中运行，只能访问该小程序所在网站，请求从任务的出口（默认账户自己的代理）发出；登录凭据过期时可重新签名。脚本的日志在运行中实时显示；网络出错时会说明具体原因（连接被拒、超时、代理无法连通等）。商店中的「LuckyHouse 百家乐 HTTP 下注」即用此步骤。
+- **小程序 HTTP 调用（无浏览器）** -- 新的自定义步骤：由 Telegram 按本任务账户签名小程序后，运行模板中的脚本直接调用小程序自己的接口，每轮只是几个请求，几乎不占内存和 CPU。脚本在沙盒（QuickJS）中运行，只能访问该小程序所在网站，请求从任务的出口（默认账户自己的代理）发出；登录凭据过期时可重新签名。脚本的日志在运行中实时显示；网络出错时会说明具体原因（连接被拒、超时、代理无法连通等）。
 - **守护机器人审核的入群** -- 群组把入群申请交给机器人在小程序中审核（如 Group Help 的「Group rules / I accept」）时，消息页的加入和邀请链接加入会打开该小程序；新增任务步骤「通过机器人小程序入群」：提交申请、打开小程序（默认等 5 秒后点「I accept」），然后等待入群结果。
 - **观看任务记录代理** -- Emby 观看的运行日志会显示本次使用的出口（按代理列表中的名称，或直连）；失败时错误信息末尾也附上出口。
 
@@ -60,10 +56,10 @@ A built-in web player that watches as an Emby watch job; Telegram accounts take 
 **Features**
 
 - **Web player** -- Emby watch jobs gain "Watch in browser", which opens a built-in player (based on Bemplayer) signed in as that job, with its User-Agent, device name and proxy, so the server sees one device throughout. A Player entry in the sidebar (Pro) opens it on its own, to pick any watch job and watch anything on its server (only its sign-in, User-Agent, device name and proxy are used). A Settings switch turns the player off (on by default); off hides it from the menu and the jobs, and a player already open stops at its next request.
-- **Account tags** -- a Telegram account can carry tags, a name alone or a name with a value ("luckybar points: 12345"). Edit them in the account dialog or in bulk; they show in the Extra Info column, a tag bar over the list filters on them, and the search box matches their values. Account export/import and the full backup carry them.
+- **Account tags** -- a Telegram account can carry tags, a name alone or a name with a value ("points: 12345"). Edit them in the account dialog or in bulk; they show in the Extra Info column, a tag bar over the list filters on them, and the search box matches their values. Account export/import and the full backup carry them.
 - **Tag value filters, and tags set by tasks** -- the filter panel takes tag conditions (has / lacks, =, ≠, contains, > ≥ < ≤), all of which must hold; number comparisons ignore thousands commas. Account bulk tasks can tag each account they succeed on, and a new custom step, Save tag, writes a tag onto the run's account, its value read off the reply by a regex or given outright.
 - **Run template jobs from the account list** -- select accounts, pick templates, and every job those templates made for them runs in one background queue, switched-off jobs included; jobs already running or queued are skipped.
-- **Mini App via HTTP (no browser)** -- a new custom step. Telegram signs the Mini App for the job's account, then the template's script calls the app's own API: a few small requests a round, next to no memory or CPU. The script runs sandboxed (QuickJS), reaches only the app's own site, and its calls leave by the job's exit (the account's proxy by default); the sign-in can be renewed when it expires. Its log lines show on the run as they are written, and a network failure says what failed (refused, timed out, a proxy that would not tunnel). The store's "LuckyHouse baccarat betting (HTTP, no browser)" is built on it.
+- **Mini App via HTTP (no browser)** -- a new custom step. Telegram signs the Mini App for the job's account, then the template's script calls the app's own API: a few small requests a round, next to no memory or CPU. The script runs sandboxed (QuickJS), reaches only the app's own site, and its calls leave by the job's exit (the account's proxy by default); the sign-in can be renewed when it expires. Its log lines show on the run as they are written, and a network failure says what failed (refused, timed out, a proxy that would not tunnel).
 - **Joins decided by a guard bot** -- for a group that hands its join requests to a bot's Mini App (Group Help's "Group rules / I accept"), joining from the messenger, or by invite link, now opens that app; and a new job step, Join through the bot's app, files the request, opens the app (by default waits 5 s and presses "I accept"), then waits for the membership.
 - **Watch runs name their proxy** -- an Emby watch run's log shows the exit it left by (as the proxy list names it, or direct), and a failed run's error ends with it.
 
@@ -165,7 +161,7 @@ One-click upgrade from Settings; a job can be held to the Pro browser, so a join
 **新功能**
 
 - **一键升级** -- 设置 → 更新 中出现「立即升级」：由面板旁的 Watchtower 拉取当前标签的新镜像并重建容器，页面等待新版本启动后自动刷新。只有 Watchtower 能访问 Docker socket；Bemby 的令牌只能请求更新它自己的镜像，Watchtower 不做定时更新，只管理 bemby 容器。新的 docker-compose.yml 已包含 watchtower 服务，需要设置 WATCHTOWER_TOKEN；旧的 compose 文件可按设置页给出的片段添加。详见 docs/one-click-upgrade.md。
-- **浏览器版本：仅 Pro / 仅免费版** -- 自定义任务与模板新增「浏览器版本」。仅 Pro：运行开始前先占用一个 CloakBrowser 授权并向授权服务验证密钥，整个运行期间保持占用，绝不改用免费版；没有空闲授权时最多等待 10 分钟，仍无则在执行任何动作前失败（例如不会发送入群申请）。适合只有一次机会的验证，如 nmBot 的入群验证。仅免费版：不占用授权，把授权留给重要任务。模板上设置后，关联任务可单独覆盖。
+- **浏览器版本：仅 Pro / 仅免费版** -- 自定义任务与模板新增「浏览器版本」。仅 Pro：运行开始前先占用一个 CloakBrowser 授权并向授权服务验证密钥，整个运行期间保持占用，绝不改用免费版；没有空闲授权时最多等待 10 分钟，仍无则在执行任何动作前失败（例如不会发送入群申请）。适合只有一次机会的验证，如部分机器人的入群验证。仅免费版：不占用授权，把授权留给重要任务。模板上设置后，关联任务可单独覆盖。
 - **watch_buttons 动作** -- 全天监听一个群组，每条带有指定按钮的新消息都用本账号点一次。同一群组、同一按钮的任务共用一个监听；每次点击单独记入日志，附机器人弹窗与点击用时。默认运行 15 小时，属于长时运行，不占运行名额。
 - **watch_codes 动作** -- 监听群组中发出的码，用正则提取后依次发给机器人（如 "/start {code}"），直到有一个成功；成功的码保存为 {code}，后续步骤接着机器人的回复继续。我方账号之间不会重复尝试同一个码，开始监听前 10 分钟以上发出的码会跳过。
 - **批量运行可并行** -- 批量运行对话框新增「同时运行的任务数」：大于 1 时，下一个任务不等上一个结束就开始，间隔用于错开启动时间（0 为同时启动）。
@@ -187,7 +183,7 @@ One-click upgrade from Settings; a job can be held to the Pro browser, so a join
 **Features**
 
 - **One-click upgrade** -- Settings → Updates offers "Upgrade now": a Watchtower beside the panel pulls the panel's own image on its current tag and recreates the container, and the page waits for the new build and reloads. Only Watchtower gets the Docker socket; Bemby's token can only ask for its own image, and Watchtower runs no scheduled updates and manages only the bemby container. The new docker-compose.yml ships the watchtower service and needs WATCHTOWER_TOKEN; Settings shows a snippet to add it to an older compose file. See docs/one-click-upgrade.md.
-- **Browser build: Pro only / Free only** -- a new "Browser build" choice on custom jobs and templates. Pro only: before the first action the run takes a CloakBrowser licence seat and checks the key with the licence service, holds the seat until the run ends, and never falls back to the free build. With every seat busy it waits up to 10 minutes, then fails before doing anything (no join request is sent, say). For a check you only get one go at, such as nmBot's join verification. Free only: takes no seat, leaving them to the jobs that matter. Set on a template, a linked job can override it.
+- **Browser build: Pro only / Free only** -- a new "Browser build" choice on custom jobs and templates. Pro only: before the first action the run takes a CloakBrowser licence seat and checks the key with the licence service, holds the seat until the run ends, and never falls back to the free build. With every seat busy it waits up to 10 minutes, then fails before doing anything (no join request is sent, say). For a check you only get one go at, such as some bots' join verification. Free only: takes no seat, leaving them to the jobs that matter. Set on a template, a linked job can override it.
 - **watch_buttons action** -- watches a group all day and presses a button on every new message that carries it, with the job's own account. Jobs on the same group and button share one watch; each press is its own step in the log, with the bot's popup and how soon it landed. Runs 15 hours by default and counts as a long run, so it takes no run slot.
 - **watch_codes action** -- watches a group for codes, pulls them out with a regex and tries them on a bot ("/start {code}") until one works; the code is kept as {code} and the steps after it carry on from the bot's answer. Our accounts never try the same code twice, and codes posted more than 10 minutes before the watch began are skipped.
 - **Bulk run in parallel** -- "Jobs running at once" in the bulk run dialog: above 1, the next job starts without waiting for the last, and the gap spaces the starts out (0 starts them together).
@@ -292,7 +288,7 @@ Joins can count an account already in the group as a success; bulk clean lets yo
 
 **新功能**
 
-- **已是成员时结束任务** -- 「加入群组」动作新增「已是成员时结束任务（视为成功）」。账户已在群内时，不再执行后面的动作，本次运行直接算成功。适用于验证放在后续步骤的入群任务：例如在 @nmnmfunbot 中打开小程序完成 nmBot 验证的模板，以前已在群内的账户收不到新的验证消息，任务会以「No Mini App button matching "中验证"」失败。模板商店中的 10 个 nmBot 入群模板已更新到 1.0.1 并启用此项（需要本版本）。
+- **已是成员时结束任务** -- 「加入群组」动作新增「已是成员时结束任务（视为成功）」。账户已在群内时，不再执行后面的动作，本次运行直接算成功。适用于验证放在后续步骤的入群任务：例如在机器人中打开小程序完成验证的模板，以前已在群内的账户收不到新的验证消息，任务会以「No Mini App button matching …」失败。模板商店中以这种方式验证的入群模板已启用此项（需要本版本）。
 - **批量清理可选步骤** -- 账户页「批量清理」对话框把每项清理列为复选框，可只执行勾选的步骤；新增「删除所有历史头像（保留当前头像）」与「删除当前头像」两项，默认不勾选，不改动对话框时清理内容与以前相同。
 
 **改进**
@@ -303,7 +299,7 @@ Joins can count an account already in the group as a success; bulk clean lets yo
 
 **Features**
 
-- **Already a member ends the job** -- the Join group action gains "Already a member ends the job as a success". When the account is in the group already, the actions after it are skipped and the run counts as a success. It is for joins whose verification is a later step: a template that opens nmBot's Mini App in @nmnmfunbot used to fail on an account already in the group with `No Mini App button matching "中验证"`, since a member gets no new prompt. The store's 10 nmBot join templates are at 1.0.1 with it on (they need this version).
+- **Already a member ends the job** -- the Join group action gains "Already a member ends the job as a success". When the account is in the group already, the actions after it are skipped and the run counts as a success. It is for joins whose verification is a later step: a template that opens a verification bot's Mini App used to fail on an account already in the group with `No Mini App button matching …`, since a member gets no new prompt. The store's join templates that verify this way have it on (they need this version).
 - **Pick the steps of a bulk clean** -- the accounts page's Bulk clean dialog lists each step as a checkbox and runs only those ticked, with two new ones: delete old profile photos (the current one is kept) and delete the current profile photo. Both start unticked, so an unchanged dialog cleans as before.
 
 **Improvements**
@@ -446,9 +442,9 @@ Group entry verification stops calling the AI for prompts that say what to press
 
 ## v1.4.6
 
-模板列表显示最后修改时间并可按其排序；要求「等几秒再点」的入群验证会先等待再作答。模板商店中的新入群模板（「结束バンド-WEB」1.0.1、「小幻影视 | Rodel Player」等）需要此版本。
+模板列表显示最后修改时间并可按其排序；要求「等几秒再点」的入群验证会先等待再作答。模板商店中的新入群模板需要此版本。
 
-Templates show when they were last modified and sort by it; a group verification that says to wait is waited out before it is answered. The new join templates in the template store ("結束バンド-WEB" 1.0.1, "小幻影视 | Rodel Player" and others) need this version.
+Templates show when they were last modified and sort by it; a group verification that says to wait is waited out before it is answered. The new join templates in the template store need this version.
 
 ### 中文
 
@@ -474,9 +470,9 @@ Templates show when they were last modified and sort by it; a group verification
 
 ## v1.4.5
 
-循环可以连续运行多天、只在每天随机抽取的时段内执行，并可独占账号；入群验证能应对更多机器人。模板商店中的「LuckyHouse 按赔率下注刷奖品」1.4.1，以及新的入群模板，需要此版本。
+循环可以连续运行多天、只在每天随机抽取的时段内执行，并可独占账号；入群验证能应对更多机器人。模板商店中的部分模板需要此版本。
 
-Loops can run for days, only inside time windows drawn afresh each day, with the account to themselves; group entry verification copes with more bots. "LuckyHouse 按赔率下注刷奖品" 1.4.1 and the new join templates in the template store need this version.
+Loops can run for days, only inside time windows drawn afresh each day, with the account to themselves; group entry verification copes with more bots. Some templates in the template store need this version.
 
 ### 中文
 
@@ -518,9 +514,9 @@ Loops can run for days, only inside time windows drawn afresh each day, with the
 
 ## v1.4.4
 
-按钮可以按几率选择：赔率范围与下注金额都能设置各自的几率，积分不够时自动改用最小金额。模板商店中的「LuckyHouse 按赔率下注刷奖品」1.2.0 需要此版本。
+按钮可以按几率选择：赔率范围与下注金额都能设置各自的几率，积分不够时自动改用最小金额。
 
-Buttons can be drawn by chance: odds ranges and bet amounts each take their own chances, with a fall back to the smallest amount when points run short. "LuckyHouse 按赔率下注刷奖品" 1.2.0 in the template store needs this version.
+Buttons can be drawn by chance: odds ranges and bet amounts each take their own chances, with a fall back to the smallest amount when points run short.
 
 ### 中文
 
@@ -542,12 +538,12 @@ Buttons can be drawn by chance: odds ranges and bet amounts each take their own 
 
 ### 中文
 
-- **修复编辑过的模板任务从不下注** -- 在任务表单中保存基于模板的自定义任务（例如修改了最高赔率）时，任务会丢失模板的选项定义，只留下所选的值。之后每次运行 `{minRate}`、`{maxRate}`、`{grabRedPacket}` 等都不会被替换：「LuckyHouse 按赔率下注刷奖品」会去找名为 `{rateBtn:{minRate}-{maxRate}}` 的按钮，于是每盘都跳过，而同一模板下没编辑过的任务一切正常。现在表单保存时会一并保存模板的选项，运行时若任务已丢失选项也会从模板补回，已受影响的任务在升级后首次启动时会自动修复（日志显示「restored template options on N job(s)」），无需逐个打开保存。
+- **修复编辑过的模板任务从不下注** -- 在任务表单中保存基于模板的自定义任务（例如修改了最高赔率）时，任务会丢失模板的选项定义，只留下所选的值。之后每次运行 `{minRate}`、`{maxRate}`、`{grabRedPacket}` 等都不会被替换：下注模板会去找名为 `{rateBtn:{minRate}-{maxRate}}` 的按钮，于是每盘都跳过，而同一模板下没编辑过的任务一切正常。现在表单保存时会一并保存模板的选项，运行时若任务已丢失选项也会从模板补回，已受影响的任务在升级后首次启动时会自动修复（日志显示「restored template options on N job(s)」），无需逐个打开保存。
 - **补丁版本被当作旧版本** -- `v1.4.3-patch-1` 这样的补丁版本此前被视为早于 `v1.4.3`：更新检查不会提示升级到补丁，模板商店也会误报需要更新 Bemby。现在补丁版本排在其正式版之后。
 
 ### English
 
-- **Fixed an edited template job never betting** -- saving a template-linked custom job from the job form (to change its top odds, say) dropped the template's option definitions and kept only the values picked. Every run after that left `{minRate}`, `{maxRate}`, `{grabRedPacket}` and the like unfilled: "LuckyHouse 按赔率下注刷奖品" looked for a button named `{rateBtn:{minRate}-{maxRate}}` and skipped every round, while a job on the same template that was never edited worked. The form now saves the template's options with the picks, and a run takes them from the template when a job has already lost them, and every affected job is mended on the first start after the update (the log says "restored template options on N job(s)"), so none has to be opened and saved again.
+- **Fixed an edited template job never betting** -- saving a template-linked custom job from the job form (to change its top odds, say) dropped the template's option definitions and kept only the values picked. Every run after that left `{minRate}`, `{maxRate}`, `{grabRedPacket}` and the like unfilled: a betting template looked for a button named `{rateBtn:{minRate}-{maxRate}}` and skipped every round, while a job on the same template that was never edited worked. The form now saves the template's options with the picks, and a run takes them from the template when a job has already lost them, and every affected job is mended on the first start after the update (the log says "restored template options on N job(s)"), so none has to be opened and saved again.
 - **Patch releases read as older** -- a patch such as `v1.4.3-patch-1` was taken for older than `v1.4.3`: the update check would not offer it and the template store asked for a newer Bemby. A patch now ranks after its release.
 
 ---
@@ -573,7 +569,7 @@ Buttons can be drawn by chance: odds ranges and bet amounts each take their own 
 - **条件判断：任务参数的值** -- 新的判断类型，把任务参数（如 `{grabRedPacket}`）与文字比较，模板可借此让某个步骤变为可选。
 - **等待回复：只等新消息** -- 只接受本步骤开始之后到达的消息，之后的点击也只看这一轮的消息。适合机器人自己定时推送、任务在两轮之间不发送消息的情况。
 - **看到按钮后等待再点** -- 点击按钮的动作可设置看到按钮后等待几秒再点，可填 `0.5`、范围 `0.5-1.5`（每次随机）或任务参数 `{名称}`，避免一出现就秒点。
-- **小程序返回机器人** -- 小程序通过 `openTelegramLink` 把人送回机器人（`t.me/bot?start=…`）时，任务会像客户端一样带着参数启动机器人，每个链接一次。常温西瓜（XGFree）的签到结果改由这种链接提交，现已支持。
+- **小程序返回机器人** -- 小程序通过 `openTelegramLink` 把人送回机器人（`t.me/bot?start=…`）时，任务会像客户端一样带着参数启动机器人，每个链接一次。
 
 **修复**
 
@@ -597,7 +593,7 @@ Buttons can be drawn by chance: odds ranges and bet amounts each take their own 
 - **Check a job input's value** -- a new kind of check compares one of the job's inputs (such as `{grabRedPacket}`) with words, so a template can make a step optional.
 - **Wait reply: new messages only** -- accepts only a message that arrives after the step starts, and the clicks after it see only that round. For a bot that posts on its own schedule while the job sends nothing between rounds.
 - **Wait before pressing** -- the button actions can wait a few seconds once the button is in view: `0.5`, a range such as `0.5-1.5` (random each time) or a job input `{name}`, so a button is not pressed the instant it appears.
-- **Mini Apps that send you back to the bot** -- when a Mini App returns to its bot with `openTelegramLink` (`t.me/bot?start=…`), the job starts the bot with that parameter, as a client does, once per link. 常温西瓜 (XGFree) now submits its check-in this way, and works again.
+- **Mini Apps that send you back to the bot** -- when a Mini App returns to its bot with `openTelegramLink` (`t.me/bot?start=…`), the job starts the bot with that parameter, as a client does, once per link.
 
 **Fixes**
 
@@ -621,7 +617,7 @@ Custom jobs gain **Repeat** (a set number of rounds, or until a time of day), qu
 - **重复执行** -- 新的「重复执行」动作把其中的步骤按顺序执行固定轮数，或一轮接一轮直到任务时区的某个时间（如 `00:00` 即当晚零点；到点时正在进行的一轮会执行完，这样的任务单次运行最长 24 小时），`{round}` 为当前轮数。默认某轮失败只记录并继续下一轮，也可设为失败即停止。不需要数据文件夹，适合整天进行的群内游戏与抢红包。
 - **退出群组 / 取消订阅频道** -- 新的动作，填写 @用户名、t.me 链接、邀请链接或群组 ID（支持 `{变量}`，可退出之前「保存消息链接」存下的群组）。账号本就不在其中时视为成功，重复运行不会报错。
 - **模板任务选项** -- 自定义模板可为任务提供几个选项（名称、标签、可选值、默认值），在任务表单顶部选择；每个任务的选择在模板更新后保留，并在动作按钮中以 `{名称}` 引用。
-- **按赔率点击按钮** -- 按钮文字可写 `{rateBtn:1-1.6}`，随机点击一个赔率（按钮文字末尾 `×` 前的数字，如「上靶 · 1.14×」）在该范围内的按钮。
+- **按赔率点击按钮** -- 按钮文字可写 `{rateBtn:1-1.6}`，随机点击一个赔率（按钮文字末尾 `×` 前的数字，如「选项 · 1.14×」）在该范围内的按钮。
 - **批量设置用户名支持更多变量** -- 批量修改资料中的用户名格式新增 `{firstName}`、`{lastName}`、`{initials}`、`{word}` / `{word:5}`（随机英文单词）、`{num:4}`、`{rand:4}`、`{letters:3}`、`{year}`，`:N` 设定长度（对名字为截断）。名字取本次要写入的名字，否则取账号当前名字，中文等非英文名换成随机英文名。默认格式改为 `{firstName}{lastName}{num:3}`。
 - **手动添加 Shadowsocks 代理** -- 「添加代理」中协议选 Shadowsocks，填写地址、端口、加密方式与密码，或粘贴 `ss://` 链接自动填写；由 Xray 内核承载，添加前实际连通测试。
 - **入群更灵活** -- 加入群组的群组字段支持 `{变量}`，可加入之前「保存消息链接」存下的邀请链接；需要在机器人私聊中完成的入群验证，若是算术题等验证码，`{aiBtn}` 会交给 AI 选出答案；公开群组中仍在等待审批的入群申请不再被当作已加入。
@@ -646,7 +642,7 @@ Custom jobs gain **Repeat** (a set number of rounds, or until a time of day), qu
 - **Repeat** -- a new **Repeat** action runs its steps a set number of times, or round after round until a time of day in the job's timezone (`00:00` is the coming midnight; a round under way at that time is finished, and a run like this may last up to 24 hours), with `{round}` holding the round number. A failed round is logged and the next one runs by default, or the job can stop at the first failure. No data folder needed: made for group games and red packets that go on all day.
 - **Quit a group / unsubscribe from a channel** -- a new action taking an @username, a t.me link, an invite link or a chat ID (`{variables}` work, so a group saved by an earlier *Save message link* step can be left). An account that is not in it counts as done, so a rerun does not fail.
 - **Template job options** -- a custom template can offer its jobs a few choices (name, label, options, default), picked at the top of the job form; each job keeps its picks through template updates, and its action buttons read them as `{name}`.
-- **Click a button by its odds** -- a button field can say `{rateBtn:1-1.6}` to click a random button whose odds (the number before `×` at the end of its text, as in "上靶 · 1.14×") fall in that range.
+- **Click a button by its odds** -- a button field can say `{rateBtn:1-1.6}` to click a random button whose odds (the number before `×` at the end of its text, as in "Option · 1.14×") fall in that range.
 - **More placeholders for bulk usernames** -- the username pattern in Bulk Rename TG Profile now takes `{firstName}`, `{lastName}`, `{initials}`, `{word}` / `{word:5}` (a random English word), `{num:4}`, `{rand:4}`, `{letters:3}` and `{year}`, with `:N` setting the length (and cutting names). Names are the ones written in the same batch, else the account's current ones; a non-Latin name becomes a random English one. The default pattern is now `{firstName}{lastName}{num:3}`.
 - **Shadowsocks proxies, added by hand** -- pick Shadowsocks under *Add proxy* and fill in the server, port, cipher and password, or paste an `ss://` link; carried by the Xray core and tested through it before it is added.
 - **Joining groups** -- the group field of *Join group* takes `{variables}`, so an invite link saved by an earlier *Save message link* step can be joined; when the join is verified in the bot's private chat with a captcha (a sum answered by one of a row of numbers), `{aiBtn}` has the AI pick the answer; and a public group the account has only asked to join, with the request still pending, no longer reads as joined.
