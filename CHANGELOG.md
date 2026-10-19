@@ -4,6 +4,58 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.6
+
+可在两种内置浏览器之间选择；日志可按模板筛选；监视群组可超过 24 小时；新增「等待群消息」动作与更多抢红包玩法。
+
+A second built-in browser to choose from; logs filtered by template; group watches that run past a day; a new Wait for a group message action and more ways to claim red packets.
+
+### 中文
+
+**新功能**
+
+- **第二种内置浏览器** -- 设置 → 浏览器设置 中可在两种内置浏览器之间选择，所有任务使用所选的那一个；第二种按需下载（约 1.3GB，含所需系统库，镜像本身不变大）。浏览器配置按浏览器分开保存，来回切换不会丢失登录；设置页的浏览器测试会用同一出口依次测试已安装的浏览器以便比较；日志会写明每个网页步骤所用的浏览器。选择第二种浏览器时，设为「仅 Pro」或「仅免费版」的任务也在它上面运行，不占用授权；含通行密钥注册步骤的任务始终使用第一种浏览器。
+- **按模板筛选日志** -- 日志页新增模板下拉，可只看某个模板下所有任务的运行记录，任务下拉随之只列出该模板的任务。
+- **批量停止或重新运行** -- 在日志页勾选多条记录后，可停止或重新运行它们所属的任务。
+- **监视可超过 24 小时** -- 监视按钮、监视码、监视口令、等待群消息按填写的小时数运行（最长 480 小时）；运行期间该任务的下一次定时启动会因仍在运行而跳过。
+- **等待群消息** -- 新动作：等到群里出现匹配的消息（可限定发送者）再继续后续步骤，消息内容可用 `{message}`，适合等开放注册再抢注。
+- **抢红包** -- 点击前可先在群里说一句；按钮可写成 `/正则/`，一条消息多个按钮时可随机或由 AI 选（问答、九宫格红包），被别人占用时换同一消息的下一个；可限定只看含指定文字的消息。新增「监视口令」动作，领取没有按钮、需发口令的红包。
+- **模板商店** -- 可按更新时间排序，或只显示有新版本的模板；新增「抢红包」与「抢注」分类。
+- **常用模板** -- 在账户页为账户运行模板任务时，最常运行的模板显示在「常用」一栏，一键选中。
+- **数据导出预览** -- 导出为文本时，预览可展开显示全部行。
+
+**修复**
+
+- 任务发出的消息按原样发送，带 `**` 的遮码不再被吞掉。
+- 按钮弹窗已表明失败时立即结束，不再空等消息被编辑。
+- 换按钮的监视遇到不认识的回复时放弃该消息，按钮数据失效时跳过该按钮。
+- 口令红包识别新的消息格式；以问题形式出现的寄语改为作答，不再原样复述。
+- 按需下载的组件（如 VNC）在 Docker 镜像中无法安装的问题。
+
+### English
+
+**Features**
+
+- **A second built-in browser** -- Settings → browser settings chooses between two built-in browsers, and every job uses the one chosen; the second downloads on demand (about 1.3 GB with the system libraries it needs, so the image does not grow). Browser profiles keep a half per browser, so switching back and forth loses no sign-ins; the browser test in Settings runs each installed browser through the same exit for comparing them; and the log names the browser behind each web step. With the second browser chosen, jobs set to Pro only or Free only run on it too, taking no licence seat; a job with a step that registers a passkey always runs on the first browser.
+- **Logs by template** -- a template dropdown on the Logs page shows the runs of every job built on one template, and narrows the job dropdown to that template's jobs.
+- **Stop or restart in bulk** -- with runs ticked on the Logs page, stop or restart the jobs they belong to.
+- **Watches past a day** -- Watch buttons, Watch codes, Watch passphrase and Wait for a group message run for the hours they are given (up to 480); meanwhile the job's next scheduled start finds it still running and is skipped.
+- **Wait for a group message** -- a new action that carries on once a group posts a matching message (from one sender, if set), with the message as `{message}` -- for a sign-up that opens without warning.
+- **Red packets** -- say a line in the group before pressing; a button may be written `/regex/`, one of several picked at random or by the AI (quiz and grid packets), and the next one on the same message tried when one is taken; a watch can be limited to messages carrying some text. A new Watch passphrase action claims packets that have no button and want a passphrase said.
+- **Template store** -- sort by last update, or show only templates with a new version; new red packet and sign-up categories.
+- **Frequent templates** -- running template jobs for an account from the Accounts page, the templates run most sit under Frequent, one click each.
+- **Data export preview** -- exporting as text, the preview can show every line.
+
+**Fixes**
+
+- A job's messages go out as typed, so a masked code's `**` is no longer eaten.
+- A button press whose popup already says it failed ends at once instead of waiting for an edit.
+- A move-on button watch leaves a message on an answer it does not know, and skips a button whose data went stale.
+- Passphrase red packets in the newer message format are recognised, and a greeting that asks a question is answered rather than repeated.
+- Components downloaded on demand (VNC, say) could not be installed in the Docker image.
+
+---
+
 ## v1.5.5
 
 可跳过每份积分太少的红包；道谢默认直接发在群里；新增「保存数据」步骤，把机器人回复中列出的每一项存入数据文件夹。
