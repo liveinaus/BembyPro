@@ -4,6 +4,52 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.7
+
+模板可暂停全部关联任务；可标记重要任务并只通知重要任务；新增当日失败补运行；任务与日志在「全部」下处理上万条也流畅。
+
+Templates can pause all their jobs; important jobs, with notifications for those only; failed jobs can run again the same day; and the Jobs and Logs pages stay fast showing tens of thousands of rows at once.
+
+### 中文
+
+**新功能**
+
+- **暂停所有关联任务** -- 模板行新增暂停/恢复按钮：暂停期间该模板的任务都不运行，各任务自己的启用状态保持不变，恢复后照常运行。适合等待外部条件，例如加群的邀请链接失效时先暂停，换好新链接再恢复。
+- **重要任务** -- 模板与任务都有「重要」设置（默认否）；任务可跟随模板，也可自行设为是或否。设置 → 通知 新增「只通知重要任务」，开启后只有重要任务发送成功或失败通知。列表中重要任务以星标显示。
+- **当日失败补运行** -- 模板与任务都可开启（默认关闭），任务可跟随模板或自行设置。运行失败后当天每隔设定小时数（默认 6 小时）再运行一次，直到成功，不顺延到第二天；若下一次已超过当天，则在当天最后一小时（23:00–23:59）随机运行一次，23:00 后失败当天不再补运行。表单中列出完整规则。
+- **任务与日志支持上万条** -- 选「全部（不分页）」时只绘制屏幕附近的行，全选与批量操作仍作用于全部；任务列表不再随每行下载完整配置，打开编辑时再单独加载。
+- **更紧凑的任务选项** -- 一次性任务、重要、当日失败补运行排成一行，说明放在问号提示里。
+- **小程序以桌面客户端身份打开** -- 小程序看到的是 Telegram 桌面客户端，每个账户使用固定的日间或夜间主题，并像真实客户端一样回应小程序的请求（主题、视口、安全区域、写入权限等）。
+- **代理出口国家** -- 代理列表显示每个出口所在国家，点击名称可查询当前出口 IP。
+- **区域节点** -- 按区域划分的 Worker 节点可加入自动代理抽取。
+
+**修复**
+
+- 代理供应商同步后先等节点就绪再测试，新节点不再一开始就全部失败。
+- 第二种浏览器可在 1GB 内存限制的容器中安装；安装被系统终止时会写明原因。
+- 一次运行中页面跳转较多时，通行密钥（安全密钥）注册不再因验证器失效而失败。
+
+### English
+
+**Features**
+
+- **Pause all linked jobs** -- a pause/resume button on a template's row holds every job of that template back without touching each job's own enabled setting; on resume they run as before. Handy while waiting on something outside, such as a group's invite link that stopped working.
+- **Important jobs** -- templates and jobs both have an Important setting (off by default); a job follows its template or sets Yes or No of its own. Settings → Notifications gains "Important jobs only", so success and failure notices come only from important jobs. A star marks them in the lists.
+- **Rerun the same day if failed** -- on templates and jobs (off by default; a job follows its template or sets its own). After a failed run the job runs again every set number of hours (6 by default) for the rest of the day until one succeeds, never carrying over to the next day; when the next try would land after midnight it runs once at a random minute in the last hour (23:00-23:59), and a failure after 23:00 is not rerun. The forms spell out the rules.
+- **Jobs and Logs at scale** -- with "All" chosen, only the rows near the screen are drawn, while select-all and bulk actions still cover every row; the job list no longer carries each job's full config, which the edit form loads on its own.
+- **Compact job options** -- One time, Important and same-day rerun sit in one row, with their hints behind question marks.
+- **Mini Apps open as a desktop client** -- a Mini App sees Telegram Desktop, with a day or night theme fixed per account, and its requests (theme, viewport, safe areas, write access) are answered as a real client would.
+- **Proxy exit countries** -- the proxy list shows each exit's country, and clicking a name looks up its current IP.
+- **Region nodes** -- region-split Worker nodes join automatic proxy draws.
+
+**Fixes**
+
+- A provider sync waits for its nodes before testing them, so new nodes no longer fail at first.
+- The second browser installs in a container with a 1 GB memory limit, and an install the system kills says so.
+- Registering a passkey (security key) no longer fails in a run that moves through many pages.
+
+---
+
 ## v1.5.6
 
 可在两种内置浏览器之间选择；日志可按模板筛选；监视群组可超过 24 小时；新增「等待群消息」动作与更多抢红包玩法。
