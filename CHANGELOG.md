@@ -4,6 +4,56 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.8
+
+任务可在 web-android-api 安卓手机的 Firefox / Chrome 上运行，并可从眼睛按钮实时观看；模板与任务可自选并排序使用的浏览器；日志可按日期筛选；内存面板会区分 JS 堆耗尽与系统内存不足。
+
+Jobs can run on the Firefox or Chrome of a web-android-api Android phone and be watched live from the eye button; templates and jobs pick and order the browsers they use; logs filter by date; and the memory panel tells a full JS heap apart from the system running out of memory.
+
+### 中文
+
+**新功能**
+
+- **安卓手机浏览器（web-android-api）** -- 设置中新增 web-android-api 手机卡片，填写地址与 API 密钥并可测试连接（仍兼容环境变量 WAA_BASE_URL / WAA_API_KEY）。之后任务可在手机的 Firefox 或 Chrome 上运行，使用真实触控，Turnstile 复选框会被真实点击。手机运行时整台设备经任务的代理出口上网（含 VLESS、VMess、Trojan、Shadowsocks 节点），时区随出口设置。卡片中可勾选要使用的手机浏览器，未勾选的不会出现在任何地方。
+- **实时观看手机运行** -- 手机上的运行同样显示眼睛按钮，打开后居中显示手机画面，默认只看不动，可接管操作。
+- **自选浏览器** -- 模板与任务可设为自动（跟随设置），或勾选并排序 CloakBrowser Pro、CloakBrowser 免费版、Camoufox 与手机浏览器；运行时依次尝试，当前浏览器不可用、无法启动或 Cloudflare 校验在所有出口都被拒绝时换下一个。
+- **浏览器测试** -- 可勾选要测试的浏览器（包括手机浏览器），每次从干净的浏览器开始；可暂停与继续；保留最近 50 次结果并可逐列对比。
+- **日志按日期筛选** -- 今天、昨天、最近 7 天、最近 30 天或自定义日期范围，按浏览器所在时区计算，并记住所选项。
+- **回复指定消息** -- 自定义任务新增动作：按消息链接回复自定义内容，支持私有、公开、话题与频道评论链接。
+- **等注册码** -- 可同时监听多个群；可在开放注册时（群内通知或公布的开放时间）直接继续后续步骤；可一次同时发送多个码。
+- **模板批量操作** -- 模板页的批量按钮合并到「批量操作」对话框，并新增批量设置重要与当日失败补运行。
+- **内存面板** -- 显示 JS 堆及其上限，堆接近上限时日志告警；进程异常退出时注明是 JS 堆耗尽、系统内存不足，还是两者都未接近上限。内存较大的机器可用 NODE_OPTIONS=--max-old-space-size 调高堆上限。
+- **更快加载** -- 面板只加载当前使用的语言。
+
+**修复**
+
+- 以占位符写成的任务输入（如 {randomFirstName}{num:3}）在使用时会被正确展开。
+- 内存面板的峰值不再低于当前占用。
+- 安全加固：导出账户与完整备份需再次输入管理员密码，新密码至少 8 位，代理与页面请求增加更多防护。
+
+### English
+
+**Features**
+
+- **Android phone browsers (web-android-api)** -- a web-android-api phone card in Settings takes the address and API key, with a connection test (WAA_BASE_URL / WAA_API_KEY still work). Jobs can then run on the phone's Firefox or Chrome with real touches, the Turnstile checkbox included. A phone run sends the whole device out through the job's proxy (VLESS, VMess, Trojan and Shadowsocks nodes too), with the exit's time zone. Tick boxes in the card choose which phone browsers are offered at all.
+- **Watch a phone run live** -- the eye button now shows for runs on the phone too, opening the phone's screen centred, hands-off until you take control.
+- **Choose the browsers** -- templates and jobs run on auto (the browser in Settings) or a ticked, ordered list of CloakBrowser Pro, the CloakBrowser free build, Camoufox and the phone browsers; a run moves to the next when one is unavailable, cannot start, or has its Cloudflare check refused through every exit.
+- **Browser test** -- tick which browsers to test (the phone's included), each starting clean; pause and resume; the last 50 results are kept and compared column by column.
+- **Filter logs by date** -- today, yesterday, the last 7 or 30 days, or a custom range, in the viewer's own time zone; the choice is remembered.
+- **Reply to a message** -- a new custom job action replies to a message named by its link: private, public, forum topic and channel comment links.
+- **Code watch** -- several groups at once; carries on when registration opens to everyone (a group notice or a published opening time); can send several codes at once.
+- **Template bulk actions** -- the templates page's bulk buttons move into one Bulk Actions dialog, which also sets Important and same-day rerun in bulk.
+- **Memory panel** -- shows the JS heap against its limit and warns in the log as it nears it; after an abrupt exit it says whether the heap filled, the system ran out of memory, or neither was near a limit. On a larger host, raise the heap limit with NODE_OPTIONS=--max-old-space-size.
+- **Faster load** -- the panel loads only the language in use.
+
+**Fixes**
+
+- A job input written in placeholders (such as {randomFirstName}{num:3}) is filled in when used.
+- The memory panel's peak never reads below the current figure.
+- Hardening: account and full exports ask for the admin password again, new passwords need 8 characters, and proxied pages and fetches are better guarded.
+
+---
+
 ## v1.5.7
 
 模板可暂停全部关联任务；可标记重要任务并只通知重要任务；新增当日失败补运行；任务与日志在「全部」下处理上万条也流畅。
