@@ -4,6 +4,28 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.9
+
+日志详情可设为从新到旧显示，长时间运行的任务无需滚动即可看到当前状态；「等待群组消息」可只看监视开始后的新消息。
+
+A run's log detail can be listed newest first, so a long-running job's current status is at the top; the group message wait can count only messages that arrive after it starts.
+
+### 中文
+
+**新功能**
+
+- **日志详情顺序** -- 设置中新增「最新记录显示在最上方」，展开日志时按从新到旧列出步骤、签到尝试与观看剧集，运行中的任务新步骤出现在顶部。默认关闭。
+- **等待群组消息：只看新消息** -- 新增选项，忽略监视开始时群里已有的消息，只有之后新到的才算，避免残留的旧消息立即触发。
+
+### English
+
+**Features**
+
+- **Log detail order** -- a "Show newest entries first" setting lists an expanded log's steps, check-in attempts and watched episodes from newest to oldest, so a running job's new steps appear at the top. Off by default.
+- **Group message wait: new messages only** -- a new option ignores messages already in the group when the watch starts, so a lingering old match no longer fires straight away.
+
+---
+
 ## v1.5.8
 
 任务可在 web-android-api 安卓手机的 Firefox / Chrome 上运行，并可从眼睛按钮实时观看；模板与任务可自选并排序使用的浏览器；日志可按日期筛选；内存面板会区分 JS 堆耗尽与系统内存不足。
