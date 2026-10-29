@@ -4,6 +4,18 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.10-patch-1
+
+### 中文
+
+- **商店模板可带连续失败停用** -- 从模板商店安装或更新的模板会带上作者设置的「连续失败多少天后停用」，加入群组类模板设为 3 天。
+
+### English
+
+- **Store templates carry the failed-days switch-off** -- a template installed or updated from the store takes its author's "switch off after failing N days in a row" setting; the join templates use 3 days.
+
+---
+
 ## v1.5.10
 
 批量任务可安排稍后开始；运行中的批量任务可调整并发与上限；连续多天失败的任务可自动停用；监视类动作可在指定时间停止；数据库清理不再卡住面板。
