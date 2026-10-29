@@ -4,6 +4,44 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.10
+
+批量任务可安排稍后开始；运行中的批量任务可调整并发与上限；连续多天失败的任务可自动停用；监视类动作可在指定时间停止；数据库清理不再卡住面板。
+
+Bulk tasks can be scheduled to start later, and a running batch's settings can be changed; jobs can switch themselves off after failing several days in a row; watch actions can stop at a time of day; and database cleanup no longer freezes the panel.
+
+### 中文
+
+**新功能**
+
+- **稍后开始批量任务** -- 账户批量对话框、任务运行对话框与账户运行任务对话框新增「稍后开始」。等待期间不占用队列、账户或任务，重启后仍会保留；开始前可修改开始时间、间隔、并发与上限，卡片上可「立即开始」或取消。
+- **调整运行中的批量任务** -- 运行中的批量任务可修改并发数、运行上限与无结果检查；运行对话框会记住上次的设置。
+- **连续失败自动停用** -- 模板可设置任务连续失败多少天后自动停用（默认关闭），任务可跟随模板、自行设置或填 0 关闭。一天只在最后一次运行失败且没有当日补运行时计一次，任何一次成功都会清零。备份、恢复与复制模板时一并保留。
+- **监视动作按时间停止** -- 监视按钮、监视码与等待群消息等动作可设为到某个时刻停止，而不只是运行若干小时。
+- **小程序 HTTP 并发请求** -- mini_app_http 脚本新增 apiBatch，可按设定速率并发发送请求，遇到 429 自动暂停重试，并可在第一个命中时停止。
+- **改进 Emby 观看**
+
+**修复**
+
+- 数据库清理不再长时间卡住面板：空间分小段释放，日志按批删除。新数据库默认使用增量回收，已有数据库可在 设置 → 日志保留 → 数据库 中点击「立即压缩」切换一次。
+
+### English
+
+**Features**
+
+- **Start bulk tasks later** -- the account bulk dialogs, the jobs run dialog and the account run-jobs dialog gain "Start later". A scheduled task holds no queue, accounts or jobs while it waits and survives a restart; its start time, gap, parallel count and limits can be changed until it starts, and its card offers Start now and Cancel.
+- **Change a running batch** -- a running batch's parallel count, run limit and no-result check can be changed, and the run dialogs remember their last settings.
+- **Switch off after repeated failures** -- templates can switch their jobs off after failing a set number of days in a row (off by default); a job follows its template, sets its own, or uses 0 for off. A day counts once, only when its last run failed with no same-day rerun left, and any success resets the count. Kept by backup, restore and template duplicate.
+- **Watch actions stop at a time of day** -- the button, code and group message watches can stop at a set time instead of after a number of hours.
+- **Parallel Mini App HTTP requests** -- mini_app_http scripts gain apiBatch, which sends requests at a set rate in parallel, pauses and retries on a 429, and can stop at the first hit.
+- **Improved Emby watch**
+
+**Fixes**
+
+- Database cleanup no longer freezes the panel: free space is given back in small slices and logs are deleted in batches. New databases use incremental auto-vacuum; an existing one switches after one Compact now under Settings → Log Retention → Database.
+
+---
+
 ## v1.5.9
 
 日志详情可设为从新到旧显示，长时间运行的任务无需滚动即可看到当前状态；「等待群组消息」可只看监视开始后的新消息。
