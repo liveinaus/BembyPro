@@ -4,6 +4,18 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.10-patch-2
+
+### 中文
+
+- **改进 Emby 观看**
+
+### English
+
+- **Improved Emby watch**
+
+---
+
 ## v1.5.10-patch-1
 
 ### 中文
