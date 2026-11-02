@@ -4,6 +4,48 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.11
+
+定时批量任务：每天在设定时间自动开始和停止批量运行，可按标签条件挑选账户；小程序与验证类动作更可靠。
+
+Recurring bulk tasks start and stop a bulk run at set times every day, and can pick accounts by tag conditions; Mini App and verification actions are more reliable.
+
+### 中文
+
+**新功能**
+
+- **定时批量任务（Pro）** -- 在任务页面点「定时」，保存账户与模板的组合。每个运行日到开始时间自动启动批量运行，到停止时间连同运行中的任务一起停止；开始与停止时间可固定，也可在范围内每天随机抽取。可按星期选择运行日、每天打乱顺序；服务器停机错过开始时间时会补启动。运行中修改会立即生效，可「暂停今天」或「停用」之后的运行日。
+- **按标签条件挑选账户** -- 定时批量任务可设置标签条件（例如积分大于 100000 且小于 500000），每天开始时重新筛选符合条件的账户，当天运行期间保持不变。
+- **小程序与回复检查支持占位符** -- 打开小程序与回复检查的联系人可使用前面步骤得到的变量；打开小程序可设置按钮最长时效，过旧的按钮不会被打开。
+- **验证按钮跟随回调链接** -- 加入群组时，验证按钮回调返回的链接会被继续打开，而不是直接当作已验证。
+- **AI 网页验证码支持单图题** -- 可完成点选一个或多个位置、拖动拼图类的单图验证码。
+- **消息中的 @用户名可点击** -- 消息页面里的 @用户名会显示为链接。
+
+**改进**
+
+- 后台任务卡片在已完成数量旁显示正在运行的任务数。
+- 从日志打开任务设置时直接在原处打开，不再跳转到任务页面。
+- 批量创建任务对话框中时区说明下方的间距。
+
+### English
+
+**New**
+
+- **Recurring bulk tasks (Pro)** -- the Jobs page "Recurring" button saves a pick of accounts and templates. On each run day a bulk run starts at the start time and is stopped, running jobs included, at the stop time; both times can be fixed or drawn at random within a range each day. Run days can be chosen by weekday and the order shuffled daily; a start missed while the server was down happens late. Edits apply to the running task at once, and a task can be paused for today or disabled for later run days.
+- **Pick accounts by tag condition** -- a recurring bulk task can take tag conditions (for example points above 100000 and below 500000); matching accounts are looked up when each day's run starts and kept for that run.
+- **Placeholders in Mini App and reply-check contacts** -- the contact of open Mini App and reply checks can use variables from earlier steps; open Mini App can skip buttons older than a set age.
+- **Verify buttons follow their callback link** -- when joining a group, the link a verify button's callback answers with is followed instead of the press being taken as verified.
+- **Single-picture challenges in the AI web captcha** -- click one or several points, or drag a piece.
+- **Clickable @handles in messages** -- bare @handles in the messenger are shown as links.
+
+**Improvements**
+
+- Background task cards show how many jobs are running next to the finished count.
+- Job settings opened from the logs open in place instead of switching to Jobs.
+- Spacing under the time zone note in the bulk create jobs dialog.
+
+---
+
 ## v1.5.10-patch-2
 
 ### 中文
