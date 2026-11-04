@@ -4,6 +4,52 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.12
+
+### 中文
+
+**新功能**
+
+- **AI 助手接入（MCP，Pro）** -- 在「设置 → AI 助手」生成令牌后，AI 助手可通过 `/mcp` 连接面板：查看状态、计划、任务与运行记录、日志、账户、代理、Telegram 聊天与消息、模板和数据；也可创建、修改、启用并运行任务，创建和修改模板，在测试账户上试运行模板，发送消息、点击按钮、加入或退出群组。删除操作需在面板中批准；所有调用均有审计记录，密钥一律打码；可在设置中调整每个账户的 Telegram 频率限制与任务重跑冷却时间，并可一键停用。只支持 OAuth 的网页应用（如 Claude.ai、ChatGPT、Gemini）也可通过 OAuth 登录连接，每次登录需在面板中确认；需设置 `PUBLIC_URL` 为外部访问地址。「退出所有其他设备」会吊销全部 AI 助手令牌。
+- **媒体服务器同步** -- 「设置 → 媒体服务器同步」可把选定观看任务的 Emby 服务器分享给第三方播放器（地址、备用线路、登录信息与客户端身份）；每台设备一个同步密钥，只显示一次，「退出所有其他设备」即可吊销。接口说明见 docs/media-sync.md。
+- **安装为应用** -- 面板可在 Chrome 或 Edge 中安装为应用（侧边栏的「安装应用」或地址栏的安装图标），以独立窗口打开；连不上服务器时显示离线提示页。需通过 HTTPS 访问。
+
+**改进**
+
+- 「{aiBtn}」按钮遇到简单算术题（例如「10 + 5 = ?」）时直接算出答案并点击，不再调用 AI；其他题目仍交给 AI。
+- 消息页面的搜索框可输入 TG 用户 ID（数字）查找用户，包括只在群里出现过的成员；消息页面也有多处更新。
+- 设置页的各个分区可折叠，默认收起，页面顶部可一键全部展开或收起；展开状态按浏览器记住，收起的分区中已填写的内容不会丢失。
+- Bemby 与其 Watchtower 使用独立的 Watchtower 作用域（`bemby`），不会与主机上的其他 Watchtower 互相干扰；如主机上另有全局 Watchtower，请为其设置 `WATCHTOWER_SCOPE: none`。
+- 生产环境下深色主题在页面加载时即生效，不再先闪一下浅色。
+- 依赖更新。
+
+**修复**
+
+- 账户已被 Telegram 封禁或注销时，认证会直接提示，并在账户上标记「已封禁」，不再发送一个永远收不到的验证码。
+
+### English
+
+**New**
+
+- **AI agent access (MCP, Pro)** -- with a token from Settings → AI agents, an AI agent connects to the panel at `/mcp`: it can read status, the schedule, jobs and their runs, logs, accounts, proxies, Telegram chats and messages, templates and Data, and it can create, edit, enable and run jobs, create and edit templates, try a template on a test account, send messages, press buttons, and join or leave chats. Deletes wait for approval in the panel; every call is audited with secrets masked; per-account Telegram limits and a job re-run cooldown are set in Settings, and a kill switch stops it all. Web apps that only connect over OAuth (such as Claude.ai, ChatGPT and Gemini) can sign in that way, with each sign-in approved in the panel; set `PUBLIC_URL` to the address they reach the panel by. Signing out all other devices revokes every agent token.
+- **Media server sync** -- Settings → Media server sync shares the Emby servers of chosen watch jobs with third-party players (addresses, backup routes, sign-in and client identity). Each device gets its own sync key, shown once and revoked by signing out all other devices. The API is described in docs/media-sync.md.
+- **Install as an app** -- the panel can be installed from Chrome or Edge (**Install app** in the sidebar, or the install icon in the address bar) and opens in its own window, with an offline page when the server cannot be reached. It needs HTTPS.
+
+**Improvements**
+
+- `{aiBtn}` answers plain arithmetic questions (such as "10 + 5 = ?") by working out the sum and pressing that button, with no AI request; anything else still goes to the AI.
+- The messenger search finds a user by their numeric TG user ID, including members seen only in a group, and the messenger view has a number of updates.
+- Settings sections fold away, starting closed, with Expand all and Collapse all at the top. Which ones are open is remembered per browser, and nothing typed into a closed one is lost.
+- Bemby and its Watchtower use a Watchtower scope of their own (`bemby`), so they keep apart from any other Watchtower on the host; give a host-wide Watchtower `WATCHTOWER_SCOPE: none`.
+- In production the dark theme applies from the first paint, with no flash of light.
+- Dependency updates.
+
+**Fixes**
+
+- A Telegram account that has been banned or deleted now says so at sign-in and is marked blocked, instead of waiting for a code that never comes.
+
+---
+
 ## v1.5.11
 
 定时批量任务：每天在设定时间自动开始和停止批量运行，可按标签条件挑选账户；小程序与验证类动作更可靠。
@@ -15,7 +61,7 @@ Recurring bulk tasks start and stop a bulk run at set times every day, and can p
 **新功能**
 
 - **定时批量任务（Pro）** -- 在任务页面点「定时」，保存账户与模板的组合。每个运行日到开始时间自动启动批量运行，到停止时间连同运行中的任务一起停止；开始与停止时间可固定，也可在范围内每天随机抽取。可按星期选择运行日、每天打乱顺序；服务器停机错过开始时间时会补启动。运行中修改会立即生效，可「暂停今天」或「停用」之后的运行日。
-- **按标签条件挑选账户** -- 定时批量任务可设置标签条件（例如积分大于 100000 且小于 500000），每天开始时重新筛选符合条件的账户，当天运行期间保持不变。
+- **按标签条件挑选账户** -- 定时批量任务可设置标签条件，每天开始时重新筛选符合条件的账户，当天运行期间保持不变。
 - **小程序与回复检查支持占位符** -- 打开小程序与回复检查的联系人可使用前面步骤得到的变量；打开小程序可设置按钮最长时效，过旧的按钮不会被打开。
 - **验证按钮跟随回调链接** -- 加入群组时，验证按钮回调返回的链接会被继续打开，而不是直接当作已验证。
 - **AI 网页验证码支持单图题** -- 可完成点选一个或多个位置、拖动拼图类的单图验证码。
@@ -32,7 +78,7 @@ Recurring bulk tasks start and stop a bulk run at set times every day, and can p
 **New**
 
 - **Recurring bulk tasks (Pro)** -- the Jobs page "Recurring" button saves a pick of accounts and templates. On each run day a bulk run starts at the start time and is stopped, running jobs included, at the stop time; both times can be fixed or drawn at random within a range each day. Run days can be chosen by weekday and the order shuffled daily; a start missed while the server was down happens late. Edits apply to the running task at once, and a task can be paused for today or disabled for later run days.
-- **Pick accounts by tag condition** -- a recurring bulk task can take tag conditions (for example points above 100000 and below 500000); matching accounts are looked up when each day's run starts and kept for that run.
+- **Pick accounts by tag condition** -- a recurring bulk task can take tag conditions; matching accounts are looked up when each day's run starts and kept for that run.
 - **Placeholders in Mini App and reply-check contacts** -- the contact of open Mini App and reply checks can use variables from earlier steps; open Mini App can skip buttons older than a set age.
 - **Verify buttons follow their callback link** -- when joining a group, the link a verify button's callback answers with is followed instead of the press being taken as verified.
 - **Single-picture challenges in the AI web captcha** -- click one or several points, or drag a piece.
