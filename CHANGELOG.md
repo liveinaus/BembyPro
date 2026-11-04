@@ -4,6 +4,20 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.12-patch-1
+
+### 中文
+
+- **加入群组：保存 Mini App 验证链接** -- 加入群组的验证按钮打开的是 Mini App 时，可把本账户那条验证的链接存入变量，交给后续步骤（如「小程序 HTTP 调用」）完成验证，不再因超时被移出群组。
+- **修复** -- 一键升级时面板中途重启，不再误报升级失败。
+
+### English
+
+- **Join group: save a Mini App verification link** -- when a group's verification button opens a Mini App, the link of this account's own prompt can be saved to a variable for a later step (such as Mini App via HTTP) to answer, so the account is no longer removed when the countdown runs out.
+- **Fix** -- a one-click upgrade no longer reports a failure when the panel restarts mid-request.
+
+---
+
 ## v1.5.12
 
 ### 中文
