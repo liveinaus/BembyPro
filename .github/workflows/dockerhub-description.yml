@@ -15,9 +15,9 @@ permissions:
 
 jobs:
   push-readme:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Docker Hub keeps only the first 25,000 bytes, and the full README is several times
       # that. So it gets the parts marked <!-- dockerhub:start --> ... <!-- dockerhub:end -->
@@ -47,7 +47,7 @@ jobs:
           fi
 
       - name: Update Docker Hub description
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@v5
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}

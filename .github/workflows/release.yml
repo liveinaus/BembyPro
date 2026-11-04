@@ -50,7 +50,7 @@ env:
 
 jobs:
   meta:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       tag: ${{ steps.resolve.outputs.tag }}
       semver: ${{ steps.resolve.outputs.semver }}
@@ -116,7 +116,7 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
             suffix: amd64
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
@@ -124,7 +124,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Check out the private source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: liveinaus/Bemby-code
           ref: ${{ needs.meta.outputs.source_ref }}
@@ -135,16 +135,16 @@ jobs:
         id: src
         run: echo "sha=$(git -C source rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push platform image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: source
           platforms: ${{ matrix.platform }}
@@ -167,17 +167,17 @@ jobs:
   # for stable, so a bare `docker pull liveinaus/bemby-pro` gets the current release)
   merge:
     needs: [meta, build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     steps:
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Create and push multi-platform manifests
         run: |
@@ -196,18 +196,18 @@ jobs:
   # cannot be pulled yet.
   publish:
     needs: [meta, merge]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
       - name: Check out this repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: main
           path: public
 
       - name: Check out the private source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: liveinaus/Bemby-code
           ref: ${{ needs.meta.outputs.source_ref }}

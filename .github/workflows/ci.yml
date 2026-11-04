@@ -25,16 +25,16 @@ concurrency:
 
 jobs:
   backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Check out the private source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: liveinaus/Bemby-code
           ref: ${{ inputs.source_ref || 'main' }}
           token: ${{ secrets.SOURCE_REPO_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
@@ -54,16 +54,16 @@ jobs:
         run: npx tsc --noEmit -p .
 
   frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Check out the private source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: liveinaus/Bemby-code
           ref: ${{ inputs.source_ref || 'main' }}
           token: ${{ secrets.SOURCE_REPO_TOKEN }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
