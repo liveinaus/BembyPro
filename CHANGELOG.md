@@ -4,6 +4,22 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.12-patch-2
+
+### 中文
+
+- **加入群组：私聊验证的入群申请** -- 需要审批的群组改由机器人私聊发送验证（图片验证码、按钮或问题）时，加入群组会自动作答并等待批准，不再停在「等待审批」。
+- **媒体同步：显示名称** -- 每个共享的观看任务可设置播放器显示的名称；留空时取任务名「watch」之前的部分。
+- **修复** -- AI 识别的验证码不再混入形似拉丁字母的西里尔或希腊字母；Mini App 签名失败时会注明原因（如账号已冻结）。
+
+### English
+
+- **Join group: join requests verified in a private chat** -- when a group that approves joins has its bot send the verification privately (a picture code, buttons or a question), the join answers it and waits for approval instead of stopping at "pending approval".
+- **Media sync: display name** -- each shared watch job can carry the name the player shows; left blank, it is the job name up to "watch".
+- **Fix** -- AI-read captchas no longer slip in Cyrillic or Greek letters that look like Latin ones; a Mini App that Telegram will not sign now says why (for example, a frozen account).
+
+---
+
 ## v1.5.12-patch-1
 
 ### 中文
