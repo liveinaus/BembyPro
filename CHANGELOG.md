@@ -13,7 +13,7 @@ All notable changes to Bemby are documented here.
 - **AI 助手（MCP）** -- 可启动、暂停、恢复或取消批量运行，调整间隔与并发；新增「发送通知」动作，经设置中的通知机器人发消息给面板主人。
 - **小程序 HTTP 调用** -- 脚本可识别本面板自己的账户。
 - **加入群组：更稳的验证** -- 「等待后点击」的验证会等到指定按钮出现才点，不再误点诱饵；以链接形式指向本账户资料的验证提示也会被认作发给本账户。
-- **Cloudflare 人机验证** -- 使用 Camoufox 浏览器时，不带响应字段的 Turnstile 也能找到并点击。
+- **Cloudflare 人机验证** -- 使用第二种浏览器引擎时，不带响应字段的 Turnstile 也能找到并点击。
 - **Emby 观看** -- 改进观看。
 
 ### English
@@ -23,7 +23,7 @@ All notable changes to Bemby are documented here.
 - **AI assistant (MCP)** -- can start, pause, resume or cancel bulk runs and change their gap and parallel count; a new Send notification action messages the panel owner through the notification bot in Settings.
 - **Mini App via HTTP** -- scripts can tell which accounts belong to this panel.
 - **Join group: steadier verification** -- a wait-then-click verification waits for the named button before pressing, rather than the decoy; a prompt that links to this account's profile counts as addressed to it.
-- **Cloudflare checks** -- on the Camoufox browser, a Turnstile widget with no response field is now found and pressed.
+- **Cloudflare checks** -- on the second browser engine, a Turnstile widget with no response field is now found and pressed.
 - **Emby watch** -- improved Emby watch.
 
 ---
@@ -242,7 +242,7 @@ Jobs can run on the Firefox or Chrome of a web-android-api Android phone and be 
 
 - **安卓手机浏览器（web-android-api）** -- 设置中新增 web-android-api 手机卡片，填写地址与 API 密钥并可测试连接（仍兼容环境变量 WAA_BASE_URL / WAA_API_KEY）。之后任务可在手机的 Firefox 或 Chrome 上运行，使用真实触控，Turnstile 复选框会被真实点击。手机运行时整台设备经任务的代理出口上网（含 VLESS、VMess、Trojan、Shadowsocks 节点），时区随出口设置。卡片中可勾选要使用的手机浏览器，未勾选的不会出现在任何地方。
 - **实时观看手机运行** -- 手机上的运行同样显示眼睛按钮，打开后居中显示手机画面，默认只看不动，可接管操作。
-- **自选浏览器** -- 模板与任务可设为自动（跟随设置），或勾选并排序 CloakBrowser Pro、CloakBrowser 免费版、Camoufox 与手机浏览器；运行时依次尝试，当前浏览器不可用、无法启动或 Cloudflare 校验在所有出口都被拒绝时换下一个。
+- **自选浏览器** -- 模板与任务可设为自动（跟随设置），或勾选并排序 Pro 版浏览器、免费版浏览器、第二种浏览器引擎与手机浏览器；运行时依次尝试，当前浏览器不可用、无法启动或 Cloudflare 校验在所有出口都被拒绝时换下一个。
 - **浏览器测试** -- 可勾选要测试的浏览器（包括手机浏览器），每次从干净的浏览器开始；可暂停与继续；保留最近 50 次结果并可逐列对比。
 - **日志按日期筛选** -- 今天、昨天、最近 7 天、最近 30 天或自定义日期范围，按浏览器所在时区计算，并记住所选项。
 - **回复指定消息** -- 自定义任务新增动作：按消息链接回复自定义内容，支持私有、公开、话题与频道评论链接。
@@ -263,7 +263,7 @@ Jobs can run on the Firefox or Chrome of a web-android-api Android phone and be 
 
 - **Android phone browsers (web-android-api)** -- a web-android-api phone card in Settings takes the address and API key, with a connection test (WAA_BASE_URL / WAA_API_KEY still work). Jobs can then run on the phone's Firefox or Chrome with real touches, the Turnstile checkbox included. A phone run sends the whole device out through the job's proxy (VLESS, VMess, Trojan and Shadowsocks nodes too), with the exit's time zone. Tick boxes in the card choose which phone browsers are offered at all.
 - **Watch a phone run live** -- the eye button now shows for runs on the phone too, opening the phone's screen centred, hands-off until you take control.
-- **Choose the browsers** -- templates and jobs run on auto (the browser in Settings) or a ticked, ordered list of CloakBrowser Pro, the CloakBrowser free build, Camoufox and the phone browsers; a run moves to the next when one is unavailable, cannot start, or has its Cloudflare check refused through every exit.
+- **Choose the browsers** -- templates and jobs run on auto (the browser in Settings) or a ticked, ordered list of the Pro browser, the free build, the second browser engine and the phone browsers; a run moves to the next when one is unavailable, cannot start, or has its Cloudflare check refused through every exit.
 - **Browser test** -- tick which browsers to test (the phone's included), each starting clean; pause and resume; the last 50 results are kept and compared column by column.
 - **Filter logs by date** -- today, yesterday, the last 7 or 30 days, or a custom range, in the viewer's own time zone; the choice is remembered.
 - **Reply to a message** -- a new custom job action replies to a message named by its link: private, public, forum topic and channel comment links.
@@ -484,7 +484,7 @@ The browser upgrades itself daily at a set time, only while it is idle; a run on
 
 **新功能**
 
-- **浏览器定时自动升级** -- 设置 → CloakBrowser 新增每日自动升级，默认开启、默认 05:00（按面板默认时区），时间可修改。已安装的 Pro 版与免费版各自升级到最新构建；新版本下载到旧版本旁边，完成后才删除旧版本。只在没有浏览器运行、也没有安装进行时执行，升级期间新启动的浏览器会稍等片刻；到时浏览器正被使用，会在 3 小时内每分钟重试，仍在使用则当天跳过。设置页显示上次检查的结果。
+- **浏览器定时自动升级** -- 设置 → 浏览器 新增每日自动升级，默认开启、默认 05:00（按面板默认时区），时间可修改。已安装的 Pro 版与免费版各自升级到最新构建；新版本下载到旧版本旁边，完成后才删除旧版本。只在没有浏览器运行、也没有安装进行时执行，升级期间新启动的浏览器会稍等片刻；到时浏览器正被使用，会在 3 小时内每分钟重试，仍在使用则当天跳过。设置页显示上次检查的结果。
 - **计划页任务详情与手动定时** -- 点击计划中的任务，可查看类型、账户、目标、时间窗口、运行间隔、上次成功、代理与下次运行时间，并可直接设定下次运行的日期时间（可在时间窗口之外），也可跳过这次或打开任务编辑。手动设定的时间以图钉标出，重启与备份恢复后保留，「重新打乱」不会移动它；之后的运行照常排期。
 - **watch_buttons 抢到后致谢** -- 抢到红包后可在群里回复致谢：从回复列表中随机选取，或按 AI 提示生成（失败时改用列表），可按弹窗内容判断是否致谢，并随机延迟片刻，不影响继续监听。
 - **编辑 UA 预设** -- 设置中可直接编辑 UA 预设，使用旧 UA 的任务和模板会一并改为编辑后的 UA。
@@ -505,7 +505,7 @@ The browser upgrades itself daily at a set time, only while it is idle; a run on
 
 **Features**
 
-- **Scheduled browser upgrade** -- Settings → CloakBrowser gains a daily upgrade, on by default at 05:00 in the panel's default time zone, with the time changeable. Each installed build, Pro and free, moves to its newest release; the new build downloads beside the old one, which is removed only after. It runs only while no browser is open and no install is running, and a browser asked for meanwhile starts once it is done. Busy at the set time, it retries each minute for 3 hours, then skips the day. Settings shows the last check's result.
+- **Scheduled browser upgrade** -- Settings → Browser gains a daily upgrade, on by default at 05:00 in the panel's default time zone, with the time changeable. Each installed build, Pro and free, moves to its newest release; the new build downloads beside the old one, which is removed only after. It runs only while no browser is open and no install is running, and a browser asked for meanwhile starts once it is done. Busy at the set time, it retries each minute for 3 hours, then skips the day. Settings shows the last check's result.
 - **Job details and hand-set runs on the Schedule page** -- click a scheduled run to see its job's type, account, target, window, interval, last success, proxy and next run, and set that run's date and time by hand (outside the window too), skip it, or open the job's editor. A run set by hand is marked with a pin, kept across a restart and a backup, and left alone by Shuffle; the runs after it are drawn as usual.
 - **watch_buttons thanks after a win** -- after a successful press it can reply in the group: a line picked at random from a list, or written from an AI hint with the list as fallback, optionally only when the popup matches, after a short random delay and without holding up the watch.
 - **Editable UA presets** -- UA presets can be edited in Settings; jobs and templates on the old UA move to the edited one.
@@ -535,7 +535,7 @@ One-click upgrade from Settings; a job can be held to the Pro browser, so a join
 **新功能**
 
 - **一键升级** -- 设置 → 更新 中出现「立即升级」：由面板旁的 Watchtower 拉取当前标签的新镜像并重建容器，页面等待新版本启动后自动刷新。只有 Watchtower 能访问 Docker socket；Bemby 的令牌只能请求更新它自己的镜像，Watchtower 不做定时更新，只管理 bemby 容器。新的 docker-compose.yml 已包含 watchtower 服务，需要设置 WATCHTOWER_TOKEN；旧的 compose 文件可按设置页给出的片段添加。详见 docs/one-click-upgrade.md。
-- **浏览器版本：仅 Pro / 仅免费版** -- 自定义任务与模板新增「浏览器版本」。仅 Pro：运行开始前先占用一个 CloakBrowser 授权并向授权服务验证密钥，整个运行期间保持占用，绝不改用免费版；没有空闲授权时最多等待 10 分钟，仍无则在执行任何动作前失败（例如不会发送入群申请）。适合只有一次机会的验证，如部分机器人的入群验证。仅免费版：不占用授权，把授权留给重要任务。模板上设置后，关联任务可单独覆盖。
+- **浏览器版本：仅 Pro / 仅免费版** -- 自定义任务与模板新增「浏览器版本」。仅 Pro：运行开始前先占用一个浏览器授权并向授权服务验证密钥，整个运行期间保持占用，绝不改用免费版；没有空闲授权时最多等待 10 分钟，仍无则在执行任何动作前失败（例如不会发送入群申请）。适合只有一次机会的验证，如部分机器人的入群验证。仅免费版：不占用授权，把授权留给重要任务。模板上设置后，关联任务可单独覆盖。
 - **watch_buttons 动作** -- 全天监听一个群组，每条带有指定按钮的新消息都用本账号点一次。同一群组、同一按钮的任务共用一个监听；每次点击单独记入日志，附机器人弹窗与点击用时。默认运行 15 小时，属于长时运行，不占运行名额。
 - **watch_codes 动作** -- 监听群组中发出的码，用正则提取后依次发给机器人（如 "/start {code}"），直到有一个成功；成功的码保存为 {code}，后续步骤接着机器人的回复继续。我方账号之间不会重复尝试同一个码，开始监听前 10 分钟以上发出的码会跳过。
 - **批量运行可并行** -- 批量运行对话框新增「同时运行的任务数」：大于 1 时，下一个任务不等上一个结束就开始，间隔用于错开启动时间（0 为同时启动）。
@@ -557,7 +557,7 @@ One-click upgrade from Settings; a job can be held to the Pro browser, so a join
 **Features**
 
 - **One-click upgrade** -- Settings → Updates offers "Upgrade now": a Watchtower beside the panel pulls the panel's own image on its current tag and recreates the container, and the page waits for the new build and reloads. Only Watchtower gets the Docker socket; Bemby's token can only ask for its own image, and Watchtower runs no scheduled updates and manages only the bemby container. The new docker-compose.yml ships the watchtower service and needs WATCHTOWER_TOKEN; Settings shows a snippet to add it to an older compose file. See docs/one-click-upgrade.md.
-- **Browser build: Pro only / Free only** -- a new "Browser build" choice on custom jobs and templates. Pro only: before the first action the run takes a CloakBrowser licence seat and checks the key with the licence service, holds the seat until the run ends, and never falls back to the free build. With every seat busy it waits up to 10 minutes, then fails before doing anything (no join request is sent, say). For a check you only get one go at, such as some bots' join verification. Free only: takes no seat, leaving them to the jobs that matter. Set on a template, a linked job can override it.
+- **Browser build: Pro only / Free only** -- a new "Browser build" choice on custom jobs and templates. Pro only: before the first action the run takes a browser licence seat and checks the key with the licence service, holds the seat until the run ends, and never falls back to the free build. With every seat busy it waits up to 10 minutes, then fails before doing anything (no join request is sent, say). For a check you only get one go at, such as some bots' join verification. Free only: takes no seat, leaving them to the jobs that matter. Set on a template, a linked job can override it.
 - **watch_buttons action** -- watches a group all day and presses a button on every new message that carries it, with the job's own account. Jobs on the same group and button share one watch; each press is its own step in the log, with the bot's popup and how soon it landed. Runs 15 hours by default and counts as a long run, so it takes no run slot.
 - **watch_codes action** -- watches a group for codes, pulls them out with a regex and tries them on a bot ("/start {code}") until one works; the code is kept as {code} and the steps after it carry on from the bot's answer. Our accounts never try the same code twice, and codes posted more than 10 minutes before the watch began are skipped.
 - **Bulk run in parallel** -- "Jobs running at once" in the bulk run dialog: above 1, the next job starts without waiting for the last, and the gap spaces the starts out (0 starts them together).
@@ -1052,7 +1052,7 @@ Browser self-test (pick the exit, score it on BrowserScan, CreepJS, FingerprintJ
 - **更像真实浏览器** -- 每次启动时读取出口当前 IP：浏览器时区改用 IP 所在城市（如墨尔本而非统一的悉尼，需在设置中点一次「下载 IP 位置数据库」，约 70MB）；WebRTC 报告出口 IP 而不是完全被屏蔽；存储配额按常见笔记本硬盘报告，不再被判为无痕模式。实测 BrowserScan 真实度从 80% 提升到 100%。
 - **任务可手动标记成功或失败** -- 任务列表新增两个按钮：最近一次运行的结果不对时可直接更正，没有可更正的运行时则记录一次今天的手动完成。标记后按运行记录重新安排下次运行；一次性任务标记成功后自动停用，撤销成功则重新启用。
 - **新的默认值** -- 新任务的默认时间窗口由 14:00–16:00 改为 13:00–22:00；新的 Emby 观看任务默认不标记已看、开启播放前校验、关闭真实观看、开启顺序播放。已有任务不受影响。
-- **CloakBrowser 升级到 0.5.11** -- 更自然的打字、滚动与点击，授权席位中途失效时给出明确错误。
+- **浏览器内核升级** -- 更自然的打字、滚动与点击，授权席位中途失效时给出明确错误。
 
 **修复**
 
@@ -1071,7 +1071,7 @@ Browser self-test (pick the exit, score it on BrowserScan, CreepJS, FingerprintJ
 - **More like a real browser** -- each launch reads the exit's current address: the browser's timezone is its city's (Melbourne rather than Sydney for every Australian exit; click "Download IP location database" in Settings once, about 70MB), WebRTC reports the exit's address instead of being blocked outright, and the storage quota is a common laptop drive's, so it no longer reads as incognito. BrowserScan's authenticity went from 80% to 100% in testing.
 - **Mark a job successful or failed by hand** -- two new buttons on the job list: correct the latest run when its verdict was wrong, or record the work as done by hand today when there is none to correct. The job is then planned again from its history; a one-time job marked successful switches off, and taking the success back switches it on again.
 - **New defaults** -- new jobs default to a 13:00-22:00 window instead of 14:00-16:00, and new Emby Watch jobs default to not marking watched, checking the file is playable, Real Watch off and Sequence Play on. Existing jobs are unchanged.
-- **CloakBrowser 0.5.11** -- more natural typing, scrolling and clicking, and a clear error when a licence seat is lost mid-run.
+- **Browser update** -- more natural typing, scrolling and clicking, and a clear error when a licence seat is lost mid-run.
 
 **Fixes**
 
@@ -1292,9 +1292,9 @@ The first Pro release (the `:pro` image), carrying everything built since the op
 
 ## v1.0.0
 
-第一个 1.0 版本：小程序（Mini App）支持、网页子步骤、注册任务增强、计划列表与批量资料生成，Cloudflare 验证改用 CloakBrowser，并完成一轮安全加固。
+第一个 1.0 版本：小程序（Mini App）支持、网页子步骤、注册任务增强、计划列表与批量资料生成，Cloudflare 验证改用指纹修补浏览器，并完成一轮安全加固。
 
-The first 1.0: Mini App support, page sub-steps, autoreg enhancements, the schedule list, AI-written bulk profiles, Cloudflare solving on CloakBrowser, and a security hardening pass.
+The first 1.0: Mini App support, page sub-steps, autoreg enhancements, the schedule list, AI-written bulk profiles, Cloudflare solving on a fingerprint-patched browser, and a security hardening pass.
 
 ### 中文
 
@@ -1318,12 +1318,12 @@ The first 1.0: Mini App support, page sub-steps, autoreg enhancements, the sched
 - **任务通知改由机器人发送** -- 在设置中填入 BotFather 的机器人 Token 与默认目标（数字 Chat ID，或频道／群组的 `@名称`），任务结束后由该机器人发送通知，不再依赖任务关联账号是否已登录——因此未关联账号的 Emby 观看任务同样能收到通知。机器人无法主动发起对话，故新增**查找会话**从机器人最近的对话中读取 Chat ID，并可**发送测试**立即验证 Token、网络可达性与目标（字段中未保存的值也会被采用，便于先试后存）。Token 仅以掩码回显，留空即保留原值，且在导出时视为敏感项（必须加密导出）。
 - **原"由任务账号发送通知"已弃用** -- 未配置机器人 Token 时该方式仍然生效，但将在后续版本中移除：它需要为每条通知建立一次完整的 MTProto 连接，且仅在该账号已登录时可用。设置页在未配置 Token 时给出提示，走该路径时任务日志也会记录一条弃用告警。
 - **浏览器配置文件管理** -- 设置中可清理浏览器留下的配置文件（Cookie 与指纹会按出口保留，需要重置时使用）。
-- **Cloudflare 验证改用 CloakBrowser** -- 过 CF 的整套浏览器底层已从 `puppeteer-real-browser` + Playwright 下载的普通 Chromium，替换为 **CloakBrowser**：一个在源码层修补指纹（Canvas、WebGL、音频、字体、WebRTC、TLS、`navigator.webdriver` 等）的 Chromium，通过 Playwright 驱动。挑战检测、小程序步骤、网页步骤与代理轮换逻辑保持不变。首次启用时按需下载（约 200MB）到数据目录，升级后仍然保留；旧版本留下的浏览器（`pw-browsers`、`cf-chromium`）会在安装成功后自动清理。
-- **CloakBrowser 授权密钥（设置页）** -- 新增密钥管理：不填密钥时使用较旧的免费构建；在 cloakbrowser.dev/free 用 GitHub 账号可免费领取密钥以使用最新构建。每个免费密钥仅允许 1 个并发会话，因此可添加多个（来自不同 GitHub 账号）密钥，运行中的浏览器各占用一个，用完则该次启动回退到免费构建。密钥仅保存在本机，界面始终掩码显示，并可一键验证有效性与套餐。
+- **Cloudflare 验证改用指纹修补浏览器** -- 过 CF 的整套浏览器底层已从 `puppeteer-real-browser` + Playwright 下载的普通 Chromium，替换为一个在源码层修补指纹（Canvas、WebGL、音频、字体、WebRTC、TLS、`navigator.webdriver` 等）的 Chromium，通过 Playwright 驱动。挑战检测、小程序步骤、网页步骤与代理轮换逻辑保持不变。首次启用时按需下载（约 200MB）到数据目录，升级后仍然保留；旧版本留下的浏览器（`pw-browsers`、`cf-chromium`）会在安装成功后自动清理。
+- **浏览器授权密钥（设置页）** -- 新增密钥管理：不填密钥时使用较旧的免费构建；用 GitHub 账号可免费领取密钥以使用最新构建。每个免费密钥仅允许 1 个并发会话，因此可添加多个（来自不同 GitHub 账号）密钥，运行中的浏览器各占用一个，用完则该次启动回退到免费构建。密钥仅保存在本机，界面始终掩码显示，并可一键验证有效性与套餐。
 - **授权构建按需下载** -- 添加授权密钥后，设置页会提示「授权构建尚未下载」，并把安装按钮切换为<strong>下载授权构建</strong>；状态行也会标明当前装的是免费构建还是授权构建。下载始终由你触发，任务运行中不会自动下载。
 - **每个出口固定设备指纹** -- 浏览器指纹种子由出口（代理）推导而来，同一出口在多次运行中呈现同一台设备，与其保留的 Cookie（含 `cf_clearance`）一致，而不再每次随机。
 - **虚拟显示由应用自行管理** -- headed 模式所需的 Xvfb 现由应用启动并复用（原先由 `puppeteer-real-browser` 负责）；无法启动时回退到 headless 并给出提示。
-- **自动更新默认关闭** -- CloakBrowser 的后台自动更新默认关闭，避免任务运行中突然下载约 200MB 并在数据卷中堆积旧构建；更新请使用设置页的「重新下载 / 更新浏览器」。
+- **自动更新默认关闭** -- 浏览器的后台自动更新默认关闭，避免任务运行中突然下载约 200MB 并在数据卷中堆积旧构建；更新请使用设置页的「重新下载 / 更新浏览器」。
 
 **安全**
 
@@ -1345,7 +1345,7 @@ The first 1.0: Mini App support, page sub-steps, autoreg enhancements, the sched
 - **任务参数问题** -- 修正自定义任务参数在若干动作间传递时的问题。
 - **浏览器测试不再 504** -- 设置页的浏览器测试改为后台执行并轮询结果，长时间的验证不再被反向代理掐断。
 - **代理导入导出** -- 修正带代理配置的导入导出。
-- **只启动 CloakBrowser 构建** -- 旧版方案会启动 `PUPPETEER_EXECUTABLE_PATH` 指向的浏览器，升级前配置过该变量的安装会继续使用它——那是没有任何指纹修补的普通 Chromium，看似在过验证，实则毫无作用。现在该变量完全不再读取（启动时会提示可删除），数据目录中遗留的 `pw-browsers` / `.pw-browsers` / `cf-chromium` 也会在下次安装时清理。
+- **只启动内置浏览器构建** -- 旧版方案会启动 `PUPPETEER_EXECUTABLE_PATH` 指向的浏览器，升级前配置过该变量的安装会继续使用它——那是没有任何指纹修补的普通 Chromium，看似在过验证，实则毫无作用。现在该变量完全不再读取（启动时会提示可删除），数据目录中遗留的 `pw-browsers` / `.pw-browsers` / `cf-chromium` 也会在下次安装时清理。
 - **设置页显示的是真正会启动的浏览器** -- 版本号改为从构建目录读取，并新增所用二进制的完整路径。此前是运行该二进制取版本，而授权构建在没有密钥的环境下拒绝启动（密钥存在数据库而非环境变量里），于是页面仍显示被替换掉的旧版本。
 - **强制重装不再清空整个缓存** -- 「重新下载 / 更新浏览器」此前会删除全部构建，导致添加密钥后免费构建被一并删除；现在只清除本次要替换的那一档。
 - **授权席位不足时排队等待** -- 密钥全部占用时不再直接以无密钥方式启动（授权构建会拒绝运行），而是等待席位释放（上限为单个操作的总时长），使并发数量自动跟随密钥数量。
@@ -1384,12 +1384,12 @@ The first 1.0: Mini App support, page sub-steps, autoreg enhancements, the sched
 - **Job notifications are sent by a bot** -- set a bot token from BotFather and a default target (a numeric chat ID, or a channel's / group's `@name`) in Settings, and that bot sends when a job finishes. Notifications no longer depend on the job's account being authenticated, so an Emby Watch job with no linked account gets them too. A bot cannot start a conversation, so **Find chats** reads the chat IDs it has heard from lately, and **Send test** proves the token, the host's reachability and the target at once (an unsaved token or target in the fields is used, so either can be tried before it is committed). The token is only ever echoed back masked, blank keeps the stored one, and it counts as sensitive on export, which must then be encrypted.
 - **Sending notifications from a job's account is deprecated** -- it still applies while no bot token is set, but it will be removed in a future release: it opens a full MTProto connection per notification and only works while that account is authenticated. Settings warns while no token is configured, and a run that takes that path logs a deprecation warning.
 - **Browser profile housekeeping** -- clear the profiles the solver keeps per exit (cookies and fingerprint) from Settings when a reset is wanted.
-- **Cloudflare solving now runs on CloakBrowser** -- the whole browser layer behind CF solving moved from `puppeteer-real-browser` plus a Playwright-downloaded stock Chromium to **CloakBrowser**: a Chromium whose fingerprint is patched at source (canvas, WebGL, audio, fonts, WebRTC, TLS, `navigator.webdriver`), driven through Playwright. Challenge detection, Mini App steps, page steps and proxy rotation are unchanged. It is downloaded on demand (~200MB) into the data dir so it survives an upgrade, and the browsers earlier versions left behind (`pw-browsers`, `cf-chromium`) are removed once the new one installs.
-- **CloakBrowser licence keys (Settings)** -- with no key the solver runs the older free build; a free key (one per GitHub account at cloakbrowser.dev/free) gets the current one. A free key allows a single concurrent session, so several keys can be stored and one is leased per running browser, with a launch falling back to the free build when every seat is taken. Keys are stored on the host, only ever shown masked, and can be checked for validity and plan from the same panel.
+- **Cloudflare solving now runs on a fingerprint-patched browser** -- the whole browser layer behind CF solving moved from `puppeteer-real-browser` plus a Playwright-downloaded stock Chromium to a Chromium whose fingerprint is patched at source (canvas, WebGL, audio, fonts, WebRTC, TLS, `navigator.webdriver`), driven through Playwright. Challenge detection, Mini App steps, page steps and proxy rotation are unchanged. It is downloaded on demand (~200MB) into the data dir so it survives an upgrade, and the browsers earlier versions left behind (`pw-browsers`, `cf-chromium`) are removed once the new one installs.
+- **Browser licence keys (Settings)** -- with no key the solver runs the older free build; a free key (one per GitHub account) gets the current one. A free key allows a single concurrent session, so several keys can be stored and one is leased per running browser, with a launch falling back to the free build when every seat is taken. Keys are stored on the host, only ever shown masked, and can be checked for validity and plan from the same panel.
 - **The licensed build is offered as a download** -- once a key is added, Settings says the build it unlocks has not been downloaded and the install button becomes <strong>Download the licensed build</strong>; the status line names which build is on disk. Downloads still only happen when you ask, never mid-job.
 - **A stable device per exit** -- the browser fingerprint seed is derived from the exit (proxy) rather than chosen at random each launch, so an exit presents the same machine run after run, matching the cookies its profile keeps (`cf_clearance` included).
 - **The app manages its own virtual display** -- the Xvfb that headed mode needs is now started and shared by the app itself (it used to come from `puppeteer-real-browser`), falling back to headless with a warning when it cannot be started.
-- **Auto-update off by default** -- CloakBrowser's background update is disabled, so a job no longer triggers a surprise ~200MB download mid-run or leaves superseded builds on the data volume. Use "Re-download / update browser" in Settings instead.
+- **Auto-update off by default** -- the browser's background update is disabled, so a job no longer triggers a surprise ~200MB download mid-run or leaves superseded builds on the data volume. Use "Re-download / update browser" in Settings instead.
 
 **Security**
 
@@ -1411,7 +1411,7 @@ The first 1.0: Mini App support, page sub-steps, autoreg enhancements, the sched
 - **Job parameters** -- fixed parameters not carrying correctly between several custom-job actions.
 - **Browser tests no longer 504** -- the Settings browser test runs in the background and is polled for its result, so a long solve is not cut off by a reverse proxy.
 - **Proxy import/export** -- fixed importing and exporting configurations that carry proxies.
-- **Only CloakBrowser builds are launched** -- the previous solver ran whatever `PUPPETEER_EXECUTABLE_PATH` named, and installs that were set up before the switch kept using it: a stock Chromium with none of the fingerprint patches, which looks like it is solving challenges without doing any of the work. The variable is no longer read at all (a startup line says so), and the browsers left in the data dir (`pw-browsers`, `.pw-browsers`, `cf-chromium`) are cleaned up on the next install.
+- **Only the bundled browser builds are launched** -- the previous solver ran whatever `PUPPETEER_EXECUTABLE_PATH` named, and installs that were set up before the switch kept using it: a stock Chromium with none of the fingerprint patches, which looks like it is solving challenges without doing any of the work. The variable is no longer read at all (a startup line says so), and the browsers left in the data dir (`pw-browsers`, `.pw-browsers`, `cf-chromium`) are cleaned up on the next install.
 - **Settings names the browser that will actually launch** -- the version is read from the build directory and the full binary path is shown. It used to come from running the binary, which the keyed build refuses to do without its licence key (the key lives in the database, not this process's environment), so the page went on naming the build it had replaced.
 - **A forced reinstall no longer empties the whole cache** -- "Re-download / update browser" deleted every build, so adding a key and reinstalling took the free build with it. Only the tier being replaced is cleared now.
 - **Launches queue for a licence seat** -- with every key in use a browser no longer starts keyless (which the keyed build refuses); it waits for a seat, bounded by the budget one action gets, so how many solvers run at once follows how many keys are configured.
