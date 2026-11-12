@@ -4,6 +4,30 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.13
+
+### 中文
+
+- **代理：Surfshark 与 PIA** -- 新增 Surfshark 与 Private Internet Access 两种 WireGuard 代理来源，每个地区各成一个出口；PIA 只需账号密码，注册会自动续期。手动代理也可直接粘贴 vless / vmess / trojan 链接。
+- **批量运行：安静时段与随机顺序** -- 批量任务可设每日安静时段，期间不再启动新任务（新任务默认 02:00-08:00 Asia/Shanghai，可在设置中更改或关闭）；启动时可打乱顺序，运行中的任务也可重新打乱尚未开始的任务。
+- **AI 助手（MCP）** -- 可启动、暂停、恢复或取消批量运行，调整间隔与并发；新增「发送通知」动作，经设置中的通知机器人发消息给面板主人。
+- **小程序 HTTP 调用** -- 脚本可识别本面板自己的账户。
+- **加入群组：更稳的验证** -- 「等待后点击」的验证会等到指定按钮出现才点，不再误点诱饵；以链接形式指向本账户资料的验证提示也会被认作发给本账户。
+- **Cloudflare 人机验证** -- 使用 Camoufox 浏览器时，不带响应字段的 Turnstile 也能找到并点击。
+- **Emby 观看** -- 改进观看。
+
+### English
+
+- **Proxies: Surfshark and PIA** -- two new WireGuard proxy sources, Surfshark and Private Internet Access, each location its own exit; PIA needs only the login, and its registration renews itself. Manual proxies also take vless / vmess / trojan links as pasted.
+- **Bulk runs: quiet hours and random order** -- a bulk task can have daily quiet hours in which nothing new starts (new tasks default to 02:00-08:00 Asia/Shanghai, changeable or off in Settings); a run can start in random order, and a running task can reshuffle the jobs it has not started.
+- **AI assistant (MCP)** -- can start, pause, resume or cancel bulk runs and change their gap and parallel count; a new Send notification action messages the panel owner through the notification bot in Settings.
+- **Mini App via HTTP** -- scripts can tell which accounts belong to this panel.
+- **Join group: steadier verification** -- a wait-then-click verification waits for the named button before pressing, rather than the decoy; a prompt that links to this account's profile counts as addressed to it.
+- **Cloudflare checks** -- on the Camoufox browser, a Turnstile widget with no response field is now found and pressed.
+- **Emby watch** -- improved Emby watch.
+
+---
+
 ## v1.5.12-patch-2
 
 ### 中文
