@@ -4,6 +4,36 @@ All notable changes to Bemby are documented here.
 
 ---
 
+## v1.5.14
+
+### 中文
+
+- **网页播放器：分享给朋友** -- 可为朋友生成链接，无需登录 Bemby 即可用所选观看任务播放；首位访客设 6 位 PIN，可限制设备数、每周或每月流量及同时播放数。朋友也可在任意 Emby 客户端里填面板地址，用链接附带的用户名密码登录。
+- **网页播放器：重新设计** -- 手机、平板、电脑各有合适的布局，触控手势与全屏播放；可安装为应用；iPhone 上 MKV 可播放且有声音，直接播放也显示下载速度。
+- **TG 账号：批量删除与停用** -- 批量删除（红色，需输入数量确认）会从 Bemby 移除账号并一并删除其任务，删除前列出受影响的任务；新增批量停用 / 启用。列表默认只显示启用的账号。
+- **TG 账号：多选筛选与排序** -- 每个筛选项可同时选多个值；可点序号直接改位置、行内移动菜单、批量「移动到」，并可把当前排序存为手动顺序。
+- **消息：Bemby 置顶聊天** -- 可在 Bemby 中置顶任意数量的聊天，不占 Telegram 的置顶名额，对所有有该聊天的账号生效，排在 Telegram 置顶之前，以琥珀色图标区分。
+- **模板编辑** -- 任务选项移到动作链上方，选项、动作链与高级设置均可折叠；新增「导出」，把当前模板（含未保存修改）复制为 JSON。
+- **模板商店：保留自改的默认值** -- 更新商店模板时，自己改过的选项默认值会保留，没改过的跟随商店更新。
+- **任务动作** -- 新增并行 HTTP 抢先动作（多出口同时请求，先成功者胜出，支持通配符展开）；小程序 HTTP 脚本可写入数据；加入群组可加入频道的讨论组；条件判断可按数字比较（如 >=90），保存标签的值可在后续步骤中使用；简单算术验证在本地计算，不调用 AI。
+- **修复** -- 未配置邮箱 API 时，租用或读取邮箱的网页步骤会在打开浏览器前就停止；「播放」移到设置上方，不易误点。
+- **Emby 观看** -- 改进观看。
+
+### English
+
+- **Web player: share with friends** -- give a friend a link that plays from the watch jobs you pick, with no Bemby sign-in; the first visitor sets a 6-digit PIN, and links carry a device limit, a weekly or monthly traffic cap and a cap on streams at once. Friends can also add the panel's address in any Emby app and sign in with the username and password the link carries.
+- **Web player: redesigned** -- layouts for phones, tablets and computers, touch gestures and fullscreen playback; installs as an app; MKV plays with sound on iPhone, and direct play shows the download speed.
+- **TG accounts: bulk delete and disable** -- bulk delete (red, confirmed by typing the count) removes accounts from Bemby along with their jobs, listing those jobs first; bulk disable / enable is new. The list shows enabled accounts by default.
+- **TG accounts: multi-select filters and ordering** -- each filter takes several values at once; click a position number to move a row, use the row move menu or bulk Move to..., and save a column sort as the manual order.
+- **Messenger: Bemby chat pins** -- pin any number of chats in Bemby without using Telegram's pin slots; pins apply to every account that has the chat, sit above Telegram's pins and use an amber icon.
+- **Template editor** -- job options sit above the action chain, and options, chain and advanced settings fold away; Export copies the template, unsaved edits included, as JSON.
+- **Template store: your defaults kept** -- updating a store template keeps option defaults you changed and follows the store for the rest.
+- **Job actions** -- a parallel HTTP race action (requests through several exits at once, first success wins, with wildcard expansion); Mini App HTTP scripts can save data; join group can join a channel's discussion group; conditions compare numbers (such as >=90) and a saved tag's value is usable in later steps; plain arithmetic checks are worked out locally, with no AI call.
+- **Fix** -- a page step that leases or reads pool mail stops before opening the browser when the email API is not set up; Player moved down above Settings so it is not opened by accident.
+- **Emby watch** -- improved Emby watch.
+
+---
+
 ## v1.5.13
 
 ### 中文
